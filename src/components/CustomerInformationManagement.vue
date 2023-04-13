@@ -1,0 +1,478 @@
+<template>
+  <div class="CustomerInformationManagement">
+    <div class="search">
+      <el-input
+          class="w-50 m-2"
+          v-model="customerQuery.customerName"
+          placeholder="客户名"
+          style="position: relative;width: 12%;margin: 0 0 0 3%"
+      />
+      <el-input
+          class="w-50 m-2"
+          v-model="customerQuery.customerNo"
+          placeholder="客户编号"
+          style="position: relative;width: 12%;margin: 0 0 0 10px"
+      />
+      <el-select  class="m-2" placeholder="请选择" style="width: 150px;margin: 0 0 0 5px" v-model="customerQuery.level">
+        <el-option label="无"    value="" />
+        <el-option label="战略合作伙伴"    value="战略合作伙伴" />
+        <el-option label="大 客 户"    value="大客户" />
+        <el-option label="重点开发客户" value="重点开发客户" />
+      </el-select>
+      &nbsp;&nbsp;
+      <el-button type="primary"  style="left: 10px" @click="selectCustomer">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="left: 10px" @click="addCustomerVisible=true,this.addCustomerInfo={},this.vv=false">添  &nbsp;&nbsp;&nbsp; 加</el-button>
+<!--      <el-button type="primary"  style="left: 10px" >联系人管理</el-button>-->
+<!--      <el-button type="primary"  style="left: 10px" >交往记录</el-button>-->
+    </div>
+    <div>
+      <el-table :data="customerList"  class="tableMenu"
+                max-height="450"  :default-sort="{ prop: 'createDate', order: 'descending' }"
+                :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
+      >
+        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column prop="name" label="客户名称" width="170" header-align="center"  align="center"/>
+        <el-table-column prop="fr" label="法人" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="khno" label="客户编号" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="area" label="地区" width="70" header-align="center"  align="center"/>
+        <el-table-column prop="cusManager" label="客户经理" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="myd" label="满意度" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="level" label="客户级别" width="150" header-align="center"  align="center"/>
+        <el-table-column prop="xyd" label="信用度" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="address" label="详细地址" width="300" header-align="center"  align="center"/>
+        <el-table-column prop="postCode" label="邮编" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="phone" label="电话" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="webSite" label="网站" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="fax" label="传真" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="zczj" label="注册资金" width="120" header-align="center"  align="center"/>
+        <el-table-column prop="yyzzzch" label="营业执照" width="300" header-align="center"  align="center"/>
+        <el-table-column prop="khyh" label="开户行" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="khzh" label="开户账号" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="gsdjh" label="国税" width="150" header-align="center"  align="center"/>
+        <el-table-column prop="dsdjh" label="地税" width="150" header-align="center"  align="center"/>
+        <el-table-column prop="createDate" label="创建时间" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
+        <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
+          <template #default="scope">
+            <el-button link size="small" type="primary" @click="addCustomerVisible=true,
+                        addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),vv=true"
+            >编 辑</el-button
+            >
+            <el-button link size="small" type="primary" @click="deleteCustomerById(scope.row)">删 除</el-button>
+            <el-button link size="small" type="primary"  style="left: 10px" @click="CustomerOrderVisible=true,addCustomerInfo=scope.row,
+                        queryOrderList(scope.row)">订单查看</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="page">
+      <el-pagination
+          v-model:current-page="customerQuery.page"
+          v-model:page-size="customerQuery.limit"
+          small="small"
+          :disabled="false"
+          :background="true"
+          layout="prev,pager,next,jumper"
+          :total="total"
+          @current-change="handleCurrentChange"
+      />
+    </div>
+    <!--添加客户-->
+    <el-dialog
+        v-model="addCustomerVisible"
+        title="客户信息编辑"
+        width="45%"
+    >
+      <el-form
+          label-position="left"
+          :inline="true"
+          label-width="80px"
+          :model="addCustomerInfo"
+      >
+        <el-form-item label="客户名称">
+          <el-input v-model="addCustomerInfo.name" placeholder="请输入客户名称"/>
+        </el-form-item>
+        <el-form-item label="法人">
+          <el-input v-model="addCustomerInfo.fr" placeholder="请输入法人"/>
+        </el-form-item>
+        <el-form-item label="区域">
+          <el-input v-model="addCustomerInfo.area" placeholder="请输入区域"/>
+        </el-form-item>
+        <el-form-item label="客户经理">
+          <el-input v-model="addCustomerInfo.cusManager" placeholder="请输入客户经理"/>
+        </el-form-item>
+        <el-form-item label="客户级别">
+          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.level" style="width: 195px">
+            <el-option label="战略合作伙伴"    value="战略合作伙伴" />
+            <el-option label="大 客 户"    value="大客户" />
+            <el-option label="重点开发客户" value="重点开发客户" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="信用度">
+          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.xyd" style="width: 195px">
+            <el-option label="☆"    value="☆" />
+            <el-option label="☆☆"    value="☆☆" />
+            <el-option label="☆☆☆"    value="☆☆☆" />
+            <el-option label="☆☆☆☆"    value="☆☆☆☆" />
+            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="满意度">
+          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.myd" style="width: 195px">
+            <el-option label="☆"    value="☆" />
+            <el-option label="☆☆"    value="☆☆" />
+            <el-option label="☆☆☆"    value="☆☆☆" />
+            <el-option label="☆☆☆☆"    value="☆☆☆☆" />
+            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="邮编">
+          <el-input v-model="addCustomerInfo.postCode"  placeholder="请输入邮编"/>
+        </el-form-item>
+        <el-form-item label="联系电话">
+          <el-input v-model="addCustomerInfo.phone" placeholder="请输入联系电话"/>
+        </el-form-item>
+        <el-form-item label="客户地址">
+          <el-input v-model="addCustomerInfo.address" placeholder="请输入客户地址"/>
+        </el-form-item>
+        <el-form-item label="传真">
+          <el-input v-model="addCustomerInfo.fax" placeholder="请输入传真"/>
+        </el-form-item>
+        <el-form-item label="营业执照">
+          <el-input v-model="addCustomerInfo.yyzzzch" placeholder="请输入营业执照"/>
+        </el-form-item>
+        <el-form-item label="网站">
+          <el-input v-model="addCustomerInfo.webSite" placeholder="请输入网站"/>
+        </el-form-item>
+        <el-form-item label="注册资金">
+          <el-input v-model="addCustomerInfo.zczj" placeholder="请输入注册资金"/>
+        </el-form-item>
+        <el-form-item label="开户行">
+          <el-input v-model="addCustomerInfo.khyh" placeholder="请输入开户行"/>
+        </el-form-item>
+        <el-form-item label="开户账号">
+          <el-input v-model="addCustomerInfo.khzh" placeholder="请输入开户账号"/>
+        </el-form-item>
+        <el-form-item label="国税">
+          <el-input v-model="addCustomerInfo.gsdjh" placeholder="请输入国税"/>
+        </el-form-item>
+        <el-form-item label="地税">
+          <el-input v-model="addCustomerInfo.dsdjh" placeholder="请输入地税"/>
+        </el-form-item>
+        <el-form-item label="年营业额">
+          <el-input v-model="addCustomerInfo.nyye" placeholder="请输入年营业额"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
+        <el-button type="primary" @click="addInfo">
+          确认
+        </el-button>
+      </span>
+      </template>
+    </el-dialog>
+    <!--查看订单页面-->
+    <el-dialog
+        v-model="CustomerOrderVisible"
+        title="客户管理-订单信息展示"
+        width="45%"
+    >
+      <el-form
+          label-position="left"
+          :inline="true"
+          label-width="80px"
+          :model="addCustomerInfo"
+      >
+        <el-form-item label="客户名称">
+          <el-input v-model="addCustomerInfo.name" placeholder="（空）"/>
+        </el-form-item>
+        <el-form-item label="法人">
+          <el-input v-model="addCustomerInfo.fr" placeholder="（空）"/>
+        </el-form-item>
+        <el-form-item label="客户地址">
+          <el-input v-model="addCustomerInfo.address" placeholder="（空）"/>
+        </el-form-item>
+        <el-form-item label="联系电话">
+          <el-input v-model="addCustomerInfo.phone" placeholder="（空）"/>
+        </el-form-item>
+      </el-form>
+      <el-table :data="customerOrderLists" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
+                :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }" >
+        <el-table-column prop ="id" label="编号" width="100" fixed="left" align="center"/>
+        <el-table-column prop ="orderNo" label="订单编号" width="170" header-align="center"  align="center"/>
+        <el-table-column prop ="orderDate" label="下单日期" width="200" header-align="center"  align="center"/>
+        <el-table-column prop ="address" label="收货地址" width="200" header-align="center"  align="center"/>
+        <el-table-column prop ="state" label="支付状态" width="100" header-align="center"  align="center">
+          <template #default="scope">
+            <span v-if="scope.row.state===1" style="color:green">已支付</span>
+            <span v-else-if="scope.row.state===0" style="color: red">未支付</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop ="createDate" label="创建时间" width="200" header-align="center"  align="center"/>
+        <el-table-column prop ="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
+        <el-table-column fixed="right" label="操 作" width="80" header-align="center" align="center">
+          <template #default="scope">
+            <el-button link size="small" type="primary" @click="orderDetails(scope.row)">订单详情</el-button>
+          </template>
+        </el-table-column>
+        <template v-slot:empty>
+          <p>该客户暂无订单</p>
+<!--          <img src="../assets/数据板-空白.png" style="height: 20px;">-->
+        </template>
+      </el-table>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
+        <el-button type="primary" @click="CustomerOrderVisible = false">
+          确认
+        </el-button>
+      </span>
+      </template>
+    </el-dialog>
+
+    <!--订单详情-->
+    <el-dialog
+        v-model="OrderDetailsVisible"
+        title="客户管理-订单信息详细展示"
+        width="65%"
+    >
+      <el-form
+          label-position="left"
+          :inline="true"
+          label-width="80px"
+          :model="orderDetailsList"
+      >
+        <el-form-item label="订单编号">
+          <el-input v-model="orderDetailsList.order_no" placeholder="请输入客户名称"/>
+        </el-form-item>
+        <el-form-item label="总金额(￥)">
+          <el-input v-model="orderDetailsList.total" placeholder="请输入法人"/>
+        </el-form-item>
+        <el-form-item label="物流地址">
+          <el-input v-model="orderDetailsList.address" placeholder="请输入客户地址"/>
+        </el-form-item>
+        <el-form-item label="支付状态">
+            <span v-if="orderDetailsList.status==='已支付'" style="color:green">已支付</span>
+            <span v-else-if="orderDetailsList.status==='未支付'" style="color: red">未支付</span>
+        </el-form-item>
+      </el-form>
+      <el-table :data="goodList" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
+                :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }" >
+        <el-table-column prop ="id" label="编号" width="100" fixed="left" align="center"/>
+        <el-table-column prop ="goodsName" label="物品名称" width="170" header-align="center"  align="center"/>
+        <el-table-column prop ="goodsNum" label="物品数量" width="100" header-align="center"  align="center"/>
+        <el-table-column prop ="unit" label="单位" width="100" header-align="center"  align="center"/>
+        <el-table-column prop ="price" label="单价(￥)" width="100" header-align="center"  align="center"/>
+        <el-table-column prop ="sum" label="总价格(￥)" width="100" header-align="center"  align="center"/>
+        <el-table-column prop ="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
+      </el-table>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
+        <el-button type="primary" @click="addInfo">
+          确认
+        </el-button>
+      </span>
+      </template>
+      <template v-slot:empty>
+        <p>该客户暂无订单</p>
+<!--        <img src="../assets/数据板-空白.png" style="height: 20px;">-->
+      </template>
+    </el-dialog>
+
+  </div>
+</template>
+
+<script>
+
+import {reactive, ref} from "@vue/reactivity";
+import {ElMessage, ElMessageBox} from "element-plus";
+
+export default {
+  name: "CustomerInformationManagement",
+  data(){
+    let total = ref("")
+    let addCustomerInfo = reactive({})
+    let customerList = reactive([])
+    let customerOrderLists = reactive([])
+    let orderDetailsList = reactive({})
+    let goodList = reactive([])
+    let addCustomerVisible = ref(false)
+    let vv = ref(false)//用来判断用户更新还是添加
+    let CustomerOrderVisible = ref(false)//客户订单展示
+    let OrderDetailsVisible = ref(false)//订单详情
+    let customerQuery = reactive({page:1,limit:10,customerName:"",customerNo:"",level:"",time:"",type:""})
+    let customerOrderQuery = reactive({page:1,limit:10,cusId:""})
+    let orderDetailsQuery = reactive({page:1,limit:10,orderId:""})
+    return{
+      customerList,customerQuery,total,addCustomerVisible,addCustomerInfo,
+      vv,CustomerOrderVisible,customerOrderLists,customerOrderQuery,OrderDetailsVisible,
+      orderDetailsList,orderDetailsQuery,goodList
+    }
+  },
+  methods:{
+    selectCustomer(){
+      console.log(this.customerQuery)
+      this.$api.CustomerInformation.queryCustomerByParams("/customer/lists",this.customerQuery).then(res=>{
+        console.log(res)
+        if (res.code===200){
+          ElMessage({
+            type:"success",
+            message:"查询成功!"
+          })
+          this.customerList = res.result.data
+          this.total = res.result.count
+        }else {
+          ElMessage({
+            type:"error",
+            message:"查询失败，请重试!"
+          })
+        }
+      })
+    },
+    handleCurrentChange(page){
+      this.customerQuery.page = page
+      this.$api.CustomerInformation.queryCustomerByParams("/customer/lists",this.customerQuery).then(res=>{
+        this.customerList = res.result.data
+      })
+    },
+    queryCustomer(){
+      this.$api.CustomerInformation.queryCustomerByParams("/customer/lists").then(res=>{
+        console.log(res)
+        this.customerList = res.result.data
+        this.total = res.result.count
+        console.log("customerList:",this.customerList)
+      })
+    },
+    addInfo(){
+      console.log("addCustomerInfo:",this.addCustomerInfo)
+      console.log(this.vv)
+      let customer = this.addCustomerInfo
+      if (this.vv){
+          this.$api.CustomerInformation.updateCustomer("/customer/updateCustomer",customer).then(res=>{
+            console.log(res)
+            if (res.code===200){
+              ElMessage({
+                type:"success",
+                message:"更新成功!"
+              })
+              this.addCustomerVisible = false
+              this.queryCustomer()
+              this.addCustomerInfo = {}
+              this.customerQuery.page=1
+            }else {
+              ElMessage({
+                type:"error",
+                message:"更新失败，请重试!"
+              })
+            }
+          })
+      }else {
+        this.$api.CustomerInformation.addCustomer("/customer/addCustomer",customer).then(res=>{
+          console.log(res)
+          if (res.code===200){
+            ElMessage({
+              type:"success",
+              message:"添加成功!"
+            })
+            this.addCustomerVisible = false
+            this.queryCustomer()
+            this.addCustomerInfo = {}
+            this.customerQuery.page=1
+          }else if (res.code===300){
+            ElMessage({
+              type:"error",
+              message:"客户名称已存在，请重试!"
+            })
+          }else {
+            ElMessage({
+              type:"error",
+              message:"添加失败，请重试!"
+            })
+          }
+        })
+      }
+      this.vv = false
+    },
+    deleteCustomerById(msg){
+      ElMessageBox.confirm(
+        "是否删除",
+        "info",
+          {
+            confirmButtonText:"是的",
+            cancelButtonText:"不,我再想想",
+          }
+      ).then(()=>{
+        console.log("msg:",msg)
+        let id = msg.id
+        this.$api.CustomerInformation.deleteCustomer("/customer/deleteCustomer",id).then(res=>{
+          console.log(res)
+          if (res.code===200){
+            ElMessage({
+              type:"success",
+              message:"删除成功!"
+            })
+          }else {
+            ElMessage({
+              type:"error",
+              message:"删除失败，请重试!"
+            })
+          }
+          this.queryCustomer()
+          this.customerQuery.page=1
+        }).catch(()=>{
+          ElMessage({
+            message:"取消操作",
+            type:"info"
+          })
+        })
+      })
+    },
+    queryOrderList(msg){
+      this.customerOrderQuery.cusId = msg.id
+      // console.log(msg.id)
+      this.$api.CustomerInformation.queryCustomerOrderByParams("/customerOrder/lists",this.customerOrderQuery).then(res=>{
+        // console.log("res为:---->",res.result.data)
+        this.customerOrderLists = res.result.data
+      })
+    },
+    orderDetails(msg){
+      this.OrderDetailsVisible=true
+      // console.log("msg----->",msg)
+      let orderId = msg.id
+      this.orderDetailsQuery.orderId = msg.id
+      this.$api.CustomerInformation.scanOrderDetails("/customerOrder/orderDetail", {orderId}).then(res=>{
+        console.log(res)
+        this.orderDetailsList=res.result
+      })
+      this.$api.CustomerInformation.queryOrderDetailsByParams("/orderDetail/lists",this.orderDetailsQuery).then(res=>{
+        console.log("res:------->",res)
+        this.goodList = res.result.data
+      })
+    },
+  },
+  mounted() {
+    this.queryCustomer()
+  }
+}
+</script>
+
+<style scoped>
+.search{
+  width: 100%;
+  height: 40px;
+  margin: 15px 0 10px 0;
+}
+.tableMenu{
+  width: 95%;
+  margin: -1% 0 0 3%;
+  position: relative;
+}
+.page{
+  position: absolute;
+  top: 90%;
+  width: 100%;
+  color: #ffffff;
+}
+</style>
