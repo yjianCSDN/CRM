@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yejian.mapper.DictionaryMapper">
+    <resultMap id="BaseResultMap" type="com.yejian.bean.Dictionary">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="data_dic_name" property="dataDicName" jdbcType="VARCHAR"/>
+        <result column="data_dic_value" property="dataDicValue" jdbcType="VARCHAR"/>
+        <result column="is_valid" property="isValid" jdbcType="INTEGER"/>
+        <result column="create_Date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_Date" property="updateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        , data_dic_name, data_dic_value, is_valid, create_date, update_date
+    </sql>
+
+    <select id="queryByParams" parameterType="java.lang.Integer" resultType="com.yejian.bean.Dictionary">
+        select
+        <include refid="Base_Column_List"/>
+        from t_datadic
+
+        where id = #{id}
+        and is_valid=1
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_datadic
+        where id = #{id,jdbcType=INTEGER}
+        and is_valid=1
+    </select>
+
+    <insert id="insertSelective" parameterType="com.yejian.bean.Dictionary">
+        insert into t_datadic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="dataDicName != null">
+                data_dic_name,
+            </if>
+            <if test="dataDicValue != null">
+                data_dic_value,
+            </if>
+            <if test="isValid != null">
+                is_valid,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="dataDicName != null">
+                #{dataDicName,jdbcType=VARCHAR},
+            </if>
+            <if test="dataDicValue != null">
+                #{dataDicValue,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.yejian.bean.Dictionary">
+        update t_datadic
+        <set>
+            <if test="dataDicName != null">
+                data_dic_name = #{dataDicName,jdbcType=VARCHAR},
+            </if>
+            <if test="dataDicValue != null">
+                data_dic_value = #{dataDicValue,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                is_valid = #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <!--
+              不判断为空！！！
+            -->
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByParams" parameterType="com.yejian.bean.query.DictionaryQuery"
+            resultType="com.yejian.bean.Dictionary">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_datadic
+        <where>
+            is_valid = 1
+            <if test="dataDicName != null and dataDicName != ''">
+                and data_dic_name like concat('%',#{dataDicName},'%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectList" resultType="com.yejian.bean.Dictionary">
+        select
+        <include refid="Base_Column_List"/>
+        from t_datadic
+        where is_valid=1
+    </select>
+
+    <update id="delDictionary" parameterType="java.lang.Integer">
+        update
+            t_datadic
+        set is_valid = 0
+        where id = #{id}
+    </update>
+</mapper>
