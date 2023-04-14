@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="width: 300px;height: 250px;margin: 0 0 0 70%;display: block;" ref="contribution"></div>
+    <div style="width: 400px;height: 250px;margin: 0 0 0 65%;display: block;" ref="contribution"></div>
     <div style="width: 430px;height: 290px;margin: -2% 0 0 65%;position: relative" ref="contributionRound"></div>
     <div class="search">
       <el-input
@@ -91,7 +91,7 @@ export default {
       let y = []
       this.customerList.forEach(item=>{
         x.push(item.name)
-        y.push(item.total)
+        y.push(item.total / 10000)
       })
       let myChart = echarts.init(this.$refs.contribution)
       let option = {
@@ -104,7 +104,8 @@ export default {
           data: toRaw([])
         },
         yAxis: {
-          type: "value"
+          type: "value",
+          name:'贡献（万元）'
         },
         //系列
         series: [{
@@ -123,6 +124,8 @@ export default {
           type: "bar"
         }]
       })
+      console.log("x",x)
+      console.log("y",y)
     },
     receiveParams(){
       let x = []
