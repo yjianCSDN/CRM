@@ -2,6 +2,7 @@ package com.yejian.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Data
@@ -12,6 +13,7 @@ public class CustomerOrder {
 
     private String orderNo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // 如果传递的参数是Date类型，要求传入的时间字符串的格式
     private Date orderDate;
 
     private String address;

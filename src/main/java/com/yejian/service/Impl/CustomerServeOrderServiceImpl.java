@@ -37,15 +37,6 @@ public class CustomerServeOrderServiceImpl extends BaseService<CustomerServeOrde
         return map;
     }
 
-//    private Integer id;
-//    private String khno;
-//    private String name;
-//    private String level;
-//    private String cusManager;
-//    private Integer isValid;
-//    private Integer orderId;
-//    private String orderNo;
-//    private String phone;
     @Override
     public Integer addCustomerList(CustomerServeOrder customerServeOrder) {
 

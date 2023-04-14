@@ -13,10 +13,10 @@
         <result column="level" property="level" jdbcType="VARCHAR" />
         <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
         <result column="address" property="address" jdbcType="VARCHAR" />
-        <result column="order_date" property="orderDate" jdbcType="DATE" />
-        <result column="create_date" property="createDate" jdbcType="DATE" />
-        <result column="update_date" property="updateDate" jdbcType="DATE" />
-        <result column="state" property="state" jdbcType="TIMESTAMP" />
+        <result column="order_date" property="orderDate" jdbcType="TIMESTAMP" />
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+        <result column="state" property="state" jdbcType="INTEGER" />
     </resultMap>
 
     <select id="selectByParams" resultMap="BaseResultMap" parameterType="com.yejian.bean.query.CustomerQuery">
@@ -70,6 +70,9 @@
             <if test="address != null" >
                 address,
             </if>
+            <if test="phone != null" >
+                phone,
+            </if>
             <if test="state != null" >
                 state,
             </if>
@@ -94,19 +97,22 @@
                 #{orderNo,jdbcType=VARCHAR},
             </if>
             <if test="orderDate != null" >
-                #{orderDate,jdbcType=DATE},
+                #{orderDate,jdbcType=TIMESTAMP},
             </if>
             <if test="address != null" >
                 #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
             </if>
             <if test="state != null" >
                 #{state,jdbcType=INTEGER},
             </if>
             <if test="createDate != null" >
-                #{createDate,jdbcType=DATE},
+                #{createDate,jdbcType=TIMESTAMP},
             </if>
             <if test="updateDate != null" >
-                #{updateDate,jdbcType=DATE},
+                #{updateDate,jdbcType=TIMESTAMP},
             </if>
             <if test="isValid != null" >
                 #{isValid,jdbcType=INTEGER},
@@ -132,6 +138,9 @@
             <if test="address != null" >
                 address,
             </if>
+            <if test="phone != null" >
+                phone,
+            </if>
             <if test="state != null" >
                 state,
             </if>
@@ -156,19 +165,22 @@
                 #{orderNo,jdbcType=VARCHAR},
             </if>
             <if test="orderDate != null" >
-                #{orderDate,jdbcType=DATE},
+                #{orderDate,jdbcType=TIMESTAMP},
             </if>
             <if test="address != null" >
                 #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
             </if>
             <if test="state != null" >
                 #{state,jdbcType=INTEGER},
             </if>
             <if test="createDate != null" >
-                #{createDate,jdbcType=DATE},
+                #{createDate,jdbcType=TIMESTAMP},
             </if>
             <if test="updateDate != null" >
-                #{updateDate,jdbcType=DATE},
+                #{updateDate,jdbcType=TIMESTAMP},
             </if>
             <if test="isValid != null" >
                 #{isValid,jdbcType=INTEGER},
