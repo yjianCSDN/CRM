@@ -14,7 +14,7 @@
         <el-option label="建议" value="8"/>
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary" style="margin: 2% 0 0 0" @click="queryServiceListByParams">搜 &nbsp;&nbsp;&nbsp; 索
+      <el-button type="primary" style="margin: 2% 0 0 0" @click="queryServiceListByParams" v-if="selectVisible">搜 &nbsp;&nbsp;&nbsp; 索
       </el-button>
     </div>
     <div>
@@ -34,7 +34,7 @@
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
         <el-table-column fixed="right" label="操作" width="70" header-align="center" align="center">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="processingVisible=true,updateServeInfo=scope.row"
+            <el-button link type="primary" size="small" @click="processingVisible=true,updateServeInfo=JSON.parse(JSON.stringify(scope.row))"
             >处 理
             </el-button
             >
@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import {reactive, ref} from "@vue/reactivity";
+import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
 import Cookies from "js-cookie";
 
@@ -151,8 +151,13 @@ export default {
       serviceRequest: "", assigner: "", label: "", serviceProce: "", serviceProcePeople: ""
     })
     let customerManagers = reactive({})
+
+
+    let list = reactive([])
+    let selectVisible = ref(false)
+    let processVisible = ref(false)
     return {
-      customerServeQuery, serveList, total, processingVisible, updateServeInfo, customerManagers
+      customerServeQuery, serveList, total, processingVisible, updateServeInfo, customerManagers,list,selectVisible,processVisible
     }
   },
   methods: {
@@ -223,6 +228,13 @@ export default {
       // console.log(res)
       this.customerManagers = res.result
       setTimeout(this.distribution, 50)
+      this.list = this.$store.getters.getPermissionList
+      if (JSON.stringify(toRaw(this.list)).includes("303001")) {
+        this.selectVisible = true
+      }
+      if (JSON.stringify(toRaw(this.list)).includes("302002")) {
+        this.processVisible = true
+      }
     })
   }
 }

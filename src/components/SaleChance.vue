@@ -19,9 +19,9 @@
         <el-option label="未 分 配" value="0"/>
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary" style="left: 30px" @click="selectQuery">点 击 查 询</el-button>
-      <el-button type="primary" style="left: 10px" @click="getAll">查 询 全 部</el-button>
-      <el-button type="primary" @click="dialogVisible=true">添 加</el-button>
+      <el-button type="primary" style="left: 30px" @click="selectQuery" v-show="selectVisible">点 击 查 询</el-button>
+      <el-button type="primary" style="left: 10px" @click="getAll" v-show="selectVisible">查 询 全 部</el-button>
+      <el-button type="primary" @click="dialogVisible=true" v-show="addVisible">添 加</el-button>
     </div>
 
     <div>
@@ -56,11 +56,14 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="110" header-align="center">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="updateSC(scope.row)"
+            <el-button link type="primary" size="small" @click="updateSC(scope.row)" v-if="updateVisible"
             >修 改
             </el-button
             >
-            <el-button link type="primary" size="small" @click="deleteSC(scope.row)">删 除</el-button>
+            <el-button link type="primary" size="small" @click="deleteSC(scope.row)" v-if="delVisible"
+            >
+              删 除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -273,35 +276,28 @@ export default {
       } else {
         saleChance.devResult = 3
       }
-
-      // if (this.saleChance[i].devResult===0){
-      //   this.saleChance[i].devResult = "未开发"
-      // }else if (this.saleChance[i].devResult===1){
-      //   this.saleChance[i].devResult = "开发中"
-      // }else if (this.saleChance[i].devResult===2){
-      //   this.saleChance[i].devResult = "开发完成"
-      // }else {
-      //   this.saleChance[i].devResult = "开发失败"
-      // }
-
-      // console.log("要更新的数据为：  ",saleChance)
-      this.$api.SaleChance.updateSaleChance("/SaleChance/updateSaleChance", saleChance).then(res => {
-        console.log(res)
-        if (res.code === 200) {
-          ElMessage({
-            message: "修改成功！",
-            type: "success"
-          })
-          this.updateDialogVisible = false
-          this.saleChanceQuery.page = 1
-          this.handleCurrentChange(this.saleChanceQuery.page)
-        } else {
-          ElMessage({
-            message: "修改失败，请重试",
-            type: "error"
-          })
-        }
-      })
+      if (!(/^1[34578]\d{9}$/.test(saleChance.linkPhone))){
+        ElMessage({type: "warning", message: "电话号码格式不正确"})
+      }else {
+        // console.log("要更新的数据为：  ",saleChance)
+        this.$api.SaleChance.updateSaleChance("/SaleChance/updateSaleChance", saleChance).then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            ElMessage({
+              message: "修改成功！",
+              type: "success"
+            })
+            this.updateDialogVisible = false
+            this.saleChanceQuery.page = 1
+            this.handleCurrentChange(this.saleChanceQuery.page)
+          } else {
+            ElMessage({
+              message: "修改失败，请重试",
+              type: "error"
+            })
+          }
+        })
+      }
     },
     //删除
     deleteSC(msg) {
@@ -498,7 +494,6 @@ export default {
     this.$api.SaleChance.getAll("/SaleChance/getAll").then(res => {
       if (res.code === 200) {
         this.total = res.result
-        // console.log(this.total)
       }
     })
     this.$api.user.queryAllSales("/user/queryAllSales").then(res => {

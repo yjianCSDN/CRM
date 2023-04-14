@@ -140,7 +140,6 @@ export default {
   height: 100vh;
   overflow: hidden;
   position: relative;
-  /*background-image: url("../assets/todo.png");*/
   background-color: skyblue;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -216,7 +215,6 @@ p {
   /*color: black;*/
   margin: -35px 0 20px 0;
 }
-
 input {
   -webkit-text-fill-color: #ffffff !important;
   transition: background-color 5000s ease-in-out, width 1s ease-out !important;

@@ -20,8 +20,9 @@
         <el-option label="重点开发客户" value="重点开发客户" />
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary"  style="left: 10px" @click="selectCustomer">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-      <el-button type="primary"  style="left: 10px" @click="addCustomerVisible=true,this.addCustomerInfo={},this.vv=false">添  &nbsp;&nbsp;&nbsp; 加</el-button>
+      <el-button type="primary"  style="left: 10px" @click="selectCustomer" v-if="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="left: 10px" @click="addCustomerVisible=true,this.addCustomerInfo={},this.vv=false" v-if="addVisible"
+      >添  &nbsp;&nbsp;&nbsp; 加</el-button>
 <!--      <el-button type="primary"  style="left: 10px" >联系人管理</el-button>-->
 <!--      <el-button type="primary"  style="left: 10px" >交往记录</el-button>-->
     </div>
@@ -55,12 +56,12 @@
         <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
           <template #default="scope">
             <el-button link size="small" type="primary" @click="addCustomerVisible=true,
-                        addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),vv=true"
+                        addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),vv=true" v-if="updateVisible"
             >编 辑</el-button
             >
-            <el-button link size="small" type="primary" @click="deleteCustomerById(scope.row)">删 除</el-button>
+            <el-button link size="small" type="primary" @click="deleteCustomerById(scope.row)" v-if="delVisible">删 除</el-button>
             <el-button link size="small" type="primary"  style="left: 10px" @click="CustomerOrderVisible=true,addCustomerInfo=scope.row,
-                        queryOrderList(scope.row)">订单查看</el-button>
+                        queryOrderList(scope.row)" v-if="selectVisible">订单查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -305,10 +306,17 @@ export default {
     let customerQuery = reactive({page:1,limit:10,customerName:"",customerNo:"",level:"",time:"",type:""})
     let customerOrderQuery = reactive({page:1,limit:10,cusId:""})
     let orderDetailsQuery = reactive({page:1,limit:10,orderId:""})
+    let list = reactive([])
+
+    //增删改查许可
+    let selectVisible = ref(false)
+    let addVisible = ref(false)
+    let updateVisible = ref(false)
+    let delVisible = ref(false)
     return{
       customerList,customerQuery,total,addCustomerVisible,addCustomerInfo,
       vv,CustomerOrderVisible,customerOrderLists,customerOrderQuery,OrderDetailsVisible,
-      orderDetailsList,orderDetailsQuery,goodList
+      orderDetailsList,orderDetailsQuery,goodList,list,selectVisible,addVisible,updateVisible,delVisible
     }
   },
   methods:{
@@ -454,6 +462,20 @@ export default {
   },
   mounted() {
     this.queryCustomer()
+    this.list=this.$store.getters.getPermissionList
+    if (JSON.stringify(this.list).includes("201001")){
+      this.addVisible=true
+    }
+    if (JSON.stringify(this.list).includes("201002")){
+      this.updateVisible=true
+    }
+    if (JSON.stringify(this.list).includes("201003")){
+      this.delVisible=true
+    }
+    if (JSON.stringify(this.list).includes("201004")){
+      this.selectVisible=true
+    }
+    // console.log("111111",this.$store.getters.getPermissionList)
   }
 }
 </script>

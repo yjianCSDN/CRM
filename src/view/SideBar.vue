@@ -185,10 +185,6 @@ export default {
       // console.log(res.result)
       if (res.code===200){
         this.list = toRaw(res.result)
-        // for (let i = 0; i < res.result.length; i++) {
-        //   // console.log(res.result[i])
-        //   this.list.push(res.result[i])
-        // }
         console.log("this.List:--->",this.list)
         // console.log(toRaw(this.list).includes("10"))//true
         this.$store.commit("setPermissionList",res.result)
@@ -217,9 +213,7 @@ export default {
       this.CustomerManagementVisible=false
       if (JSON.stringify(this.list).includes("2000") ){
         this.CustomerManagementVisible=true
-        console.log(this.CustomerManagementVisible)
-        // console.log(JSON.stringify(this.list).includes(20))
-        // console.log(JSON.stringify(this.list).includes("20"))
+        // console.log(this.CustomerManagementVisible)
       }
       if (JSON.stringify(this.list).includes("2010")){
         this.CustomerInfoVisible=true
@@ -233,24 +227,13 @@ export default {
       this.UserManagementVisible=false
       if (JSON.stringify(this.list).includes("8010")){
         this.UserManagementVisible=true
-        console.log(JSON.stringify(this.list).includes(8010))
-        console.log(JSON.stringify(this.list).includes("8010"))
       }
       if (JSON.stringify(this.list).includes("801001")){
         this.updatePersonalInfoVisible=true
       }
-      // var index = JSON.stringify(this.list).indexOf("10")
-      // console.log("bbbbbbbbbbbbbbbbbbbbbbb",JSON.stringify(this.list).indexOf("20"))
-      // console.log("ccccccccccccccc","20".length===JSON.stringify(this.list)[index])
-      // console.log("bbbbbbbbbbbbbbbbbbbbbbb",JSON.stringify(this.list).indexOf("10"))
-      // console.log("ccccccccccccccc","10".length===JSON.stringify(this.list)[index])
-      // console.log('aaaaaaaaaaaaa',JSON.stringify(800020).length)
-
       this.ServerVisible=false
       if (JSON.stringify(this.list).includes("3000")){
         this.ServerVisible=true
-        // console.log(JSON.stringify(this.list).includes("30"))
-        // console.log(JSON.stringify(this.list).includes(30))
       }
       if (JSON.stringify(this.list).includes("3010")){
         this.ServerCreationVisible=true
@@ -270,8 +253,6 @@ export default {
       this.SystemVisible=false
       if (JSON.stringify(this.list).includes("6000")){
         this.SystemVisible=true
-        // console.log(JSON.stringify(this.list).includes("60"))
-        // console.log(JSON.stringify(this.list).includes(60))
       }
       if (JSON.stringify(this.list).includes("6010")){
         this.UserVisible=true
@@ -282,8 +263,6 @@ export default {
       this.CountVisible=false
       if (JSON.stringify(this.list).includes("4000")){
         this.CountVisible=true
-        // console.log(JSON.stringify(this.list).includes("40"))
-        // console.log(JSON.stringify(this.list).includes(40))
       }
       if (JSON.stringify(this.list).includes("4010")){
         this.CustomerContributionVisible=true

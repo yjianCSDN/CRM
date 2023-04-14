@@ -8,8 +8,8 @@
           style="position: relative;width: 12%;margin: 1% 0 0 3%"
       />
       &nbsp;&nbsp;
-      <el-button type="primary" style="margin: 1% 0 0 5px" @click="selectRoleListByName">搜 索</el-button>
-      <el-button type="primary" style="margin: 1% 0 0 10px" @click="addRoleVisible=true">添 加 角 色</el-button>
+      <el-button type="primary" style="margin: 1% 0 0 5px" @click="selectRoleListByName" v-if="selectVisible">搜 索</el-button>
+      <el-button type="primary" style="margin: 1% 0 0 10px" @click="addRoleVisible=true" v-if="addVisible">添 加 角 色</el-button>
     </div>
     <div>
       <el-table :data="roleList"  class="tableMenu"
@@ -25,11 +25,15 @@
         <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
           <template #default="scope">
             <el-button link size="small" type="primary" @click="updateRoleVisible=true,updateRoleInfo=JSON.parse(JSON.stringify(scope.row)),
-                       updateOldRoleName=scope.row.roleName"
+                       updateOldRoleName=scope.row.roleName" v-show="updateVisible"
             >编 辑</el-button
             >
-            <el-button link size="small" type="danger" @click="delRole(scope.row)">删 除</el-button>
-            <el-button type="primary" size="small" style="left: 10px" @click="this.empowerVisible=true;addGrantModel.roleId=scope.row.id;PermissionEcho(scope.row)">授 权</el-button>
+            <el-button link size="small" type="danger" @click="delRole(JSON.parse(JSON.stringify(scope.row)))"
+                       v-show="delVisible"
+            >删 除</el-button>
+            <el-button type="primary" size="small" style="left: 10px" @click="this.empowerVisible=true;addGrantModel.roleId=scope.row.id;PermissionEcho(JSON.parse(JSON.stringify(scope.row)))"
+                       v-show="empower"
+            >授 权</el-button>
 
           </template>
         </el-table-column>
@@ -160,9 +164,19 @@ export default {
               })
     let PermissionEchoList = reactive([])//权限列表回显
     let treeStrictly = false
+
+
+
+    let list = reactive([])
+    let addVisible = ref(false)
+    let selectVisible =ref(false)
+    let updateVisible = ref(false)
+    let delVisible = ref(false)
+    let empower = ref(false)
     return{
       RoleQuery,roleList,addRoleVisible,addRoleInfo,result,updateRoleInfo,updateRoleVisible,updateResult,updateOldRoleName,empowerVisible,
-      defaultProps,empowerList,addGrantModel,PermissionEchoList,checkedKeys,treeStrictly
+      defaultProps,empowerList,addGrantModel,PermissionEchoList,checkedKeys,treeStrictly,
+      list,addVisible,selectVisible,updateVisible,delVisible,empower
     }
   },
   methods:{
@@ -436,8 +450,23 @@ export default {
   mounted() {
     this.selectRoleList()
     this.getAllEmpower()
+    this.list = this.$store.getters.getPermissionList
+    if (JSON.stringify(toRaw(this.list)).includes("602001")) {
+      this.addVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("602002")) {
+      this.selectVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("602003")) {
+      this.updateVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("602004")) {
+      this.delVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("602005")) {
+      this.empower = true
+    }
   }
-
 }
 </script>
 

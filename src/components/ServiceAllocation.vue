@@ -14,7 +14,7 @@
         <el-option label="建议"   value="8" />
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary"  style="margin: 2% 0 0 0" @click="queryServiceListByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: 2% 0 0 0" @click="queryServiceListByParams" v-if="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
     </div>
 
     <div>
@@ -34,7 +34,9 @@
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
         <el-table-column fixed="right" label="操作" width="70" header-align="center" align="center">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="updateServeVisible=true,updateServeInfo=scope.row,distribution(scope.row)"
+            <el-button link type="primary" size="small" @click="updateServeVisible=true,updateServeInfo=JSON.parse(JSON.stringify(scope.row)),
+                                                        distribution(JSON.parse(JSON.stringify(scope.row)))"
+                            v-if="allocationVisible"
             >分 配</el-button
             >
           </template>
@@ -123,7 +125,7 @@
 </template>
 
 <script>
-import {reactive, ref} from "@vue/reactivity";
+import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
 
 export default {
@@ -135,8 +137,13 @@ export default {
     let updateServeVisible = ref(false)
     let updateServeInfo = reactive({serveType:"",customer:"",overview:"",serviceRequest:"",assigner:""})
     let customerManagers = reactive([])
+
+
+    let list = reactive([])
+    let selectVisible = ref(false)
+    let allocationVisible = ref(false)
     return{
-      customerServeQuery,serveList,total,updateServeVisible,updateServeInfo,customerManagers
+      customerServeQuery,serveList,total,updateServeVisible,updateServeInfo,customerManagers,list,selectVisible,allocationVisible
     }
   },
   methods:{
@@ -204,10 +211,16 @@ export default {
   mounted() {
     this.paramsInitialization()
     this.$api.CustomerServer.queryAllCustomerManagers("/user/queryAllCustomerManagers").then(res=>{
-      // console.log(res)
       this.customerManagers=res.result
     })
     setTimeout(this.distribution,50)
+    this.list = this.$store.getters.getPermissionList
+    if (JSON.stringify(toRaw(this.list)).includes("302001")) {
+      this.selectVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("302002")) {
+      this.allocationVisible = true
+    }
   }
 }
 </script>

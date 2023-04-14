@@ -55,6 +55,7 @@
             >
             <el-button link type="primary" size="small" @click="Development(scope.row)"
                        v-if="scope.row.devResult=='开发中' || scope.row.devResult=='未开发'"
+                       v-show="developVisible"
             >开 发
             </el-button>
           </template>
@@ -182,7 +183,8 @@
           <el-input v-model="DevelopmentInformation.cgjl" disabled placeholder="暂无"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="margin: 10px 0 10px 10px" @click="AddScheduleItemVisible=true">添加计划项
+          <el-button type="primary" style="margin: 10px 0 10px 10px" @click="AddScheduleItemVisible=true" v-show="addItemVisible"
+          >添加计划项
           </el-button>
           <el-button type="success" style="margin: 10px 0 10px 10px" @click="success" v-model="SaleChanceSuccess">开发成功
           </el-button>
@@ -200,11 +202,13 @@
           <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
           <el-table-column fixed="right" label="操作" width="110" header-align="center">
             <template #default="scope">
-              <el-button link type="primary" size="small" @click="updateDVP(scope.row)"
+              <el-button link type="primary" size="small" @click="updateDVP(scope.row)" v-show="updateItemVisible"
               >编 辑
               </el-button
               >
-              <el-button link type="primary" size="small" @click="deleteDVP(scope.row)">删 除</el-button>
+              <el-button link type="primary" size="small" @click="deleteDVP(scope.row)" v-show="delItemVisible"
+              >删 除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -368,10 +372,16 @@ export default {
       permissionList: {},//角色权限码
       //根据权限码来显示增删查改操作
       ViewDetailsVisible: false,
+      //客户机会查询
       selectVisible: false,
-      addVisible: false,
-      updateVisible: false,
-      delVisible: false
+      //添加子项
+      addItemVisible: false,
+      //修改子项
+      updateItemVisible: false,
+      //删除子项
+      delItemVisible: false,
+      //客户开发
+      developVisible:false
     }
   },
   methods: {
@@ -614,20 +624,24 @@ export default {
     this.query()
     this.permissionList = this.$store.getters.getPermissionList
     if (JSON.stringify(toRaw(this.permissionList)).includes("102001")) {
-      this.ViewDetailsVisible = true
-    }
-    if (JSON.stringify(toRaw(this.permissionList)).includes("101001")) {
       this.selectVisible = true
     }
-    if (JSON.stringify(toRaw(this.permissionList)).includes("101002")) {
-      this.addVisible = true
+    if (JSON.stringify(toRaw(this.permissionList)).includes("102003")) {
+      this.ViewDetailsVisible = true
     }
-    if (JSON.stringify(toRaw(this.permissionList)).includes("101003")) {
-      this.delVisible = true
+    if (JSON.stringify(toRaw(this.permissionList)).includes("102004")) {
+      this.developVisible = true
     }
-    if (JSON.stringify(toRaw(this.permissionList)).includes("101004")) {
-      this.updateVisible = true
+    if (JSON.stringify(toRaw(this.permissionList)).includes("10200501")) {
+      this.addItemVisible = true
     }
+    if (JSON.stringify(toRaw(this.permissionList)).includes("10500503")) {
+      this.delItemVisible = true
+    }
+    if (JSON.stringify(toRaw(this.permissionList)).includes("10200502")) {
+      this.updateItemVisible = true
+    }
+
   }
 }
 </script>

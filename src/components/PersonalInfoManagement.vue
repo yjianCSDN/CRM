@@ -92,7 +92,7 @@ export default {
       nameList: [],
       oldUserName: "",
       PwdModel,
-      src: require("@/assets/头像.jpg"),
+      src: require("@/assets/头像.png"),
       confirmUserPwdVisible,
       updateRoleId
     }

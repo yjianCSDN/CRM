@@ -20,9 +20,9 @@
         <el-option label="重点开发客户" value="重点开发客户"/>
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary" style="left: 10px;margin: -1% 0 0 0" @click="selectCustomer">搜 &nbsp;&nbsp;&nbsp; 索
+      <el-button type="primary" style="left: 10px;margin: -1% 0 0 0" @click="selectCustomer" v-show="selectVisible">搜 &nbsp;&nbsp;&nbsp; 索
       </el-button>
-      <el-button type="primary" style="left: 10px;margin: -1% 0 0 12px" @click="addOrderVisible=true"
+      <el-button type="primary" style="left: 10px;margin: -1% 0 0 12px" @click="addOrderVisible=true" v-show="addVisible"
       >添加订单
       </el-button
       >
@@ -56,7 +56,7 @@
                         queryOrderList(scope.row),PaymentStatus=scope.row.state">订单查看
             </el-button>
             <el-button link size="small" type="primary" @click="updateCustomerInfo=JSON.parse(JSON.stringify(scope.row)),updateCustomerVisible=true,
-                        updateCustomerId=scope.row.orderId,updateId=scope.row.orderId"
+                        updateCustomerId=scope.row.orderId,updateId=scope.row.orderId" v-show="updateVisible"
             >订单修改
             </el-button>
           </template>
@@ -154,7 +154,10 @@
         </el-form-item>
       </el-form>
       <el-button type="primary" style="margin: 10px 0 10px 10px"
-                 @click="orderDetailsVisible=true,addOrUpdateResult=false">添加子项
+                 @click="orderDetailsVisible=true,addOrUpdateResult=false,title='订单管理-添加子项',button='添加'"
+                 v-show="addItemVisible"
+      >
+        添加子项
       </el-button>
       <el-button type="primary" style="margin: 10px 0 10px 10px" v-show="PaymentStatus===0" @click="setState">设置为已支付
       </el-button>
@@ -168,11 +171,14 @@
         <el-table-column prop="sum" label="总价" width="100" header-align="center" align="center"/>
         <el-table-column fixed="right" label="操 作" width="180" header-align="center" align="center">
           <template #default="scope">
-            <el-button link size="small" type="primary" @click="addOrUpdateResult=true,orderDetailsVisible=true,
-                                                        orderDetails=scope.row"
+            <el-button link size="small" type="primary"
+                       @click="addOrUpdateResult=true,orderDetailsVisible=true,
+                       orderDetails=JSON.parse(JSON.stringify(scope.row)),title='订单管理-修改子项',button='修改'"
+                       v-show="updateItemVisible"
             >编 辑
             </el-button>
             <el-button link size="small" type="primary" @click="confirmEvent(scope.row)"
+                       v-show="delItemVisible"
             >删 除
             </el-button>
           </template>
@@ -188,13 +194,13 @@
           :disabled="false"
           :background="true"
           layout="prev,pager,next,jumper"
-          :total="total"
+          :total="orderTotal"
           @current-change="handleCurrentChange2"
       />
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false,CustomerOrderVisible=false">取 消</el-button>
-        <el-button type="primary" @click="addInfo">
+        <el-button type="primary" @click="CustomerOrderVisible=false">
           确认
         </el-button>
       </span>
@@ -204,7 +210,7 @@
     <!--添加服务-->
     <el-dialog
         v-model="orderDetailsVisible"
-        title="订单管理-添加子项"
+        :title="title"
         width="30%"
     >
       <el-form
@@ -230,13 +236,13 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-           <el-button type="primary" @click="addServeVisible=false,addServeInfo={}"
+           <el-button type="primary" @click="orderDetailsVisible=false,addServeInfo={}"
            >
             取 消
           </el-button>
           <el-button type="primary" @click="addOrderDetails"
           >
-            添 加
+            {{ button }}
           </el-button>
         </span>
       </template>
@@ -311,6 +317,18 @@ export default {
     let updateCustomerInfo = reactive({id: "", name: "", cusId: "", orderDate: "", address: "", orderNo: "", phone: ""})
     let updateCustomerVisible = ref(false)
     let updateId = ref("")
+    let title = ref("")
+    let button = ref("")
+    let orderTotal = ref("")
+
+
+    let list = reactive([])//权限列表
+    let addVisible = ref(false)//添加订单
+    let selectVisible = ref(false)//搜索订单
+    let updateVisible = ref(false)//修改订单
+    let addItemVisible = ref(false)//订单子项添加
+    let updateItemVisible = ref(false)//订单子项修改
+    let delItemVisible = ref(false)//订单子项删除
     return {
       customerList,
       total,
@@ -328,7 +346,17 @@ export default {
       addOrUpdateResult,
       PaymentStatus,
       updateCustomerVisible,
-      updateId
+      updateId,
+      title,
+      button,
+      orderTotal,
+      list,
+      addVisible,
+      updateVisible,
+      addItemVisible,
+      updateItemVisible,
+      delItemVisible,
+      selectVisible
     }
   },
   methods: {
@@ -354,30 +382,34 @@ export default {
     },
     addInfo() {
       let customer = this.customerOrder.name
-      this.$api.CustomerServer.getInfoByName("/customerServe/getInfoByName", {customer}).then(res => {
-        if (res.code === 200) {
-          // console.log("yejian",res)
-          this.customerOrder.cusId = res.result.id
-          // this.customerOrder.address=res.result.address
-          // console.log(this.customerOrder)
-          this.$api.CustomerInformation.addCustomerOrder("/customerServeOrder/addOrder", this.customerOrder).then(res => {
-            // console.log(res)
-            if (res.code === 200) {
-              ElMessage({type: "success", message: "添加成功"})
-            } else {
-              ElMessage({type: "error", message: "添加失败，请稍后再试"})
-            }
-            this.customerOrder = {}
-            this.addOrderVisible = false
-            this.queryCustomer()
-          })
-        } else {
-          ElMessage({
-            type: "info",
-            message: "暂无该用户数据，也可能该用户不存在!"
-          })
-        }
-      })
+      if (!(/^1[34578]\d{9}$/.test(this.customerOrder.phone))){
+        ElMessage({type: "warning", message: "电话号码格式不正确"})
+      }else {
+        this.$api.CustomerServer.getInfoByName("/customerServe/getInfoByName", {customer}).then(res => {
+          if (res.code === 200) {
+            // console.log("yejian",res)
+            this.customerOrder.cusId = res.result.id
+            // this.customerOrder.address=res.result.address
+            console.log(this.customerOrder)
+            this.$api.CustomerInformation.addCustomerOrder("/customerServeOrder/addOrder", this.customerOrder).then(res => {
+              // console.log(res)
+              if (res.code === 200) {
+                ElMessage({type: "success", message: "添加成功"})
+              } else {
+                ElMessage({type: "error", message: "添加失败，请稍后再试"})
+              }
+              this.customerOrder = {}
+              this.addOrderVisible = false
+              this.handleCurrentChange(this.customerQuery.page)
+            })
+          } else {
+            ElMessage({
+              type: "info",
+              message: "暂无该用户数据，也可能该用户不存在!"
+            })
+          }
+        })
+      }
     },
     //查询所有订单
     queryOrderList(msg) {
@@ -389,6 +421,7 @@ export default {
       this.$api.CustomerInformation.queryCustomerOrderByParams("/orderDetail/lists", this.orderDetailsQuery).then(res => {
         // console.log("/customerOrder/orderDetail:---------------->",res)
         this.orderDetailsList = res.result.data
+        this.orderTotal=res.result.count
       })
     },
     //订单翻页
@@ -505,21 +538,44 @@ export default {
       })
     },
     updateOrderInfo() {
-      this.updateCustomerInfo.id = this.updateCustomerInfo.orderId
-      this.$api.CustomerInformation.updateOrderInfo("/customerOrder/updateInfo", this.updateCustomerInfo).then(res => {
-        // console.log(res)
-        if (res.code === 200) {
-          ElMessage({type: "success", message: "修改成功"})
-          this.updateCustomerVisible = false
-          this.queryCustomer()
-        } else {
-          ElMessage({type: "error", message: "修改失败，请重试"})
-        }
-      })
+      if (!(/^1[34578]\d{9}$/.test(this.updateCustomerInfo.phone))){
+        ElMessage({type: "warning", message: "电话号码格式不正确"})
+      }else {
+        this.updateCustomerInfo.id = this.updateCustomerInfo.orderId
+        this.$api.CustomerInformation.updateOrderInfo("/customerOrder/updateInfo", this.updateCustomerInfo).then(res => {
+          // console.log(res)
+          if (res.code === 200) {
+            ElMessage({type: "success", message: "修改成功"})
+            this.updateCustomerVisible = false
+            this.queryCustomer()
+          } else {
+            ElMessage({type: "error", message: "修改失败，请重试"})
+          }
+        })
+      }
     }
   },
   mounted() {
     this.queryCustomer()
+    this.list=this.$store.getters.getPermissionList
+    if (JSON.stringify(this.list).includes("203001")){
+      this.addVisible=true
+    }
+    if (JSON.stringify(this.list).includes("203002")){
+      this.addItemVisible=true
+    }
+    if (JSON.stringify(this.list).includes("203003")){
+      this.updateItemVisible=true
+    }
+    if (JSON.stringify(this.list).includes("203004")){
+      this.delItemVisible=true
+    }
+    if (JSON.stringify(this.list).includes("203005")){
+      this.selectVisible=true
+    }
+    if (JSON.stringify(this.list).includes("203006")){
+      this.updateVisible=true
+    }
   }
 }
 </script>

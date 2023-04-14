@@ -183,7 +183,6 @@ export default {
   },
   mounted() {
     this.$api.CustomerServer.queryCustomerContributionByParams("/customer/queryCustomerContributionByParams",this.customerQuery).then(res=>{
-      // console.log(res)
       this.customerList=res.result.data
       this.total=res.result.count
       this.customerList.forEach(item=>{

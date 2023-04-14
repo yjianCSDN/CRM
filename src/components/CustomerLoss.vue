@@ -20,8 +20,8 @@
       <el-option label="确认流失"    value="1" />
     </el-select>
     &nbsp;&nbsp;
-    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="queryListBySth">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="insertVisible=true">添加流失客户</el-button>
+    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="queryListBySth" v-show="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="insertVisible=true" v-show="addVisible">添加流失客户</el-button>
 
   </div>
 
@@ -45,7 +45,7 @@
           >详 &nbsp; &nbsp;情</el-button
           >
           <el-button  size="small" type="warning" v-else-if="scope.row.state===0" @click="AddHold(scope.row)"
-          >添加暂缓</el-button
+          >添加暂缓措施</el-button
           >
         </template>
       </el-table-column>
@@ -88,9 +88,16 @@
         <el-input v-model="CustomerLossExpandList.lossReason" placeholder="(空)"/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="margin: 10px 0 10px 10px" v-if="title==='流失管理-暂缓措施维护'" @click="AddCustomerReprieveVisible=true">添加暂缓</el-button>
         <el-button type="primary" style="margin: 10px 0 10px 10px" v-if="title==='流失管理-暂缓措施维护'"
-                    @click="ConfirmLossVisible=true">确认流失</el-button>
+                   @click="AddCustomerReprieveVisible=true" v-show="addItemVisible"
+        >
+          添加暂缓
+        </el-button>
+        <el-button type="primary" style="margin: 10px 0 10px 10px" v-if="title==='流失管理-暂缓措施维护'"
+                    @click="ConfirmLossVisible=true" v-show="confirmLossVisible"
+        >
+          确认流失
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table :data="customerReprieveList" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
@@ -155,7 +162,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button >取 消</el-button>
+        <el-button @click="AddCustomerReprieveVisible=false">取 消</el-button>
         <el-button type="primary" @click="addCustomerReprieve">
           确认
         </el-button>
@@ -181,7 +188,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button >取 消</el-button>
+        <el-button @click="UpdateCustomerReprieveVisible=false">取 消</el-button>
         <el-button type="primary" @click="updateCustomerReprieve">
           确认
         </el-button>
@@ -275,10 +282,18 @@ export default {
     let insertLossInfo = reactive({cusName:"",lastOrderTime:""})
     let insertVisible = ref(false)
     let customerList = reactive([])//未流失客户名单，用来判断名称是否正确
+
+
+    let list = reactive([])
+    let addVisible = ref(false)//流失管理添加
+    let selectVisible = ref(false)//流失管理查询
+    let addItemVisible = ref(false)//添加暂缓
+    let confirmLossVisible = ref(false)//确认流失
     return{
       customerLossList,customerLossQuery,total,CustomerLossExpandVisible,CustomerLossExpandList,title,customerReprieveQueryTotal,
       customerReprieveQuery,customerReprieveList,AddCustomerReprieveVisible,
-      customerReprieve,UpdateCustomerReprieveVisible,lossReason,id,ConfirmLossVisible,insertLossInfo,insertVisible,customerList
+      customerReprieve,UpdateCustomerReprieveVisible,lossReason,id,ConfirmLossVisible,insertLossInfo,insertVisible,customerList,
+      addVisible,selectVisible,list,addItemVisible,confirmLossVisible
     }
   },
   methods:{
@@ -465,6 +480,19 @@ export default {
   mounted() {
     this.queryLossList()
     this.queryCustomer()
+    this.list=this.$store.getters.getPermissionList
+    if (JSON.stringify(this.list).includes("202003")){
+      this.addVisible=true
+    }
+    if (JSON.stringify(this.list).includes("201002")){
+      this.selectVisible=true
+    }
+    if (JSON.stringify(this.list).includes("20200101")){
+      this.addItemVisible=true
+    }
+    if (JSON.stringify(this.list).includes("20200102")){
+      this.confirmLossVisible=true
+    }
   }
 }
 </script>

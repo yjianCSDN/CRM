@@ -14,8 +14,8 @@
         <el-option label="投诉"   value="8" />
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary"  style="margin: 2% 0 0 0" @click="queryServiceListByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-      <el-button type="primary"  style="margin: 2% 0 0 10px" @click="addServeVisible=true">添  &nbsp;&nbsp;&nbsp; 加</el-button>
+      <el-button type="primary"  style="margin: 2% 0 0 0" @click="queryServiceListByParams" v-show="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: 2% 0 0 10px" @click="addServeVisible=true" v-show="addVisible">添  &nbsp;&nbsp;&nbsp; 加</el-button>
     </div>
 
     <div>
@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import {reactive, ref} from "@vue/reactivity";
+import {reactive, ref, toRaw} from "@vue/reactivity";
 // eslint-disable-next-line no-unused-vars
 import {ElMessage, ElMessageBox} from "element-plus";
 export default {
@@ -118,8 +118,13 @@ export default {
     let total = ref("")
     let addServeVisible = ref(false)
     let addServeInfo = reactive({serveType:"",customer:"",overview:"",serviceRequest:""})
+
+
+    let list = reactive([])
+    let selectVisible = ref(false)
+    let addVisible = ref(false)
     return{
-      customerServeQuery,serveList,total,addServeVisible,addServeInfo
+      customerServeQuery,serveList,total,addServeVisible,addServeInfo,list,selectVisible,addVisible
     }
   },
   methods:{
@@ -176,6 +181,14 @@ export default {
   },
   mounted() {
    this.paramsInitialization()
+    this.list = this.$store.getters.getPermissionList
+    console.log("this.list:::::::",this.list)
+    if (JSON.stringify(toRaw(this.list)).includes("301001")) {
+      this.selectVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("301002")) {
+      this.addVisible = true
+    }
   }
 }
 </script>

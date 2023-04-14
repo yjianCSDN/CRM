@@ -8,8 +8,8 @@
           style="position: relative;width: 12%;margin: 1% 0 0 5%"
       />
       &nbsp;&nbsp;
-      <el-button type="primary" style="margin: 1% 0 0 5px" @click="selectDictionaryByParams">搜 索</el-button>
-      <el-button type="primary" style="margin: 1% 0 0 10px" @click="AddDictionaryVisible=true">添 加</el-button>
+      <el-button type="primary" style="margin: 1% 0 0 5px" @click="selectDictionaryByParams" v-show="selectVisible">搜 索</el-button>
+      <el-button type="primary" style="margin: 1% 0 0 10px" @click="AddDictionaryVisible=true" v-show="addVisible">添 加</el-button>
     </div>
     <div>
       <el-table :data="dictionaryList" class="tableMenu"  max-height="520"
@@ -23,11 +23,12 @@
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
         <el-table-column fixed="right" label="操作" width="150" header-align="center">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="editDictionaryVisible=true,editDicInfo=scope.row"
+            <el-button link type="primary" size="small" @click="editDictionaryVisible=true,editDicInfo=JSON.parse(JSON.stringify(scope.row))"
+                       v-show="updateVisible"
             >编 辑
             </el-button
             >
-            <el-button link type="primary" size="small" @click="delDictionary(scope.row)"
+            <el-button link type="primary" size="small" @click="delDictionary(JSON.parse(JSON.stringify(scope.row)))" v-show="delVisible"
             >删 除
             </el-button>
           </template>
@@ -115,7 +116,7 @@
 </template>
 
 <script>
-import {reactive, ref} from "@vue/reactivity";
+import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage, ElMessageBox} from "element-plus";
 
 export default {
@@ -128,8 +129,15 @@ export default {
     let insertDicInfo = reactive({dataDicName:"",dataDicValue:""})//添加字典信息
     let editDicInfo = reactive({})
     let editDictionaryVisible = ref(false)//修改字典信息
+
+    let list = reactive([])
+    let addVisible = ref(false)
+    let selectVisible = ref(false)
+    let updateVisible = ref(false)
+    let delVisible = ref(false)
     return{
-      dictionaryQuery,dictionaryList,total,AddDictionaryVisible,insertDicInfo,editDicInfo,editDictionaryVisible
+      dictionaryQuery,dictionaryList,total,AddDictionaryVisible,insertDicInfo,editDicInfo,editDictionaryVisible,
+      list,addVisible,selectVisible,updateVisible,delVisible
     }
   },
   methods:{
@@ -231,6 +239,19 @@ export default {
   },
   mounted() {
     this.queryByParams()
+    this.list = this.$store.getters.getPermissionList
+    if (JSON.stringify(toRaw(this.list)).includes("604001")) {
+      this.addVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("604002")) {
+      this.selectVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("604003")) {
+      this.updateVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("604004")) {
+      this.delVisible = true
+    }
   }
 }
 </script>

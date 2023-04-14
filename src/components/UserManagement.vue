@@ -20,8 +20,8 @@
         style="position: relative;width: 12%;margin: 1% 0 0 5px"
     />
     &nbsp;&nbsp;
-    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="selectByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-    <el-button type="primary"  style="margin: 1% 0 0 10px" @click="this.addUserVisible=true">添 加 用 户</el-button>
+    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="selectByParams" v-if="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+    <el-button type="primary"  style="margin: 1% 0 0 10px" @click="this.addUserVisible=true" v-if="addVisible">添 加 用 户</el-button>
   </div>
   <div style="margin: 5px 0 1% 3%">
 
@@ -47,10 +47,11 @@
       <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
       <el-table-column fixed="right" label="操 作" width="130" header-align="center"  align="center">
         <template #default="scope">
-          <el-button link size="small" type="primary" @click="User(scope.row)"
+          <el-button link size="small" type="primary" @click="User(JSON.parse(JSON.stringify(scope.row)))" v-show="updateVisible"
           >编 辑</el-button
           >
-          <el-button link size="small" type="primary" @click="delUser(scope.row)">删 除</el-button>
+          <el-button link size="small" type="primary" @click="delUser(JSON.parse(JSON.stringify(scope.row)))" v-show="delVisible"
+          >删 除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -281,6 +282,13 @@ export default {
     let result = ref(true)
     let updateResult = ref(true)
     let addRoleIds = reactive([])
+
+
+    let list = reactive([])
+    let addVisible = ref(false)
+    let updateVisible = ref(false)
+    let delVisible = ref(false)
+    let selectVisible = ref(false)
     return{
       userQuery,
       userList:[],
@@ -289,7 +297,8 @@ export default {
       total:"",
       delId:"",
       addUserInfo,updateUserInfo,updateRoleId,PwdModel,userId,title,RoleList,addRoleList,addRoleIds,
-      addUserVisible,updateUserVisible,confirmUserPwdVisible,confirmUserPwdVisible2,result,updateOldUserName,updateResult
+      addUserVisible,updateUserVisible,confirmUserPwdVisible,confirmUserPwdVisible2,result,updateOldUserName,updateResult,
+      list,addVisible,updateVisible,delVisible,selectVisible
     }
   },
   methods:{
@@ -555,6 +564,19 @@ export default {
     this.$api.user.queryAllRoles("/role/queryAllRoles").then(res=>{
       this.RoleList = res.result
     })
+    this.list = this.$store.getters.getPermissionList
+    if (JSON.stringify(toRaw(this.list)).includes("601001")) {
+      this.addVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("601002")) {
+      this.selectVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("601003")) {
+      this.updateVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("601004")) {
+      this.delVisible = true
+    }
   },
 }
 </script>
