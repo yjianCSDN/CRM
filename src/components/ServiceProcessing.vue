@@ -120,7 +120,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-           <el-button type="primary" @click="updateServeVisible=false,updateServeInfo={}"
+           <el-button type="primary" @click="processingVisible=false,updateServeInfo={}"
            >
             取 消
           </el-button>

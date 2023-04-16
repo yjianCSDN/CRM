@@ -35,7 +35,7 @@
         <el-table-column fixed="right" label="操作" width="70" header-align="center" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="processingVisible=true,updateServeInfo=JSON.parse(JSON.stringify(scope.row))"
-                       v-if="feedVisible"
+                       v-show="feedVisible"
             >处 理
             </el-button
             >
@@ -136,7 +136,7 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-           <el-button type="primary" @click="updateServeVisible=false,updateServeInfo={}"
+           <el-button type="primary" @click="processingVisible=false,updateServeInfo={}"
            >
             取 消
           </el-button>
@@ -257,8 +257,9 @@ export default {
       this.selectVisible = true
     }
     if (JSON.stringify(toRaw(this.list)).includes("304002")) {
-      this.allocationVisible = true
+      this.feedVisible = true
     }
+    // console.log("111111",JSON.stringify(toRaw(this.list)).includes("304002"))
   }
 }
 </script>
