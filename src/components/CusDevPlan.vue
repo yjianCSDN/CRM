@@ -462,23 +462,28 @@ export default {
     addCDP() {
       this.addCusDevPlan.saleChanceId = this.DevelopmentInformation.id
       // console.log(toRaw(this.addCusDevPlan))
-      this.$api.CusDevPlan.addCusDevPlan("/CusDevPlan/add", toRaw(this.addCusDevPlan)).then(res => {
-        // console.log(res)
-        if (res.code === 200) {
-          ElMessage({
-            type: "success",
-            message: "添加成功!"
-          })
-        } else {
-          ElMessage({
-            type: "error",
-            message: "添加失败，请稍后重试！"
-          })
-        }
-        this.AddScheduleItemVisible = false
-        this.addCusDevPlan = {}
-        this.queryByParams()
-      })
+      if (this.addCusDevPlan.planItem===""||this.addCusDevPlan.planDate===""){
+        ElMessage({type:"info",message:"信息缺失"})
+      }else {
+        this.$api.CusDevPlan.addCusDevPlan("/CusDevPlan/add", toRaw(this.addCusDevPlan)).then(res => {
+          // console.log(res)
+          if (res.code === 200) {
+            ElMessage({
+              type: "success",
+              message: "添加成功!"
+            })
+          } else {
+            ElMessage({
+              type: "error",
+              message: "添加失败，请稍后重试！"
+            })
+          }
+          this.AddScheduleItemVisible = false
+          this.addCusDevPlan = {}
+          this.queryByParams()
+        })
+      }
+
     },
     //获取客户开发计划总数
     getTotal(msg) {
@@ -533,22 +538,26 @@ export default {
     },
     //实现更新操作
     updateCDP() {
-      this.$api.CusDevPlan.updateCDP("/CusDevPlan/update", this.updateCusDevPlan).then(res => {
-        if (res.code === 200) {
-          ElMessage({
-            type: "success",
-            message: "更新成功！"
-          })
-        } else {
-          ElMessage({
-            message: "更新失败，请重试！",
-            type: "error"
-          })
-        }
-        this.UpdateScheduleItemVisible = false
-        this.queryByParams()
-        this.updateCusDevPlan = {}
-      })
+      if(this.updateCusDevPlan.planItem===""||this.updateCusDevPlan.planItem===""){
+        ElMessage({type:"info",message:"计划项信息不完整!"})
+      }else {
+        this.$api.CusDevPlan.updateCDP("/CusDevPlan/update", this.updateCusDevPlan).then(res => {
+          if (res.code === 200) {
+            ElMessage({
+              type: "success",
+              message: "更新成功！"
+            })
+          } else {
+            ElMessage({
+              message: "更新失败，请重试！",
+              type: "error"
+            })
+          }
+          this.UpdateScheduleItemVisible = false
+          this.queryByParams()
+          this.updateCusDevPlan = {}
+        })
+      }
     },
     //开发成功
     success() {
@@ -649,28 +658,27 @@ export default {
 <style scoped>
 .CusDevPlan {
   width: 100%;
-  height: 100%;
+  height: 95%;
   position: relative;
+  /*background-color: seashell;*/
 }
-
-.search {
+.search{
   position: relative;
-  width: 100%;
+  width: 60%;
   height: 50px;
-}
+  display: block;
 
+}
 .tableMenu {
-  /*header-align:center;*/
-  top: -8px;
-  left: 20px;
+  header-align: center;
+  left: 1%;
   position: relative;
-  width: 95%;
+  width: 98%;
 }
-
-.page {
-  position: absolute;
-  top: 86%;
-  width: 100%;
+.page{
+  position: relative;
+  margin: 1% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

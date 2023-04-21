@@ -226,16 +226,21 @@ export default {
 </script>
 
 <style scoped>
-.tableMenu{
-  margin: 2% 0 0 0 ;
+.search{
+  width: 60%;
+  height: 50px;
+  margin: 0 0 0 1%;
+}
+.tableMenu {
+  margin: 1% 0 0 0;
   left: 3%;
   position: relative;
   width: 90%;
 }
 .page{
   position: absolute;
-  top: 92%;
-  width: 100%;
+  margin: 29% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

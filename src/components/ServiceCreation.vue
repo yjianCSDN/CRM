@@ -1,5 +1,5 @@
 <template>
-  <div class="customerServer">
+  <div class="ServiceCreation">
     <div class="search">
       <el-input
           v-model="customerServeQuery.customer"
@@ -7,7 +7,7 @@
           placeholder="客户名"
           style="position: relative;width: 10%;margin: 2% 0 0 3%"
       />
-      <el-select  class="m-2" placeholder="请选择服务类型" v-model="customerServeQuery.serveType" style="margin: 2% 0 0 10px;width: 12%">
+      <el-select  class="m-2" placeholder="请选择服务类型" v-model="customerServeQuery.serveType" style="margin: 2% 0 0 10px">
         <el-option label="无"     value="" />
         <el-option label="咨询"   value="6" />
         <el-option label="建议"   value="7" />
@@ -171,7 +171,7 @@ export default {
           }else {
             ElMessage({
               type:"info",
-              message:"暂无该用户数据，也可能该用户不存在!"
+              message:"暂无用户数据，也可能该用户不存在!"
             })
           }
         })
@@ -194,16 +194,25 @@ export default {
 </script>
 
 <style scoped>
-.tableMenu{
-  margin: 2% 0 0 0 ;
+.ServiceCreation{
+  height: 95%;
+  width: 100%;
+}
+.search{
+  width: 60%;
+  height: 50px;
+  margin: 0 0 0 1%;
+}
+.tableMenu {
+  margin: 1% 0 0 0;
   left: 3%;
   position: relative;
   width: 90%;
 }
 .page{
   position: absolute;
-  top: 92%;
-  width: 100%;
+  margin: 29% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

@@ -1,9 +1,11 @@
 <template>
 <div class="MainContent">
-  <div style="width: 100%;height: 40px">
+  <div style="width: 100%;height: 5%">
     <bread/>
   </div>
-  <router-view></router-view>
+  <div class="content">
+    <router-view></router-view>
+  </div>
 </div>
 </template>
 
@@ -18,9 +20,6 @@ export default {
       lists:[]
     }
   },
-
-
-
 }
 </script>
 
@@ -28,9 +27,17 @@ export default {
 .MainContent{
   position: relative;
   background-size: 100% 100%;
-  /*background-color: #d7f1ea;*/
+  background-color: seashell;
   height: 100%;
   width: 87%;
   float: right;
+}
+.content{
+  height: 90%;
+  width: 98%;
+  margin: 0 0 0 1%;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px  rgba(0,0,0,0.5);
 }
 </style>

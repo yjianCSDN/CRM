@@ -6,8 +6,6 @@
         >&nbsp;{{item.title}}<i @click="deleteBread(item)">x</i>
         </el-breadcrumb-item>
       </el-breadcrumb>
-
-
   </div>
 </template>
 

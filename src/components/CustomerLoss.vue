@@ -1,12 +1,12 @@
 <template>
-<div class="CustomerLoss">
+<div class="CustomerLoss" >
 
-  <div class="search">
+  <div class="search" >
     <el-input
         class="w-50 m-2"
         placeholder="客户编号"
         v-model="customerLossQuery.customerNo"
-        style="position: relative;width: 12%;margin: 1% 0 0 3%"
+        style="position: relative;width: 12%;margin: 1% 0 0 0"
     />
     <el-input
         class="w-50 m-2"
@@ -21,13 +21,13 @@
     </el-select>
     &nbsp;&nbsp;
     <el-button type="primary"  style="margin: 1% 0 0 5px" @click="queryListBySth" v-show="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-    <el-button type="primary"  style="margin: 1% 0 0 5px" @click="insertVisible=true" v-show="addVisible">添加流失客户</el-button>
+    <el-button type="primary"   style="margin: 1% 0 0 5px" @click="insertVisible=true" v-show="addVisible">添加流失客户</el-button>
 
   </div>
 
   <div>
     <el-table :data="customerLossList"  class="tableMenu"
-              max-height="450"  :default-sort="{ prop: 'createDate', order: 'descending' }"
+              max-height="520"  :default-sort="{ prop: 'createDate', order: 'descending' }"
               :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
     >
       <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
@@ -440,6 +440,7 @@ export default {
           }
       }
 
+      // console.log("this.CustomerList:::::::",this.customerList)
       for (let i = 0; i < this.customerList.length; i++) {
         if (this.insertLossInfo.cusName===this.customerList[i].name){
           result2 = true
@@ -499,23 +500,26 @@ export default {
 
 <style scoped>
 .tableMenu{
-  width: 95%;
-  margin: 0 0 0 3%;
+  width: 98%;
+  margin: 0 0 0 1%;
   position: relative;
 }
 .CustomerLoss{
   width: 100%;
-  height: 100%;
+  height: 93.5%;
+  /*background-color: sandybrown;*/
 }
 .search{
   position: relative;
-  width: 100%;
+  width: 60%;
   height: 50px;
+  display: block;
+  left: 1%;
 }
 .page{
-  position: absolute;
-  top: 90%;
-  width: 100%;
+  position: relative;
+  margin: 1% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

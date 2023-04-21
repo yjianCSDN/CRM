@@ -5,23 +5,23 @@
           class="w-50 m-2"
           v-model="customerQuery.customerName"
           placeholder="客户名"
-          style="position: relative;width: 12%;margin: 0 0 0 3%"
+          style="position: relative;width: 12%;margin: 1% 0 0 0"
       />
       <el-input
           class="w-50 m-2"
           v-model="customerQuery.customerNo"
           placeholder="客户编号"
-          style="position: relative;width: 12%;margin: 0 0 0 10px"
+          style="position: relative;width: 12%;margin: 1% 0 0 10px"
       />
-      <el-select  class="m-2" placeholder="请选择" style="width: 150px;margin: 0 0 0 5px" v-model="customerQuery.level">
+      <el-select  class="m-2" placeholder="请选择" style="width: 150px;margin: 1% 0 0 5px" v-model="customerQuery.level">
         <el-option label="无"    value="" />
         <el-option label="战略合作伙伴"    value="战略合作伙伴" />
         <el-option label="大 客 户"    value="大客户" />
         <el-option label="重点开发客户" value="重点开发客户" />
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary"  style="left: 10px" @click="selectCustomer" v-if="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-      <el-button type="primary"  style="left: 10px" @click="addCustomerVisible=true,this.addCustomerInfo={},this.vv=false" v-if="addVisible"
+      <el-button type="primary"  style="margin: 1% 0 0 10px" @click="selectCustomer" v-if="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: 1% 0 0 10px" @click="addCustomerVisible=true,this.addCustomerInfo={},this.vv=false" v-if="addVisible"
       >添  &nbsp;&nbsp;&nbsp; 加</el-button>
 <!--      <el-button type="primary"  style="left: 10px" >联系人管理</el-button>-->
 <!--      <el-button type="primary"  style="left: 10px" >交往记录</el-button>-->
@@ -60,7 +60,7 @@
             >编 辑</el-button
             >
             <el-button link size="small" type="primary" @click="deleteCustomerById(scope.row)" v-if="delVisible">删 除</el-button>
-            <el-button link size="small" type="primary"  style="left: 10px" @click="CustomerOrderVisible=true,addCustomerInfo=scope.row,
+            <el-button link size="small" type="primary"  style="left: 10px" @click="CustomerOrderVisible=true,addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),
                         queryOrderList(scope.row)" v-if="selectVisible">订单查看</el-button>
           </template>
         </el-table-column>
@@ -214,7 +214,7 @@
         <el-table-column prop ="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
         <el-table-column fixed="right" label="操 作" width="80" header-align="center" align="center">
           <template #default="scope">
-            <el-button link size="small" type="primary" @click="orderDetails(scope.row)">订单详情</el-button>
+            <el-button link size="small" type="primary" v-show="scope.row.state===1" @click="orderDetails(scope.row)">订单详情</el-button>
           </template>
         </el-table-column>
         <template v-slot:empty>
@@ -224,7 +224,7 @@
       </el-table>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
+        <el-button @click="CustomerOrderVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
         <el-button type="primary" @click="CustomerOrderVisible = false">
           确认
         </el-button>
@@ -245,13 +245,13 @@
           :model="orderDetailsList"
       >
         <el-form-item label="订单编号">
-          <el-input v-model="orderDetailsList.order_no" placeholder="请输入客户名称"/>
+          <el-input v-model="orderDetailsList.order_no" disabled placeholder="(空)"/>
         </el-form-item>
         <el-form-item label="总金额(￥)">
-          <el-input v-model="orderDetailsList.total" placeholder="请输入法人"/>
+          <el-input v-model="orderDetailsList.total"  disabled placeholder="(空)"/>
         </el-form-item>
         <el-form-item label="物流地址">
-          <el-input v-model="orderDetailsList.address" placeholder="请输入客户地址"/>
+          <el-input v-model="orderDetailsList.address" disabled placeholder="(空)"/>
         </el-form-item>
         <el-form-item label="支付状态">
             <span v-if="orderDetailsList.status==='已支付'" style="color:green">已支付</span>
@@ -268,17 +268,17 @@
         <el-table-column prop ="sum" label="总价格(￥)" width="100" header-align="center"  align="center"/>
         <el-table-column prop ="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
       </el-table>
+      <template v-slot:empty>
+        <p>该客户暂无订单</p>
+        <!--        <img src="../assets/数据板-空白.png" style="height: 20px;">-->
+      </template>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
-        <el-button type="primary" @click="addInfo">
+        <el-button @click="OrderDetailsVisible=false,this.vv=false">取 消</el-button>
+        <el-button type="primary" @click="OrderDetailsVisible=false">
           确认
         </el-button>
       </span>
-      </template>
-      <template v-slot:empty>
-        <p>该客户暂无订单</p>
-<!--        <img src="../assets/数据板-空白.png" style="height: 20px;">-->
       </template>
     </el-dialog>
 
@@ -455,8 +455,15 @@ export default {
         this.orderDetailsList=res.result
       })
       this.$api.CustomerInformation.queryOrderDetailsByParams("/orderDetail/lists",this.orderDetailsQuery).then(res=>{
-        console.log("res:------->",res)
-        this.goodList = res.result.data
+        console.log("orderDetailsQuery:------->",res)
+        // this.goodList = res.result.data
+        // if (res.result.data.length===0){
+        //   console.log("1111111真的吗")
+        //   this.goodList = []
+        // }else {
+        //   console.log("22222当然是假的拉")
+          this.goodList = res.result.data
+        // }
       })
     },
   },
@@ -475,26 +482,29 @@ export default {
     if (JSON.stringify(this.list).includes("201004")){
       this.selectVisible=true
     }
-    // console.log("111111",this.$store.getters.getPermissionList)
   }
 }
 </script>
 
 <style scoped>
-.search{
+.CustomerInformationManagement{
+  height: 100%;
   width: 100%;
-  height: 40px;
-  margin: 15px 0 10px 0;
+}
+.search{
+  width: 60%;
+  height: 50px;
+  margin: 0 0 0 1%;
 }
 .tableMenu{
-  width: 95%;
-  margin: -1% 0 0 3%;
+  width: 97%;
+  margin: 0 0 0 1%;
   position: relative;
 }
 .page{
   position: absolute;
   top: 90%;
-  width: 100%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

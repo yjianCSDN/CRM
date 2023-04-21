@@ -5,7 +5,7 @@
           v-model="customerLossQuery.customerNo"
           class="w-50 m-2"
           placeholder="客户编号"
-          style="position: relative;width: 10%;margin: 2% 0 0 3%"
+          style="position: relative;width: 10%;margin: 2% 0 0 2%"
       />
       <el-input
           v-model="customerLossQuery.customerName"
@@ -99,9 +99,9 @@ export default {
 <style scoped>
 .tableMenu{
   margin: 7px 0 0 0 ;
-  left: 3%;
+  left: 2%;
   position: relative;
-  width: 80%;
+  width: 96%;
 }
 .page{
   position: absolute;

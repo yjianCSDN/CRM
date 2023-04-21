@@ -593,8 +593,8 @@ export default {
 }
 .page{
   position: absolute;
-  top: 85%;
-  width: 100%;
+  top: 88%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

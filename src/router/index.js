@@ -22,6 +22,9 @@ import CustomerChurn from "@/components/CustomerChurn";
 import CustomerOrders from "@/components/CustomerOrders";
 import PersonalInfoManagement from "@/components/PersonalInfoManagement";
 import DictionaryManagement from "@/components/DictionaryManagement";
+import welcome from "@/components/welcome";
+import AllAnnouncements from "@/components/AllAnnouncements";
+import Announcement from "@/components/Announcement";
 const routes = [
     {
         path:"/",
@@ -35,6 +38,17 @@ const routes = [
         name:"index",
         requireAuth: true,
         children:[
+            {
+                path:"/index/welcome",
+                component:welcome,
+                name:"welcome",
+                meta: {
+                    title: '个人中心',
+                    path:"/index/welcome",
+                    breadNumber: 0,
+                    name:"初始页面"
+                },
+            },
             {
                 path:"/index/PersonCenter",
                 component:PersonCenter,
@@ -233,7 +247,28 @@ const routes = [
                     name:"客户流失"
                 },
             },
-
+            {
+                path: "/index/AllAnnouncements",
+                component: AllAnnouncements,
+                name: AllAnnouncements,
+                meta: {
+                    title: '所有公告',
+                    path: "/index/AllAnnouncements",
+                    breadNumber: 2,
+                    name:"所有公告"
+                },
+            },
+            {
+                path: "/index/Announcement",
+                component: Announcement,
+                name: Announcement,
+                meta: {
+                    title: '发布公告',
+                    path: "/index/Announcement",
+                    breadNumber: 2,
+                    name:"发布公告"
+                },
+            },
             {
                 path: "/index/PersonalInfoManagement",
                 component: PersonalInfoManagement,

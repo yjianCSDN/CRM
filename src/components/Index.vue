@@ -2,7 +2,6 @@
   <div class="Index">
     <Header></Header>
     <SideBar></SideBar>
-
     <MainContent></MainContent>
   </div>
 </template>
@@ -23,7 +22,7 @@ export default {
 <style scoped>
 .Index{
   width: 100%;
-  height: 625px;
+  height: 675px;
 
 }
 </style>

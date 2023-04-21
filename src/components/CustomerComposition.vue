@@ -65,7 +65,7 @@ export default {
           //系列
           series: [{
             data: y,
-            type: "line"
+            type: "bar"
           }]
         })
       })
@@ -151,7 +151,8 @@ export default {
 
 <style scoped>
 .CustomerComposition {
-  height: 100%;
+  height: 95%;
   width: 100%;
+  /*background-color: springgreen;*/
 }
 </style>

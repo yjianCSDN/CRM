@@ -10,7 +10,7 @@
              v-model.trim="user.userPwd">
       <label for="code"></label>
       <input type="text" placeholder="验证码" name="code" id="code" autocapitalize="off" v-model.trim="code">
-      <tools :identifyCode="identifyCode" @click="refreshCode"></tools>
+      <tools class="tools" :identifyCode="identifyCode" @click="refreshCode"></tools>
       <div class="checkbox">
         <el-checkbox v-model="RememberMe" label="记住我" size="large"/>
       </div>
@@ -58,7 +58,9 @@ export default {
         ElMessage({type: "info", message: "没有输入验证码"})
       } else if (this.code !== this.identifyCode) {
         ElMessage({type: "error", message: "验证码错误,请重新输入"})
-      } else {
+      } else if (this.user.userName===""||this.user.userPwd===""){
+        ElMessage({type:"info",message:"用户信息输入缺失"})
+      }else {
         this.$api.login.Login("/user/login", this.user).then(res => {
           console.log(res)
           if (res.code === 200) {
@@ -90,6 +92,7 @@ export default {
     resetInfo: function () {
       this.user.userName = ''
       this.user.userPwd = ''
+      this.identifyCode=""
     },
     open2: function () {
       if (this.user.username != '' || this.user.password != '') {
@@ -197,7 +200,6 @@ div {
 }
 
 button {
-  /*// rgba*/
   background-color: rgba(9, 108, 144, 0.5);
   margin: 10px 25px 40px 25px;
 }
@@ -212,12 +214,17 @@ p {
 }
 
 .checkbox {
-  /*color: black;*/
   margin: -35px 0 20px 0;
 }
 input {
   -webkit-text-fill-color: #ffffff !important;
   transition: background-color 5000s ease-in-out, width 1s ease-out !important;
+}
+.tools{
+  position: absolute;
+  width: 20%;
+  margin: 120px 0 0 59%;
+  /*background-color: red;*/
 }
 </style>
 

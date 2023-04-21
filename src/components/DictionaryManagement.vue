@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="Dictionary">
     <div class="search">
       <el-input
           v-model="dictionaryQuery.dataDicName"
           class="w-50 m-2"
           placeholder="角色名"
-          style="position: relative;width: 12%;margin: 1% 0 0 5%"
+          style="position: relative;width: 25%;margin: 1% 0 0 3%"
       />
       &nbsp;&nbsp;
       <el-button type="primary" style="margin: 1% 0 0 5px" @click="selectDictionaryByParams" v-show="selectVisible">搜 索</el-button>
@@ -257,16 +257,25 @@ export default {
 </script>
 
 <style scoped>
+.Dictionary{
+  height: 100%;
+  width: 100%;
+}
+.search{
+  width: 60%;
+  height: 50px;
+  margin: 1% 0 0 1%;
+}
 .tableMenu {
-  left: 5%;
-  top: 10px;
+  margin: 1% 0 0 0;
+  left: 3%;
   position: relative;
-  width: 960px;
+  width: 90%;
 }
 .page {
-  position: absolute;
-  top: 88%;
-  width: 100%;
+  position: relative;
+  top: 13%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

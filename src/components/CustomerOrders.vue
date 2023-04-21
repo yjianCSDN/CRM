@@ -5,24 +5,24 @@
           class="w-50 m-2"
           v-model="customerQuery.customerName"
           placeholder="客户名"
-          style="position: relative;width: 12%;margin: 1% 0 2% 3%"
+          style="position: relative;width: 12%;margin: 1% 0 0 0"
       />
       <el-input
           class="w-50 m-2"
           v-model="customerQuery.customerNo"
           placeholder="客户编号"
-          style="position: relative;width: 12%;margin: -1% 0 0 10px"
+          style="position: relative;width: 12%;margin: 1% 0 0 10px"
       />
-      <el-select class="m-2" placeholder="请选择" v-model="customerQuery.level" style="width: 150px;margin: -1% 0 0 5px">
+      <el-select class="m-2" placeholder="请选择" v-model="customerQuery.level" style="width: 150px;margin: 1% 0 0 5px">
         <el-option label="无" value=""/>
         <el-option label="战略合作伙伴" value="战略合作伙伴"/>
         <el-option label="大 客 户" value="大客户"/>
         <el-option label="重点开发客户" value="重点开发客户"/>
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary" style="left: 10px;margin: -1% 0 0 0" @click="selectCustomer" v-show="selectVisible">搜 &nbsp;&nbsp;&nbsp; 索
+      <el-button type="primary" style="left: 10px;margin: 1% 0 0 0" @click="selectCustomer" v-show="selectVisible">搜 &nbsp;&nbsp;&nbsp; 索
       </el-button>
-      <el-button type="primary" style="left: 10px;margin: -1% 0 0 12px" @click="addOrderVisible=true" v-show="addVisible"
+      <el-button type="primary" style="left: 10px;margin: 1% 0 0 12px" @click="addOrderVisible=true" v-show="addVisible"
       >添加订单
       </el-button
       >
@@ -582,15 +582,21 @@ export default {
 
 <style scoped>
 .tableMenu {
-  width: 95%;
-  margin: -1.5% 0 0 3%;
+  width: 98%;
+  margin: 0 0 0 1%;
   position: relative;
 }
-
-.page {
-  position: absolute;
-  top: 90%;
-  width: 100%;
+.search{
+  position: relative;
+  width: 60%;
+  height: 50px;
+  display: block;
+  left: 1%;
+}
+.page{
+  position: relative;
+  margin: 1% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

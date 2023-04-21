@@ -76,7 +76,7 @@ export default {
           //y值
           series: [{
             data: y,
-            type: "line"
+            type: "bar"
           }]
         })
       })
@@ -184,6 +184,6 @@ export default {
 <style scoped>
 .CustomerService{
   width: 100%;
-  height: 100%;
+  height: 95%;
 }
 </style>

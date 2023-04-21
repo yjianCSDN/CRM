@@ -5,7 +5,7 @@
           v-model="saleChanceQuery.customerName"
           class="w-50 m-2"
           placeholder="客户名"
-          style="position: relative;width: 12%;margin: 0 0 0 1.5%"
+          style="position: relative;width: 12%;margin: 0 0 0 0"
       />
       <el-input
           v-model="saleChanceQuery.createMan"
@@ -20,12 +20,12 @@
       </el-select>
       &nbsp;&nbsp;
       <el-button type="primary" style="left: 30px" @click="selectQuery" v-show="selectVisible">点 击 查 询</el-button>
-      <el-button type="primary" style="left: 10px" @click="getAll" v-show="selectVisible">查 询 全 部</el-button>
+<!--      <el-button type="primary" style="left: 10px" @click="getAll" v-show="selectVisible">查 询 全 部</el-button>-->
       <el-button type="primary" @click="dialogVisible=true" v-show="addVisible">添 加</el-button>
     </div>
 
     <div>
-      <el-table :data="saleChance" class="tableMenu" max-height="520"
+      <el-table :data="saleChance" class="tableMenu" max-height="500"
                 :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
         <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
@@ -520,22 +520,26 @@ export default {
 <style scoped>
 .SaleChance {
   width: 100%;
-  height: 100%;
+  height: 95%;
   position: relative;
 }
-
+.search{
+  position: relative;
+  width: 60%;
+  height: 50px;
+  display: block;
+  left: 1%;
+}
 .tableMenu {
   header-align: center;
-  top: 8%;
-  left: 20px;
+  left: 1%;
   position: relative;
-  width: 95%;
+  width: 98%;
 }
-
-.page {
-  position: absolute;
-  top: 88%;
-  width: 100%;
+.page{
+  position: relative;
+  margin: 1% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

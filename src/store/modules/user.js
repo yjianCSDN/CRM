@@ -3,13 +3,15 @@ export default {
     state:{
     //全局属性
         ImgUrl:"",
-        PermissionList:{}
+        PermissionList:sessionStorage.getItem("PermissionList")
     },
     mutations:{
 
         setPermissionList(state,PermissionList){
             state.PermissionList = PermissionList
             // console.log("PermissionList:",PermissionList)
+            sessionStorage.setItem("PermissionList",PermissionList)
+            console.log(sessionStorage.getItem(PermissionList))
         }
     },
     action:{

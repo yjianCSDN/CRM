@@ -9,6 +9,7 @@ import * as Permission from "@/http/modules/Permission"
 import * as CustomerInformation from "@/http/modules/CustomerInformation";
 import * as CustomerServer from "@/http/modules/CustomerServer"
 import * as Dictionary from "@/http/modules/Dictionary";
+import * as Notice from "@/http/modules/Notice";
 export default {
     login,
     user,
@@ -20,5 +21,6 @@ export default {
     Permission,
     CustomerInformation,
     CustomerServer,
-    Dictionary
+    Dictionary,
+    Notice
 }

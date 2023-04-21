@@ -259,23 +259,26 @@ export default {
     if (JSON.stringify(toRaw(this.list)).includes("304002")) {
       this.feedVisible = true
     }
-    // console.log("111111",JSON.stringify(toRaw(this.list)).includes("304002"))
   }
 }
 </script>
 
 <style scoped>
+.search{
+  width: 60%;
+  height: 50px;
+  margin: 0 0 0 1%;
+}
 .tableMenu {
-  margin: 2% 0 0 0;
+  margin: 1% 0 0 0;
   left: 3%;
   position: relative;
   width: 90%;
 }
-
-.page {
+.page{
   position: absolute;
-  top: 92%;
-  width: 100%;
+  margin: 25% 0 0 1%;
+  width: 60%;
   color: #ffffff;
 }
 </style>

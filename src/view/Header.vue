@@ -1,6 +1,6 @@
 <template>
   <div class="Header">
-    <div style="width: 12%;height:100%;float: left">
+    <div style="width: 13%;height:100%;float: left">
           <el-image :src="require('@/assets/crm.jpeg')" style="position: relative;height: 100%;width: 100%"/>
     </div>
     <div style="width: 400px;height: 100%;position: relative;float: left;margin: 1.5% 0 0 0 ">

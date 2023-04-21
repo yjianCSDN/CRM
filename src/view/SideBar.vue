@@ -1,6 +1,5 @@
 <template>
 <div class="SideBar">
-  <el-aside  :width="'100%'">
     <el-menu
       default-active="$router.path"
       router="router"
@@ -60,7 +59,7 @@
     <el-sub-menu index="4" v-if="ServerVisible">
       <template #title>
         <el-image style="width: 40px; height: 40px;top: -8px;margin: 0 10px 0 0" :src="require('@/assets/基础服务管理.png')"/>
-        <span>服 务 管 理</span>
+        <span>客户意见管理</span>
       </template>
       <el-menu-item-group>
         <el-menu-item index="/index/ServiceCreation" v-show="ServerCreationVisible">
@@ -85,7 +84,6 @@
         </el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
-
     <el-sub-menu index="5" v-if="SystemVisible">
       <template #title>
         <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0" :src="require('@/assets/系统管理.png')"/>
@@ -134,8 +132,25 @@
         </el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
+    <el-sub-menu index="7" v-if="UserManagementVisible">
+        <template #title>
+          <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/公告.png')"/>
+          <span>公告管理</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="/index/AllAnnouncements" >
+            <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/招展管理.png')"/>
+            公告展示
+          </el-menu-item>
+        </el-menu-item-group>
+      <el-menu-item-group>
+        <el-menu-item index="/index/Announcement" >
+          <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/发布公告.png')"/>
+            发布公告
+        </el-menu-item>
+      </el-menu-item-group>
+      </el-sub-menu>
   </el-menu>
-  </el-aside>
 </div>
 </template>
 
@@ -182,23 +197,18 @@ export default {
   mounted() {
     console.log(Cookies.get("userIdStr"))
     this.$api.Permission.queryUserHasRoleHasPermissionByUserId("/permission/lists", {userIdStr:Cookies.get("userIdStr")   }).then(res=>{
-      // console.log(res.result)
       if (res.code===200){
         this.list = toRaw(res.result)
         console.log("this.List:--->",this.list)
-        // console.log(toRaw(this.list).includes("10"))//true
         this.$store.commit("setPermissionList",res.result)
       }
 
       this.saleChance = false
       if (JSON.stringify(toRaw(this.list)).includes("1000")){
         this.saleChance = true
-        // console.log(JSON.stringify(this.list).includes("10"))
-        // console.log(JSON.stringify(this.list).includes(10))
       }
       if (JSON.stringify(toRaw(this.list)).includes("1010")){
         this.select = true
-        console.log("result:----->",JSON.stringify(toRaw(this.list)).includes("1010"))
       }
       if (JSON.stringify(toRaw(this.list)).includes("1020")){
         this.CusDevPlan = true
@@ -209,11 +219,8 @@ export default {
       if (JSON.stringify(toRaw(this.list)).includes("6020")){
         this.RoleManagement = true
       }
-
-      this.CustomerManagementVisible=false
       if (JSON.stringify(this.list).includes("2000") ){
         this.CustomerManagementVisible=true
-        // console.log(this.CustomerManagementVisible)
       }
       if (JSON.stringify(this.list).includes("2010")){
         this.CustomerInfoVisible=true
@@ -250,7 +257,6 @@ export default {
       if (JSON.stringify(this.list).includes("3050")){
         this.ServerArchivingVisible=true
       }
-      this.SystemVisible=false
       if (JSON.stringify(this.list).includes("6000")){
         this.SystemVisible=true
       }
@@ -277,7 +283,6 @@ export default {
         this.LossVisibleImage=true
       }
     })
-    // this.list = this.$store.getters.getPermissionList
   }
 }
 </script>
@@ -285,16 +290,15 @@ export default {
 <style scoped>
 .SideBar{
   position: relative;
-  /*display: flex;*/
+  display: block;
   background-color: rgb(223, 239, 245);
-  /*width: 13%;*/
-  width: auto;
+  width: 13%;
   height: 100%;
   float: left;
   color: white;
+  height: 100%;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 100%;
-  /*min-height: 400px;*/
 }
 </style>
