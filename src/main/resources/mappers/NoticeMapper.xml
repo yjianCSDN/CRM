@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yejian.mapper.NoticeMapper">
+    <resultMap id="BaseResultMap" type="com.yejian.bean.Notice">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="userId" property="userId" jdbcType="INTEGER"/>
+        <result column="publisher" property="publisher" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="createDate" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+        <result column="is_valid" property="isValid" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, user_id, title, publisher, type, content, is_valid, create_date, update_date
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from t_user_notice
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.yejian.bean.Notice" >
+        insert into t_user_notice
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="publisher != null" >
+                publisher,
+            </if>
+            <if test="title != null" >
+                title,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="isValid != null" >
+                is_valid,
+            </if>
+            <if test="createDate != null" >
+                create_date,
+            </if>
+            <if test="updateDate != null" >
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="publisher != null" >
+                #{publisher,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null" >
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=INTEGER},
+            </if>
+            <if test="isValid != null" >
+                #{isValid,jdbcType=TINYINT},
+            </if>
+            <if test="createDate != null" >
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null" >
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.yejian.bean.Notice" >
+        update t_user_notice
+        <set >
+            <if test="userId != null" >
+                user_Id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="publisher != null" >
+                publisher = #{publisher,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null" >
+                is_valid = #{isValid,jdbcType=TINYINT},
+            </if>
+            <if test="createDate != null" >
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null" >
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="getUserAll" resultType="java.lang.Integer" parameterType="com.yejian.bean.query.NoticeQuery">
+        select count(0) from t_user_notice where is_valid=1 and user_id = #{userId}
+    </select>
+
+
+    <!-- 多条件查询 -->
+    <select id="selectByParams" parameterType="com.yejian.bean.query.NoticeQuery" resultType="com.yejian.bean.Notice">
+        select
+        <include refid="Base_Column_List"></include>
+        from
+        t_user_notice
+        <where>
+            is_valid = 1
+            <!-- 类型查询 -->
+            <if test="null != type and type != ''">
+                and type = #{type}
+            </if>
+            <!-- 标题查询 -->
+            <if test="null != title and title != ''">
+                and title like concat('%',#{title},'%')
+            </if>
+            <!-- 创建人查询 -->
+            <if test="null != publisher and publisher != ''">
+                and publisher like concat('%',#{publisher},'%')
+            </if>
+            <if test="null != userId and userId != ''">
+                and user_id =#{userId}
+            </if>
+        </where>
+    </select>
+
+
+
+</mapper>
