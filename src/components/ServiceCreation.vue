@@ -5,17 +5,17 @@
           v-model="customerServeQuery.customer"
           class="w-50 m-2"
           placeholder="客户名"
-          style="position: relative;width: 10%;margin: 2% 0 0 3%"
+          style="position: relative;width: 10%;margin: 1% 0 0 1%"
       />
-      <el-select  class="m-2" placeholder="请选择服务类型" v-model="customerServeQuery.serveType" style="margin: 2% 0 0 10px">
+      <el-select  class="m-2" placeholder="请选择服务类型" v-model="customerServeQuery.serveType" style="margin: 1% 0 0 10px">
         <el-option label="无"     value="" />
         <el-option label="咨询"   value="6" />
         <el-option label="建议"   value="7" />
         <el-option label="投诉"   value="8" />
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary"  style="margin: 2% 0 0 0" @click="queryServiceListByParams" v-show="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
-      <el-button type="primary"  style="margin: 2% 0 0 10px" @click="addServeVisible=true" v-show="addVisible">添  &nbsp;&nbsp;&nbsp; 加</el-button>
+      <el-button type="primary"  style="margin: 1% 0 0 0" @click="queryServiceListByParams" v-show="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: 1% 0 0 10px" @click="addServeVisible=true" v-show="addVisible">添  &nbsp;&nbsp;&nbsp; 加</el-button>
     </div>
 
     <div>
@@ -199,15 +199,15 @@ export default {
   width: 100%;
 }
 .search{
-  width: 60%;
+  width: 96%;
   height: 50px;
   margin: 0 0 0 1%;
 }
 .tableMenu {
   margin: 1% 0 0 0;
-  left: 3%;
+  left: 2%;
   position: relative;
-  width: 90%;
+  width: 95%;
 }
 .page{
   position: absolute;

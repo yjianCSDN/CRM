@@ -5,16 +5,17 @@
           v-model="customerServeQuery.customer"
           class="w-50 m-2"
           placeholder="客户名"
-          style="position: relative;width: 10%;margin: 2% 0 0 3%"
+          style="position: relative;width: 10%;margin: 1% 0 0 1%"
       />
-      <el-select  class="m-2" placeholder="开发状态" v-model="customerServeQuery.serveType" style="margin: 2% 0 0 10px">
+      <el-select  class="m-2" placeholder="开发状态" v-model="customerServeQuery.serveType" style="margin: 1% 0 0 10px">
         <el-option label="无"     value="" />
         <el-option label="咨询"   value="6" />
         <el-option label="投诉"   value="7" />
         <el-option label="建议"   value="8" />
       </el-select>
       &nbsp;&nbsp;
-      <el-button type="primary"  style="margin: 2% 0 0 0" @click="queryServiceListByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: 1% 0 0 0" @click="queryServiceListByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
     <div>
       <el-table :data="serveList"  class="tableMenu"
@@ -59,7 +60,7 @@
     <!--服务归档-->
     <el-dialog
         v-model="ArchivingVisible"
-        title="服务管理-服务反馈"
+        title="服务管理-服务归档"
         width="40%"
     >
       <el-form
@@ -138,7 +139,7 @@
           </el-button>
           <el-button type="primary" @click="ArchivingVisible=false"
           >
-            提 交
+            确 定
           </el-button>
         </span>
       </template>
@@ -149,6 +150,7 @@
 <script>
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
+import {saveJsonToExcel} from "@/tools/utils";
 
 export default {
   name: "ServiceArchiving",
@@ -165,6 +167,24 @@ export default {
     }
   },
   methods:{
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.serveList.length; i++) {
+        json_fields.push({
+          "编号":this.serveList[i].id,
+          "客户名":this.serveList[i].customer,
+          "服务类型":this.serveList[i].dicValue,
+          "概要信息":this.serveList[i].overview,
+          "创建人":this.serveList[i].createProple,
+          "创建时间":this.serveList[i].createDate,
+          "分配人":this.serveList[i].assigner,
+          "分配时间":this.serveList[i].assignTime,
+          "更新时间":this.serveList[i].updateDate
+        })
+      }
+      // console.log("json_fields",json_fields)
+      saveJsonToExcel(json_fields, '客户意见服务信息.xlsx')
+    },
     queryServiceListByParams(){
       this.$api.CustomerServer.queryCustomerServeByParams("/customerServe/lists",this.customerServeQuery).then(res=>{
         this.serveList=res.result.data
@@ -182,13 +202,10 @@ export default {
     },
     distribution() {
       for (let i = 0; i < this.serveList.length; i++) {
-        // console.log("77")
         for (let j = 0; j < this.customerManagers.length; j++) {
-          // console.log("88")
           if (this.serveList[i].assigner == this.customerManagers[j].id) {
             this.serveList[i].label=this.customerManagers[j].uname
             this.serveList[i].assigner = this.customerManagers[j].uname
-            // console.log("有相同的🌶！！")
           }
         }
       }
@@ -197,6 +214,7 @@ export default {
     //页面初始化（查找数据）
     paramsInitialization(){
       this.$api.CustomerServer.queryCustomerServeByParams("/customerServe/lists",this.customerServeQuery).then(res=>{
+        console.log(res)
         this.serveList=res.result.data
         console.log("queryCustomerServeByParams",res)
         this.total = res.result.count
@@ -216,15 +234,15 @@ export default {
 
 <style scoped>
 .search{
-  width: 60%;
+  width: 96%;
   height: 50px;
   margin: 0 0 0 1%;
 }
 .tableMenu {
   margin: 1% 0 0 0;
-  left: 3%;
+  left: 2%;
   position: relative;
-  width: 90%;
+  width: 95%;
 }
 .page{
   position: absolute;

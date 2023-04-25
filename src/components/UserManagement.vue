@@ -24,7 +24,6 @@
     <el-button type="primary"  style="margin: 1% 0 0 10px" @click="this.addUserVisible=true" v-if="addVisible">添 加 用 户</el-button>
   </div>
   <div style="margin: 5px 0 1% 3%">
-
   </div>
   <div>
     <el-table :data="userList"  class="tableMenu"
@@ -45,6 +44,15 @@
       <el-table-column prop="phone" label="手机号" width="150" header-align="center"  align="center"/>
       <el-table-column prop="createDate" label="创建时间" width="200" header-align="center"  align="center"/>
       <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
+      <el-table-column label="用户头像" width="200" header-align="center"  align="center">
+        <template #default="scope">
+          <el-image
+              :src="scope.row.img"
+              style="width: 50px;height: 50px"
+              alt="图片加载失败"
+          />
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操 作" width="130" header-align="center"  align="center">
         <template #default="scope">
           <el-button link size="small" type="primary" @click="User(JSON.parse(JSON.stringify(scope.row)))" v-show="updateVisible"
@@ -103,6 +111,19 @@
       </el-form-item>
       <el-form-item label="用户密码">
         <el-input type="password" v-model="addUserInfo.userPwd" style="width: 90%" show-password placeholder="请输入用户密码"/>
+      </el-form-item>
+      <el-row>
+      </el-row>
+      <el-form-item label="用户头像">
+        <el-upload
+            v-model:file-list="imgList"
+            class="upload-demo"
+            action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
+            multiple
+            :on-success="AddonSuccess"
+        >
+          <el-button size="small" type="primary">点我上传</el-button>
+        </el-upload>
       </el-form-item>
       <el-form-item label="用户角色">
         <el-select
@@ -167,6 +188,18 @@
       <el-form-item label="用户密码">
         <el-input type="password" v-model="updateUserInfo.userPwd" style="width: 90%" show-password placeholder="请输入用户密码"/>
       </el-form-item>
+      <el-form-item label="用户头像">
+        <el-upload
+            v-model:file-list="imgList"
+            class="upload-demo"
+            action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
+            multiple
+            :on-success="UpdateOnSuccess"
+        >
+          <el-button size="small" type="primary">点我上传</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item></el-form-item>
       <el-form-item label="用户角色">
         <el-select
             v-model="updateRoleId"
@@ -266,8 +299,8 @@ export default {
   name: "UserManagement",
   data(){
     let userQuery = reactive({userName:"", email:"", phone:"", limit:10, page:1, total:"",})
-    let addUserInfo = reactive({userName:"".trim(), trueName:"".trim(),sex:"", email:"", phone:"", userPwd:"".trim(),roleIds:""})
-    let updateUserInfo = reactive({label:"",id:"",userName:"".trim(), trueName:"".trim(), sex:"", email:"", phone:"", userPwd:"".trim(),roleIds:[]})
+    let addUserInfo = reactive({userName:"".trim(), trueName:"".trim(),sex:"", email:"", phone:"", userPwd:"".trim(),roleIds:"",img:""})
+    let updateUserInfo = reactive({label:"",id:"",userName:"".trim(), trueName:"".trim(), sex:"", email:"", phone:"", userPwd:"".trim(),roleIds:[],img:""})
     let updateOldUserName = ref("")
     let updateRoleId = reactive([])
     let PwdModel = reactive({userIdStr:"",oldPwd:""})//确认密码是否正确
@@ -282,6 +315,7 @@ export default {
     let result = ref(true)
     let updateResult = ref(true)
     let addRoleIds = reactive([])
+    let imgList = reactive([])
 
 
     let list = reactive([])
@@ -289,6 +323,7 @@ export default {
     let updateVisible = ref(false)
     let delVisible = ref(false)
     let selectVisible = ref(false)
+    let AllUserName = reactive([])
     return{
       userQuery,
       userList:[],
@@ -298,7 +333,7 @@ export default {
       delId:"",
       addUserInfo,updateUserInfo,updateRoleId,PwdModel,userId,title,RoleList,addRoleList,addRoleIds,
       addUserVisible,updateUserVisible,confirmUserPwdVisible,confirmUserPwdVisible2,result,updateOldUserName,updateResult,
-      list,addVisible,updateVisible,delVisible,selectVisible
+      list,addVisible,updateVisible,delVisible,selectVisible,imgList,AllUserName
     }
   },
   methods:{
@@ -323,10 +358,9 @@ export default {
     },
 
     checkUserNameIsRepeat(){
-      // console.log("checkUserNameIsRepeat被调用了")
       this.result=true
-      for (let i = 0; i < this.userList.length; i++) {
-        if (this.addUserInfo.userName===this.userList[i].userName){
+      for (let i = 0; i < this.AllUserName.length; i++) {
+        if (this.addUserInfo.userName===this.AllUserName[i]){
           ElMessage({
             type:"info",
             message:"当前输入角色名称与原有角色名称重复"
@@ -357,14 +391,9 @@ export default {
             message:"邮箱格式错误!"
           })
       }else {
+        console.log(this.addUserInfo)
         this.checkUserNameIsRepeat()
         if (this.result){
-          // console.log("addRoleIds",this.addRoleIds)
-          // console.log("addUserInfo.roleIds",this.addRoleIds.join(","))
-          // var roleId = this.addUserInfo.roleIds.join(",")
-          // this.addUserInfo.roleIds = roleId
-          // console.log(this.addUserInfo.roleIds)
-          // console.log(this.addUserInfo.label)
           this.addUserInfo.roleIds=this.addRoleIds.join(",")
           let user = this.addUserInfo
           // console.log("user信息为: ->",user)
@@ -378,6 +407,7 @@ export default {
               this.addUserVisible = false
               this.addUserInfo = {}
               this.addRoleIds=[]
+              this.imgList=[]
             }else {
               ElMessage({
                 type:"error",
@@ -444,8 +474,8 @@ export default {
       this.updateResult=true
       console.log("this.updateUserInfo.userName:  ",this.updateUserInfo.userName)
       console.log("updateOldUserName   :",this.updateOldUserName)
-      for (let i = 0; i < this.userList.length; i++) {
-        if (this.updateUserInfo.userName===this.userList[i].userName){
+      for (let i = 0; i < this.AllUserName.length; i++) {
+        if (this.updateUserInfo.userName===this.AllUserName[i].userName){
           if (this.updateUserInfo.userName===this.updateOldUserName){
             // console.log("更新后名字与原来名字一致")
           }else {
@@ -476,6 +506,7 @@ export default {
               message:"修改成功!"
             })
             this.selectList()
+            this.imgList=[]
           }else {
             ElMessage({
               type:"error",
@@ -483,10 +514,6 @@ export default {
             })
           }
         })
-
-
-        // this.updateUserInfo = {}
-        // this.updateRoleId = []
         this.selectList()
       }else {
         ElMessage({
@@ -543,7 +570,7 @@ export default {
     //初始查询用户列表
     selectList(){
         this.$api.user.selectList("/user/lists",{}).then(res=>{
-          // console.log("初始用户列表： ",res)
+          console.log("初始用户列表： ",res)
           this.userList = toRaw(res.result.data)
           // console.log(toRaw(res.result.data.length))
           this.total = toRaw(res.result.data.length)
@@ -557,10 +584,27 @@ export default {
           this.userList = toRaw(res.result.data)
         }
       })
+    },
+    AddonSuccess(res){
+      this.addUserInfo.img=res.url
+      console.log(res)
+    },
+    UpdateOnSuccess(res){
+      console.log(res)
+      this.updateUserInfo.img=res.url
+    },
+    getAllUserName(){
+      this.$api.user.getAllPhoneInfo("/user/userName").then(res=>{
+        if (res.code===200){
+          // console.log(res)
+          this.AllUserName=res.result
+        }
+      })
     }
   },
   mounted() {
     this.selectList()
+    this.getAllUserName()
     this.$api.user.queryAllRoles("/role/queryAllRoles").then(res=>{
       this.RoleList = res.result
     })

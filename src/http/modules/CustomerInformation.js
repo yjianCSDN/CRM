@@ -52,3 +52,6 @@ export function setStateIsPay(url,params) {
 export function updateOrderInfo(url,params) {
     return post(url,params)
 }
+export function getCusPhones(url,params) {
+    return get(url,params)
+}

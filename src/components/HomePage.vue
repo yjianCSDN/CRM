@@ -68,10 +68,13 @@ export default {
               Cookies.set("userName", res.result.userName, {expires: 7})
               Cookies.set("trueName", res.result.trueName, {expires: 7})
               Cookies.set("userIdStr", res.result.userIdStr, {expires: 7})
+              sessionStorage.setItem("img",res.result.img)
+              Cookies.set("img", res.result.img, {expires: 7})
             } else {
               Cookies.set("userName", res.result.userName)
               Cookies.set("trueName", res.result.trueName)
               Cookies.set("userIdStr", res.result.userIdStr)
+              Cookies.set("img",res.result.img)
             }
             ElNotification({
               title: 'Success',
@@ -143,7 +146,7 @@ export default {
   height: 100vh;
   overflow: hidden;
   position: relative;
-  background-color: skyblue;
+  background-image: linear-gradient(to bottom right, #d819bf, #2683cf, #63e4b9);
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
@@ -224,7 +227,6 @@ input {
   position: absolute;
   width: 20%;
   margin: 120px 0 0 59%;
-  /*background-color: red;*/
 }
 </style>
 

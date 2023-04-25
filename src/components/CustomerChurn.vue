@@ -5,16 +5,17 @@
           v-model="customerLossQuery.customerNo"
           class="w-50 m-2"
           placeholder="客户编号"
-          style="position: relative;width: 10%;margin: 2% 0 0 2%"
+          style="position: relative;width: 10%;margin: 1% 0 0 0"
       />
       <el-input
           v-model="customerLossQuery.customerName"
           class="w-50 m-2"
           placeholder="客户名"
-          style="position: relative;width: 10%;margin: 2% 0 0 10px"
+          style="position: relative;width: 10%;margin: 1% 0 0 10px"
       />
       &nbsp;&nbsp;
-      <el-button type="primary"  style="margin: 2% 0 0 0" @click="query">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: 1% 0 0 0" @click="query">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button size="small" type="success" style="float: right;margin: 2% 2% 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
 
     <div>
@@ -55,6 +56,7 @@
 <script>
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
+import {saveJsonToExcel} from "@/tools/utils";
 
 export default {
   name: "CustomerChurn",
@@ -67,6 +69,26 @@ export default {
     }
   },
   methods:{
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.customerList.length; i++) {
+        json_fields.push({
+          "编号":this.customerList[i].id,
+          "客户编号":this.customerList[i].cusNo,
+          "客户名称":this.customerList[i].cusName,
+          "客户经理":this.customerList[i].cusManager,
+          "最后下单原因":this.customerList[i].lastOrderTime,
+          "流失原因":this.customerList[i].lossReason,
+          "确认六十时间":this.customerList[i].confirmLossTime
+        })
+      }
+      // console.log("json_fields",json_fields)
+      if (json_fields.length===0){
+        ElMessage({type:"warning",message:"该条件下无内容,无数据可导出!"})
+      }else {
+        saveJsonToExcel(json_fields, '客户流失分析.xlsx')
+      }
+    },
     query(){
       this.$api.CustomerInformation.queryLossCustomer("/customerLoss/list",this.customerLossQuery).then(res=>{
         console.log(res)
@@ -105,8 +127,15 @@ export default {
 }
 .page{
   position: absolute;
-  top: 92%;
+  top: 85%;
   width: 100%;
   color: #ffffff;
+}
+.search{
+  position: relative;
+  width: 98%;
+  height: 50px;
+  display: block;
+  left: 2%;
 }
 </style>

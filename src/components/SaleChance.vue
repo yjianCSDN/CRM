@@ -20,8 +20,8 @@
       </el-select>
       &nbsp;&nbsp;
       <el-button type="primary" style="left: 30px" @click="selectQuery" v-show="selectVisible">点 击 查 询</el-button>
-<!--      <el-button type="primary" style="left: 10px" @click="getAll" v-show="selectVisible">查 询 全 部</el-button>-->
       <el-button type="primary" @click="dialogVisible=true" v-show="addVisible">添 加</el-button>
+      <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
 
     <div>
@@ -91,9 +91,11 @@
           label-position="left"
           label-width="100px"
           :model="addSaleChanceList"
+          :rules="RuleForm"
+          ref="addSaleChanceList"
           style="max-width: 460px"
       >
-        <el-form-item label="客户名称">
+        <el-form-item label="客户名称" prop="customerName">
           <el-input v-model="addSaleChanceList.customerName" placeholder="请输入客户名称"/>
         </el-form-item>
         <el-form-item label="机会来源">
@@ -102,7 +104,7 @@
         <el-form-item label="联系人">
           <el-input v-model="addSaleChanceList.linkMan" placeholder="请输入联系人"/>
         </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话" prop="linkPhone">
           <el-input v-model="addSaleChanceList.linkPhone" placeholder="请输入联系电话"/>
         </el-form-item>
         <el-form-item label="概要">
@@ -198,11 +200,15 @@
 import Cookies from "js-cookie";
 import {toRaw} from '@vue/reactivity'
 import {ElMessage, ElMessageBox} from "element-plus";
-
+// eslint-disable-next-line no-unused-vars
+import { saveJsonToExcel } from '../tools/utils.js'
 export default {
   name: "SaleChance",
   data() {
     return {
+      RuleForm : [{ linkPhone:[{required:true,message:"请输入联系电话",trigger:'blur'}],
+        customerName:[{required:true,message:"请填写客户名称",trigger:'blur'}]
+      }],
       AssignmentList: [],//指派列表
       dialogVisible: false,//添加对话框显示
       updateDialogVisible: false,//修改对话框显示
@@ -245,22 +251,36 @@ export default {
     }
   },
   methods: {
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.saleChance.length; i++) {
+        json_fields.push({
+          "编号":this.saleChance[i].id,
+          "机会来源":this.saleChance[i].chanceSource,
+          "客户名称":this.saleChance[i].customerName,
+          "成功几率(%)":this.saleChance[i].cgjl,
+          "概要":this.saleChance[i].overview,
+          "联系人":this.saleChance[i].linkMan,
+          "联系电话":this.saleChance[i].linkPhone,
+          "描述":this.saleChance[i].description,
+          "创建人":this.saleChance[i].createMan,
+          "分配人":this.saleChance[i].assignMan,
+          "分配时间":this.saleChance[i].assignTime,
+          "创建时间":this.saleChance[i].createDate,
+          "修改时间":this.saleChance[i].updateDate,
+          "分配状态":this.saleChance[i].state===1?'已分配':'未分配',
+          "开发状态":this.saleChance[i].devResult
+        })
+      }
+      // console.log("json_fields",json_fields)
+      saveJsonToExcel(json_fields, '营销机会信息.xlsx')
+    },
     updateSC(msg) {
       this.updateDialogVisible = true
       this.updateSaleChanceList = JSON.parse(JSON.stringify(msg))
     },
     //更新
     update() {
-      // console.log(this.AssignmentList)
-      // for (let i = 0; i < this.AssignmentList.length; i++) {
-      //   console.log(this.AssignmentList[i])
-      //   if (this.updateSaleChanceList.uname===this.AssignmentList[i].id){
-      //     this.updateSaleChanceList.assignMan=this.AssignmentList[i].id
-      //   }
-      // }
-      // this.updateSaleChanceList.assignMan = this.updateSaleChanceList.uname
-      // console.log(this.updateSaleChanceList.uname)
-      // this.updateSaleChanceList.assignMan = this.updateSaleChanceList.uname
       let saleChance = this.updateSaleChanceList
       if (saleChance.state == "未分配") {
         saleChance.state = 0
@@ -525,7 +545,7 @@ export default {
 }
 .search{
   position: relative;
-  width: 60%;
+  width: 98%;
   height: 50px;
   display: block;
   left: 1%;

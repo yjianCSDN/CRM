@@ -2,14 +2,15 @@
   <div>
     <div>
       <el-avatar
-          :src="src"
+          :src="img"
           style="margin: 5% 0 0 40%;width: 150px;height: 150px"
       />
+
       <el-form
           label-position="left"
           label-width="100px"
           :model="userinfo"
-          style="max-width: 460px;margin: 2% 0 0 30%;position: relative"
+          style="max-width: 460px;margin: 0 0 0 30%;position: relative"
       >
 
         <el-form-item label="用户名">
@@ -19,9 +20,9 @@
           <el-input v-model="userinfo.trueName" style="width: 70%"/>
         </el-form-item>
         <el-form-item label="性别">
-          <el-select class="m-2" placeholder="请选择" v-model="userinfo.sex" style="width: 70%">
-            <el-option label="男" value="1"/>
-            <el-option label="女" value="0"/>
+          <el-select class="m-2" placeholder="请选择" v-model="userinfo.label" style="width: 70%">
+            <el-option label="男" value="男"/>
+            <el-option label="女" value="女"/>
           </el-select>
         </el-form-item>
         <el-form-item label="电话号码">
@@ -30,12 +31,20 @@
         <el-form-item label="邮箱">
           <el-input v-model="userinfo.email" style="width: 70%"/>
         </el-form-item>
-        <el-form-item>
-          <el-bottom type="primary" label="修改个人信息"></el-bottom>
+        <el-form-item label="上传头像">
+          <el-upload
+              v-model:file-list="fileList"
+              class="upload-demo"
+              action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
+              multiple
+              :on-success="onSuccess"
+          >
+            <el-button size="small" type="primary">点我上传</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
     </div>
-    <el-button type="primary" style="position: relative;margin: 1% 0 0 41%" @click="checkInfoIsRight">修改个人资料</el-button>
+    <el-button type="primary" style="position: relative;margin: 0 0 0 41%" @click="checkInfoIsRight">修改个人资料</el-button>
   </div>
   <!--更新角色确认密码-->
   <el-dialog
@@ -55,7 +64,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-         <el-button type="primary" @click="this.confirmUserPwdVisible = false,this.PwdModel={}">
+         <el-button type="primary" @click="this.confirmUserPwdVisible = false,this.PwdModel.oldPwd=''">
           取 消
         </el-button>
         <el-button type="primary" @click="confirmUserPwd">
@@ -77,6 +86,8 @@ export default {
     let PwdModel = reactive({userIdStr: "", oldPwd: ""})//确认密码是否正确
     let confirmUserPwdVisible = ref(false)
     let updateRoleId = reactive([])
+    let phoneList = reactive([])
+    let oldPhone = ref("")
     return {
       userinfo: {
         id: "",
@@ -86,6 +97,7 @@ export default {
         email: "",
         phone: "",
         userPwd: "".trim(),
+        imgUrl:"",
         roleIds: []
       },
       userQuery: {},
@@ -94,7 +106,10 @@ export default {
       PwdModel,
       src: require("@/assets/头像.png"),
       confirmUserPwdVisible,
-      updateRoleId
+      updateRoleId,
+      phoneList,
+      oldPhone,
+      img:Cookies.get("img")
     }
   },
   methods: {
@@ -113,8 +128,6 @@ export default {
         }
       } else {
         this.confirmUserPwdVisible = true
-        // console.log("includes:", this.nameList.includes(this.userinfo.userName))
-        // console.log(this.userinfo)
       }
 
     },
@@ -123,16 +136,17 @@ export default {
       // eslint-disable-next-line no-unused-vars
       let userId = ""
       let userName = Cookies.get("userName")
-      // console.log("userName:->",userName)
       this.oldUserName = userName
       this.$api.user.queryUserByName("/user/getUserByUserName", {userName}).then(res => {
         // console.log("userName", res)
         userId = res.result.id
         this.userinfo = res.result
+        this.oldPhone=res.result.phone
         if (res.result.sex === 0) {
           this.userinfo.sex = '女'
+          this.userinfo.label = '女'
         } else if (res.result.sex === 1) {
-          this.userinfo.sex = '男'
+          this.userinfo.label = '男'
         }
         // console.log(this.userinfo)
         this.PwdModel.userIdStr = res.result.id
@@ -160,33 +174,48 @@ export default {
     },
     //确认密码是否正确
     confirmUserPwd() {
+      let result = true
+      console.log("this.PwdModel",this.PwdModel)
       this.userinfo.roleIds = this.updateRoleId.join(",")
       this.$api.user.confirmPwd("/user/confirmPwd", this.PwdModel).then(res => {
         if (res.code === 200) {
           // console.log("密码正确")
-          if (this.userinfo.sex === '男') {
+          if (this.userinfo.label === '男') {
             this.userinfo.sex = 1
           } else {
             this.userinfo.sex = 0
           }
           console.log(this.userinfo)
-          this.$api.user.updateUser("/user/updateUser?flag=1", this.userinfo).then(res => {
-            if (res.code === 200) {
-              ElMessage({
-                type: "success",
-                message: "修改成功,请重新登录!"
-              })
-              Cookies.remove("userIdStr")
-              Cookies.remove("userName")
-              Cookies.remove("trueName")
-              this.$router.push("/")
-            } else {
-              ElMessage({
-                type: "error",
-                message: "修改失败，请重试!"
-              })
-            }
-          })
+          if (this.phoneList.indexOf(this.userinfo.phone)!==-1 &&this.userinfo.phone===this.oldPhone){
+            // console.log("电话号码没有改变")
+          }else {
+            // console.log("电话修改了")
+            // console.log("电话号码重复了")
+            result = false
+          }
+          // console.log(result)
+          if (result){
+            console.log(this.userinfo)
+            this.$api.user.updateUser("/user/updateUser?flag=1", this.userinfo).then(res => {
+              if (res.code === 200) {
+                ElMessage({
+                  type: "success",
+                  message: "修改成功,请重新登录!"
+                })
+                Cookies.remove("userIdStr")
+                Cookies.remove("userName")
+                Cookies.remove("trueName")
+                this.$router.push("/")
+              } else {
+                ElMessage({
+                  type: "error",
+                  message: "修改失败，请重试!"
+                })
+              }
+            })
+          }else {
+           ElMessage({type:"warning",message:"电话号码与其他用户重复啦!"})
+          }
         } else {
           ElMessage({
             type: "error",
@@ -194,11 +223,24 @@ export default {
           })
         }
       })
-      this.PwdModel = {}
+      this.PwdModel.oldPwd = ""
     },
+    getAllPhone(){
+      this.$api.user.getAllPhoneInfo("/user/phone").then(res=>{
+        this.phoneList=res.result
+        console.log(res.result)
+      })
+    },
+
+    onSuccess(res){
+      console.log(res.url)
+      this.userinfo.imgUrl=res.url
+      this.img=res.url
+    }
   },
   mounted() {
     this.getInfo()
+    this.getAllPhone()
     setTimeout(this.getRoleId, 50)
   }
 }

@@ -26,6 +26,7 @@
       >添加订单
       </el-button
       >
+      <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
     <div>
       <el-table :data="customerList" class="tableMenu"
@@ -37,9 +38,22 @@
         <el-table-column prop="name" label="客户名称" width="170" header-align="center" align="center"/>
         <el-table-column prop="level" label="客户级别" width="150" header-align="center" align="center"/>
         <el-table-column prop="cusManager" label="客户经理" width="100" header-align="center" align="center"/>
-        <el-table-column prop="address" label="详细地址" width="300" header-align="center" align="center"/>
+        <el-table-column label="详细地址" width="200" header-align="center" align="center">
+          <template #default="scope">
+            <el-popover
+                placement="right-start"
+                title="地址:"
+                :width="400"
+                trigger="hover"
+                :content="scope.row.address"
+            >
+              <template #reference>
+                <el-button class="m-2" link type="primary">详细地址</el-button>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="phone" label="电话" width="200" header-align="center" align="center"/>
-        <!--        <el-table-column prop="orderId" label="订单编号" width="150" header-align="center"  align="center"/>-->
         <el-table-column prop="orderNo" label="订单编号" width="150" header-align="center" align="center"/>
         <el-table-column prop="orderDate" label="订单日期" width="200" header-align="center" align="center"/>
         <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
@@ -82,7 +96,7 @@
     <el-dialog
         v-model="addOrderVisible"
         title="客户订单添加"
-        width="45%"
+        width="40%"
     >
       <el-form
           label-position="left"
@@ -90,17 +104,17 @@
           :model="customerOrder"
       >
         <el-form-item label="客户名称">
-          <el-input v-model="customerOrder.name" style="width: 200px;" placeholder="请输入客户名称"/>
+          <el-input v-model="customerOrder.name" style="width: 300px;" placeholder="请输入客户名称"/>
         </el-form-item>
         <el-form-item label="订单编号">
-          <el-input v-model="customerOrder.orderNo" style="width: 200px;" placeholder="请输入订单名称"/>
+          <el-input v-model="customerOrder.orderNo" style="width: 300px;" placeholder="请输入订单名称"/>
         </el-form-item>
         <el-form-item label="订单地址">
-          <el-input v-model="customerOrder.address" style="width: 200px;" type="textarea"
+          <el-input v-model="customerOrder.address" style="width: 300px;" type="textarea"
                     :autosize="{ minRows: 2, maxRows: 4 }" placeholder="请输入订单地址"/>
         </el-form-item>
         <el-form-item label="电话号码">
-          <el-input v-model="customerOrder.phone" style="width: 200px;" placeholder="请输入电话号码"/>
+          <el-input v-model="customerOrder.phone" style="width: 300px;" placeholder="请输入电话号码"/>
         </el-form-item>
         <el-form-item label="订单时间">
           <el-date-picker
@@ -109,10 +123,11 @@
               placeholder="选择订单时间"
               format="YYYY-MM-DD HH:mm:ss"
               value-format="YYYY-MM-DD HH:mm:ss"
+              style="width: 300px;"
           />
         </el-form-item>
         <el-form-item label="订单支付状态">
-          <el-select class="m-2" placeholder="请选择" v-model="customerOrder.state">
+          <el-select class="m-2" placeholder="请选择" style="width: 300px" v-model="customerOrder.state">
             <el-option label="已支付" value="1"/>
             <el-option label="未支付" value="0"/>
           </el-select>
@@ -161,6 +176,7 @@
       </el-button>
       <el-button type="primary" style="margin: 10px 0 10px 10px" v-show="PaymentStatus===0" @click="setState">设置为已支付
       </el-button>
+      <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownloadItems">导出EXCEL表格</el-button>
       <el-table :data="orderDetailsList" max-height="450" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
         <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
@@ -260,13 +276,13 @@
           :model="updateCustomerInfo"
       >
         <el-form-item label="客户名称">
-          <el-input v-model="updateCustomerInfo.name" disabled placeholder="（空）"/>
+          <el-input v-model="updateCustomerInfo.name" style="width: 300px" disabled placeholder="（空）"/>
         </el-form-item>
         <el-form-item label="订单编号">
-          <el-input v-model="updateCustomerInfo.orderNo" placeholder="（空）"/>
+          <el-input v-model="updateCustomerInfo.orderNo" style="width: 300px" placeholder="（空）"/>
         </el-form-item>
         <el-form-item label="订单地址">
-          <el-input v-model="updateCustomerInfo.address" placeholder="（空）"/>
+          <el-input v-model="updateCustomerInfo.address" style="width: 300px" placeholder="（空）"/>
         </el-form-item>
         <el-form-item label="订单时间">
           <el-date-picker
@@ -275,10 +291,11 @@
               placeholder="选择订单时间"
               format="YYYY-MM-DD HH:mm:ss"
               value-format="YYYY-MM-DD HH:mm:ss"
+              style="width: 300px"
           />
         </el-form-item>
         <el-form-item label="联系电话">
-          <el-input v-model="updateCustomerInfo.phone" placeholder="（空）"/>
+          <el-input v-model="updateCustomerInfo.phone" style="width: 300px" placeholder="（空）"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -296,6 +313,7 @@
 <script>
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage, ElMessageBox} from "element-plus";
+import { saveJsonToExcel } from '../tools/utils.js'
 
 export default {
   name: "CustomerOrders",
@@ -320,7 +338,9 @@ export default {
     let title = ref("")
     let button = ref("")
     let orderTotal = ref("")
-
+    let ruleForm = [{}]
+    // formRules:{name:[{required:true,message:"请输入客户名称",trigger:'blur'}],
+    //     phone:[{required:true,message:"请输入联系电话",trigger:'blur'}]}
 
     let list = reactive([])//权限列表
     let addVisible = ref(false)//添加订单
@@ -356,10 +376,51 @@ export default {
       addItemVisible,
       updateItemVisible,
       delItemVisible,
-      selectVisible
+      selectVisible,
+      ruleForm
     }
   },
   methods: {
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.customerList.length; i++) {
+        json_fields.push({
+          "id":this.customerList[i].orderId,
+          "客户编号":this.customerList[i].khno,
+          "客户名称":this.customerList[i].name,
+          "客户级别":this.customerList[i].level,
+          "客户经理":this.customerList[i].cusManager,
+          "详细地址":this.customerList[i].address,
+          "电话":this.customerList[i].phone,
+          "订单编号":this.customerList[i].orderNo,
+          "订单日期":this.customerList[i].orderDate,
+          "创建日期":this.customerList[i].createDate,
+          "更新日期":this.customerList[i].updateDate,
+          "支付状态":this.customerList[i].state===1?'已支付':'未支付'
+        })
+      }
+      // console.log(json_fields)
+      saveJsonToExcel(json_fields, '客户订单信息.xlsx')
+    },
+    //订单子项数据excel
+    handleDownloadItems(){
+      let json_fields = []
+      for (let i = 0; i < this.orderDetailsList.length; i++) {
+        json_fields.push({
+          "编号":this.orderDetailsList[i].id,
+          "物品名称":this.orderDetailsList[i].goodsName,
+          "物品数量":this.orderDetailsList[i].goodsNum,
+          "单位":this.orderDetailsList[i].unit,
+          "单价":this.orderDetailsList[i].price,
+          "总价":this.orderDetailsList[i].sum
+        })
+      }
+      if (json_fields.length===0){
+        ElMessage({type:"warning",message:"该订单下无内容,无数据可导出!"})
+      }else {
+        saveJsonToExcel(json_fields, '客户订单子项信息.xlsx')
+      }
+    },
     //条件查询
     selectCustomer() {
       // console.log(this.customerQuery)
@@ -588,7 +649,7 @@ export default {
 }
 .search{
   position: relative;
-  width: 60%;
+  width: 98%;
   height: 50px;
   display: block;
   left: 1%;

@@ -21,6 +21,7 @@
       </el-select>
       &nbsp;&nbsp;
       <el-button type="primary" style="left: 20px" @click="selectQuery" v-if="selectVisible">点 击 查 询</el-button>
+      <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
     <div>
       <el-table :data="saleChance" class="tableMenu" max-height="520"
@@ -109,7 +110,7 @@
           <el-input v-model="DetailedInformation.cgjl" disabled placeholder="成功几率"/>
         </el-form-item>
       </el-form>
-
+      <el-button size="small" type="success" style="float: right;margin: 0 3.3% 0 0 " @click="handleDownloadItem">导出EXCEL表格</el-button>
       <el-table :data="cusDevPlan" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
         <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
@@ -121,14 +122,6 @@
         <template v-slot:empty>
           <p>暂无记录</p>
         </template>
-        <!--      <el-table-column fixed="right" label="操作" width="110" header-align="center">-->
-        <!--        <template #default="scope">-->
-        <!--          <el-button link type="primary" size="small" @click="updateSC(scope.row)"-->
-        <!--          >修 改</el-button-->
-        <!--          >-->
-        <!--          <el-button link type="primary" size="small" @click="deleteSC(scope.row)">删 除</el-button>-->
-        <!--        </template>-->
-        <!--      </el-table-column>-->
       </el-table>
 
       <el-pagination
@@ -157,6 +150,7 @@
         title="计划项数据维护"
         width="70%"
     >
+
       <el-form
           label-position="left"
           label-width="90px"
@@ -191,7 +185,7 @@
           <el-button type="danger" style="margin: 10px 0 10px 10px" @click="error" v-model="SaleChanceError">开发失败
           </el-button>
         </el-form-item>
-
+        <el-button size="small" type="success" style="float: right;margin: 4% 0.5% 0 0 " @click="handleDownloadItem02">导出EXCEL表格</el-button>
         <el-table :data="cusDevPlan" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
                   :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
           <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
@@ -317,11 +311,12 @@
 <script>
 import {toRaw, reactive} from '@vue/reactivity'
 import {ElMessage, ElMessageBox} from "element-plus";
+// eslint-disable-next-line no-unused-vars
+import {saveJsonToExcel} from "@/tools/utils";
 
 export default {
   name: "CusDevPlan",
   data() {
-
     let tableList = reactive({
       id: "",
       devResult: ""
@@ -385,6 +380,69 @@ export default {
     }
   },
   methods: {
+    //excel导出
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.saleChance.length; i++) {
+        json_fields.push({
+          "编号":this.saleChance[i].id,
+          "机会来源":this.saleChance[i].chanceSource,
+          "客户名称":this.saleChance[i].customerName,
+          "成功几率(%)":this.saleChance[i].cgjl,
+          "概要":this.saleChance[i].overview,
+          "联系人":this.saleChance[i].linkMan,
+          "联系电话":this.saleChance[i].linkPhone,
+          "描述":this.saleChance[i].description,
+          "创建人":this.saleChance[i].createMan,
+          "分配人":this.saleChance[i].assignMan,
+          "分配时间":this.saleChance[i].assignTime,
+          "创建时间":this.saleChance[i].createDate,
+          "修改时间":this.saleChance[i].updateDate,
+          "开发状态":this.saleChance[i].devResult
+        })
+      }
+      // console.log("json_fields",json_fields)
+      saveJsonToExcel(json_fields, '客户开发计划信息.xlsx')
+    },
+    handleDownloadItem(){
+      let json_fields = []
+      for (let i = 0; i < this.cusDevPlan.length; i++) {
+        json_fields.push({
+          "编号":this.cusDevPlan[i].id,
+          "计划项":this.cusDevPlan[i].planItem,
+          "执行效果":this.cusDevPlan[i].exeAffect,
+          "执行时间":this.cusDevPlan[i].planDate,
+          "创建时间":this.cusDevPlan[i].createDate,
+          "更新时间":this.cusDevPlan[i].updateDate
+        })
+      }
+      if (json_fields.length===0){
+        ElMessage({type:"warning",message:"该客户开发计划项子项无数据，无法导出!"})
+      }else {
+        // console.log("json_fields",json_fields)
+        saveJsonToExcel(json_fields, '客户开发计划项子项信息.xlsx')
+      }
+    },
+    handleDownloadItem02(){
+      let json_fields = []
+      for (let i = 0; i < this.cusDevPlan.length; i++) {
+        json_fields.push({
+          "编号":this.cusDevPlan[i].id,
+          "计划项":this.cusDevPlan[i].planItem,
+          "执行效果":this.cusDevPlan[i].exeAffect,
+          "执行时间":this.cusDevPlan[i].planDate,
+          "创建时间":this.cusDevPlan[i].createDate,
+          "更新时间":this.cusDevPlan[i].updateDate
+        })
+      }
+      if (json_fields.length===0){
+        ElMessage({type:"warning",message:"该客户开发计划项子项无数据，无法导出!"})
+      }else {
+        // console.log("json_fields",json_fields)
+        saveJsonToExcel(json_fields, '客户开发计划项子项信息.xlsx')
+      }
+    },
+
     //根据开发状态显示字体颜色
     rowStyle({row}) {
       let stylejson = {}
@@ -664,10 +722,9 @@ export default {
 }
 .search{
   position: relative;
-  width: 60%;
+  width: 98%;
   height: 50px;
   display: block;
-
 }
 .tableMenu {
   header-align: center;

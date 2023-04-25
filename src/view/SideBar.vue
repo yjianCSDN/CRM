@@ -132,19 +132,19 @@
         </el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
-    <el-sub-menu index="7" v-if="UserManagementVisible">
+    <el-sub-menu index="7" v-show="AnnouncementManagement">
         <template #title>
           <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/公告.png')"/>
           <span>公告管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="/index/AllAnnouncements" >
+          <el-menu-item index="/index/AllAnnouncements" v-show="ViewAnnouncement">
             <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/招展管理.png')"/>
             公告展示
           </el-menu-item>
         </el-menu-item-group>
       <el-menu-item-group>
-        <el-menu-item index="/index/Announcement" >
+        <el-menu-item index="/index/Announcement" v-show="Announcement">
           <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/发布公告.png')"/>
             发布公告
         </el-menu-item>
@@ -191,7 +191,10 @@ export default {
       CompositionVisible:false, //客户构成分析
       CustomerServerVisible:false,  //客户服务分析
       LossVisibleImage:false, //客户流失分析
-      collapse:false
+      collapse:false,
+      ViewAnnouncement:false,
+      Announcement:false,
+      AnnouncementManagement:false,
     }
   },
   mounted() {
@@ -281,6 +284,15 @@ export default {
       }
       if (JSON.stringify(this.list).includes("4060")){
         this.LossVisibleImage=true
+      }
+      if (JSON.stringify(this.list).includes("901001")){
+        this.ViewAnnouncement=true
+      }
+      if (JSON.stringify(this.list).includes("902001")){
+        this.Announcement=true
+      }
+      if (JSON.stringify(this.list).includes("901000")){
+        this.AnnouncementManagement=true
       }
     })
   }

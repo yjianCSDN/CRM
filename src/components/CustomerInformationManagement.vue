@@ -23,8 +23,7 @@
       <el-button type="primary"  style="margin: 1% 0 0 10px" @click="selectCustomer" v-if="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
       <el-button type="primary"  style="margin: 1% 0 0 10px" @click="addCustomerVisible=true,this.addCustomerInfo={},this.vv=false" v-if="addVisible"
       >添  &nbsp;&nbsp;&nbsp; 加</el-button>
-<!--      <el-button type="primary"  style="left: 10px" >联系人管理</el-button>-->
-<!--      <el-button type="primary"  style="left: 10px" >交往记录</el-button>-->
+      <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
     <div>
       <el-table :data="customerList"  class="tableMenu"
@@ -56,7 +55,8 @@
         <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
           <template #default="scope">
             <el-button link size="small" type="primary" @click="addCustomerVisible=true,
-                        addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),vv=true" v-if="updateVisible"
+                      addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),vv=true,oldPhone=JSON.parse(JSON.stringify(scope.row.phone))"
+                       v-if="updateVisible"
             >编 辑</el-button
             >
             <el-button link size="small" type="primary" @click="deleteCustomerById(scope.row)" v-if="delVisible">删 除</el-button>
@@ -89,9 +89,11 @@
           :inline="true"
           label-width="80px"
           :model="addCustomerInfo"
+          :rules="formRules"
+          :ref="addCustomerInfo"
       >
-        <el-form-item label="客户名称">
-          <el-input v-model="addCustomerInfo.name" placeholder="请输入客户名称"/>
+        <el-form-item label="客户名称" prop="name">
+          <el-input v-model="addCustomerInfo.name" placeholder="请输入客户名称(必填)"/>
         </el-form-item>
         <el-form-item label="法人">
           <el-input v-model="addCustomerInfo.fr" placeholder="请输入法人"/>
@@ -130,8 +132,8 @@
         <el-form-item label="邮编">
           <el-input v-model="addCustomerInfo.postCode"  placeholder="请输入邮编"/>
         </el-form-item>
-        <el-form-item label="联系电话">
-          <el-input v-model="addCustomerInfo.phone" placeholder="请输入联系电话"/>
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="addCustomerInfo.phone" placeholder="请输入联系电话(必填)"/>
         </el-form-item>
         <el-form-item label="客户地址">
           <el-input v-model="addCustomerInfo.address" placeholder="请输入客户地址"/>
@@ -166,7 +168,7 @@
       </el-form>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false">取 消</el-button>
+        <el-button @click="addCustomerVisible = false,this.addCustomerInfo={},this.vv=false,oldPhone=''">取 消</el-button>
         <el-button type="primary" @click="addInfo">
           确认
         </el-button>
@@ -219,7 +221,6 @@
         </el-table-column>
         <template v-slot:empty>
           <p>该客户暂无订单</p>
-<!--          <img src="../assets/数据板-空白.png" style="height: 20px;">-->
         </template>
       </el-table>
       <template #footer>
@@ -270,7 +271,6 @@
       </el-table>
       <template v-slot:empty>
         <p>该客户暂无订单</p>
-        <!--        <img src="../assets/数据板-空白.png" style="height: 20px;">-->
       </template>
       <template #footer>
       <span class="dialog-footer">
@@ -289,9 +289,12 @@
 
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage, ElMessageBox} from "element-plus";
-
+// eslint-disable-next-line no-unused-vars
+import { readExcelToJson, saveJsonToExcel } from '../tools/utils.js'
 export default {
   name: "CustomerInformationManagement",
+  components:{
+  },
   data(){
     let total = ref("")
     let addCustomerInfo = reactive({})
@@ -307,6 +310,8 @@ export default {
     let customerOrderQuery = reactive({page:1,limit:10,cusId:""})
     let orderDetailsQuery = reactive({page:1,limit:10,orderId:""})
     let list = reactive([])
+    let phoneList = reactive([])
+    let oldPhone = ref("")
 
     //增删改查许可
     let selectVisible = ref(false)
@@ -314,12 +319,45 @@ export default {
     let updateVisible = ref(false)
     let delVisible = ref(false)
     return{
-      customerList,customerQuery,total,addCustomerVisible,addCustomerInfo,
-      vv,CustomerOrderVisible,customerOrderLists,customerOrderQuery,OrderDetailsVisible,
-      orderDetailsList,orderDetailsQuery,goodList,list,selectVisible,addVisible,updateVisible,delVisible
+      customerList,customerQuery,total,addCustomerVisible,addCustomerInfo,phoneList,
+      vv,CustomerOrderVisible,customerOrderLists,customerOrderQuery,OrderDetailsVisible,oldPhone,
+      orderDetailsList,orderDetailsQuery,goodList,list,selectVisible,addVisible,updateVisible,delVisible,
+      formRules:{name:[{required:true,message:"请输入客户名称",trigger:'blur'}],
+                phone:[{required:true,message:"请输入联系电话",trigger:'blur'}]},
     }
   },
   methods:{
+    //导出excel表格
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.customerList.length; i++) {
+        json_fields.push({
+          "编号":this.customerList[i].id,
+          "客户名称":this.customerList[i].name,
+          "法人":this.customerList[i].fr,
+          "客户编号":this.customerList[i].khno,
+          "地区":this.customerList[i].area,
+          "客户经理":this.customerList[i].cusManager,
+          "满意度":this.customerList[i].myd,
+          "客户级别":this.customerList[i].level,
+          "信用度":this.customerList[i].xyd,
+          "详细地址":this.customerList[i].address,
+          "邮编":this.customerList[i].postCode,
+          "联系电话":this.customerList[i].phone,
+          "网站":this.customerList[i].webSite,
+          "传真":this.customerList[i].fax,
+          "注册资金":this.customerList[i].zczj,
+          "营业执照注册号":this.customerList[i].yyzzzch,
+          "开户行":this.customerList[i].khyh,
+          "开户账号":this.customerList[i].khzh,
+          "国税":this.customerList[i].gsdjh,
+          "地税":this.customerList[i].dsdjh,
+          "创建时间":this.customerList[i].createDate,
+          "更新时间":this.customerList[i].updateDate,
+        })
+      }
+      saveJsonToExcel(json_fields, '客户信息.xlsx')
+    },
     selectCustomer(){
       console.log(this.customerQuery)
       this.$api.CustomerInformation.queryCustomerByParams("/customer/lists",this.customerQuery).then(res=>{
@@ -347,61 +385,100 @@ export default {
     },
     queryCustomer(){
       this.$api.CustomerInformation.queryCustomerByParams("/customer/lists").then(res=>{
-        console.log(res)
         this.customerList = res.result.data
         this.total = res.result.count
         console.log("customerList:",this.customerList)
       })
+      this.$api.CustomerInformation.getCusPhones("/customer/phone").then(res=>{
+        for (let i = 0; i < res.result.length; i++) {
+          if (res.result[i]!==null){
+            this.phoneList.push(res.result[i])
+          }
+        }
+        console.log("phoneList",this.phoneList)
+      })
     },
     addInfo(){
-      console.log("addCustomerInfo:",this.addCustomerInfo)
-      console.log(this.vv)
-      let customer = this.addCustomerInfo
-      if (this.vv){
-          this.$api.CustomerInformation.updateCustomer("/customer/updateCustomer",customer).then(res=>{
-            console.log(res)
-            if (res.code===200){
-              ElMessage({
-                type:"success",
-                message:"更新成功!"
-              })
-              this.addCustomerVisible = false
-              this.queryCustomer()
-              this.addCustomerInfo = {}
-              this.customerQuery.page=1
-            }else {
-              ElMessage({
-                type:"error",
-                message:"更新失败，请重试!"
-              })
-            }
-          })
+      let result = true
+      if (this.addCustomerInfo.name===undefined||this.addCustomerInfo.phone===undefined){
+        ElMessage({type:"warning",message:"必填项未填写"})
+      }else if (!(/^1[34578]\d{9}$/.test(this.addCustomerInfo.phone))){
+        ElMessage({type:"warning",message:"联系电话格式错误"})
       }else {
-        this.$api.CustomerInformation.addCustomer("/customer/addCustomer",customer).then(res=>{
-          console.log(res)
-          if (res.code===200){
-            ElMessage({
-              type:"success",
-              message:"添加成功!"
-            })
-            this.addCustomerVisible = false
-            this.queryCustomer()
-            this.addCustomerInfo = {}
-            this.customerQuery.page=1
-          }else if (res.code===300){
-            ElMessage({
-              type:"error",
-              message:"客户名称已存在，请重试!"
-            })
+        // console.log("addCustomerInfo:",this.addCustomerInfo)
+        // console.log(this.vv)
+        let customer = this.addCustomerInfo
+        for (let i = 0; i < this.phoneList.length; i++) {
+          if (this.addCustomerInfo.phone===this.phoneList[i]){
+            if (this.addCustomerInfo.phone===this.oldPhone){
+              console.log("有相同的")
+              console.log("oldPhone",this.oldPhone)
+              // result = true
+            }else {
+              console.log("没有")
+              result=false
+            }
+          }
+        }
+        if (result){
+          console.log("this.vv",this.vv)
+          if (this.vv){
+              this.$api.CustomerInformation.updateCustomer("/customer/updateCustomer",customer).then(res=>{
+                console.log(res)
+                if (res.code===200){
+                  ElMessage({
+                    type:"success",
+                    message:"更新成功!"
+                  })
+                  this.addCustomerVisible = false
+                  this.queryCustomer()
+                  this.addCustomerInfo = {}
+                  this.customerQuery.page=1
+                  this.oldPhone=''
+                }else if (res.msg==='用户名重复'){
+                  ElMessage({
+                    type:"warning",
+                    message:"用户名重复!"
+                  })
+                }else {
+                  ElMessage({
+                    type:"error",
+                    message:"更新失败，请重试!"
+                  })
+                }
+              })
           }else {
-            ElMessage({
-              type:"error",
-              message:"添加失败，请重试!"
+            this.$api.CustomerInformation.addCustomer("/customer/addCustomer",customer).then(res=>{
+              console.log(res)
+              if (res.code===200){
+                ElMessage({
+                  type:"success",
+                  message:"添加成功!"
+                })
+                this.addCustomerVisible = false
+                this.queryCustomer()
+                this.addCustomerInfo = {}
+                this.customerQuery.page=1
+              }else if (res.code===300){
+                ElMessage({
+                  type:"error",
+                  message:"客户名称已存在，请重试!"
+                })
+              }else {
+                ElMessage({
+                  type:"error",
+                  message:"添加失败，请重试!"
+                })
+              }
             })
           }
-        })
+          this.vv = false
+        }else {
+          ElMessage({type:"warning",message:"联系电话与其他客户重复"})
+        }
       }
-      this.vv = false
+
+
     },
     deleteCustomerById(msg){
       ElMessageBox.confirm(
@@ -455,15 +532,7 @@ export default {
         this.orderDetailsList=res.result
       })
       this.$api.CustomerInformation.queryOrderDetailsByParams("/orderDetail/lists",this.orderDetailsQuery).then(res=>{
-        console.log("orderDetailsQuery:------->",res)
-        // this.goodList = res.result.data
-        // if (res.result.data.length===0){
-        //   console.log("1111111真的吗")
-        //   this.goodList = []
-        // }else {
-        //   console.log("22222当然是假的拉")
           this.goodList = res.result.data
-        // }
       })
     },
   },
@@ -487,23 +556,28 @@ export default {
 </script>
 
 <style scoped>
+.icon {
+  position: absolute;
+  color: red;
+
+}
 .CustomerInformationManagement{
   height: 100%;
   width: 100%;
 }
 .search{
-  width: 60%;
+  width: 98%;
   height: 50px;
   margin: 0 0 0 1%;
 }
 .tableMenu{
-  width: 97%;
+  width: 98%;
   margin: 0 0 0 1%;
   position: relative;
 }
 .page{
   position: absolute;
-  top: 90%;
+  top: 87%;
   width: 60%;
   color: #ffffff;
 }

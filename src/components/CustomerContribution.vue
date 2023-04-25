@@ -99,6 +99,16 @@ export default {
           text: "客户贡献分析"
         },
         tooltip: {},
+        toolbox:{
+          show: true,
+          feature: {
+            saveAsImage: {
+              show:true,
+              excludeComponents :['toolbox'],
+              pixelRatio: 2
+            }
+          }
+        },
         xAxis: {
           type: "category",
           data: toRaw([])
@@ -144,6 +154,16 @@ export default {
         tooltip: {
           trigger: 'item'
         },
+          toolbox:{
+            show: true,
+            feature: {
+              saveAsImage: {
+                show:true,
+                excludeComponents :['toolbox'],
+                pixelRatio: 2
+              }
+            }
+          },
         legend: {
           orient: 'vertical',
           left: 'left'
@@ -208,7 +228,7 @@ export default {
 }
 .page{
   position: absolute;
-  top: 92%;
+  top: 85%;
   width: 100%;
   color: #ffffff;
 }

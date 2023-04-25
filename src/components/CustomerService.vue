@@ -2,9 +2,9 @@
   <div class="CustomerService">
     <div class="main" ref="mainExpand" style="width: 600px;height: 300px;
                                       position: relative;margin: 0 0 0 50%;top: 20%"
-    ></div>
-    <div class="mian02" ref="mainExpandRound" style="width: 600px;height: 300px;margin: -13% 0 0 3%"
-    ></div>
+    />
+    <div class="mian02" ref="mainExpandRound" style="width: 600px;height: 300px;margin: -15% 0 0 3%"
+    />
   </div>
 </template>
 
@@ -32,7 +32,16 @@ export default {
         title: {
           text: "客户服务分析",
         },
-        tooltip: {},
+        toolbox:{
+          show: true,
+          feature: {
+            saveAsImage: {
+              show:true,
+              excludeComponents :['toolbox'],
+              pixelRatio: 2
+            }
+          }
+        },
         xAxis: {
           type: "category",
           data: toRaw([])
@@ -91,6 +100,16 @@ export default {
         },
         tooltip: {
           trigger: 'item'
+        },
+        toolbox:{
+          show: true,
+          feature: {
+            saveAsImage: {
+              show:true,
+              excludeComponents :['toolbox'],
+              pixelRatio: 2
+            }
+          }
         },
         legend: {
           orient: 'vertical',

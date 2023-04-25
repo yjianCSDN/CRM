@@ -7,4 +7,5 @@ import api from "@/http/index.js";
 import store from "@/store";
 import Cookies from 'js-cookie'
 import * as echarts from 'echarts'
-createApp(App).use(echarts).use(store).use(Cookies).use(router).use(api).use(ElementUI).use(ElementUI).mount('#app')
+import JsonExcel from 'vue-json-excel'
+createApp(App).use(JsonExcel).use(echarts).use(store).use(Cookies).use(router).use(api).use(ElementUI).use(ElementUI).mount('#app')

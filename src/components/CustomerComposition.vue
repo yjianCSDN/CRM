@@ -1,8 +1,8 @@
 <template>
   <div class="CustomerComposition">
-    <div id="main" ref="mainExpand" style="width: 800px;height: 400px;top: 10%;left: 40%"></div>
+    <div id="main" ref="mainExpand" style="width: 700px;height: 400px;top: 10%;left: 40%"></div>
     <div id="main02" ref="mainExpand"
-         style="width: 600px;height: 300px; top:-50%;left: 5%"></div>
+         style="width: 500px;height: 300px; top:-50%;left:1%"></div>
   </div>
 </template>
 
@@ -31,6 +31,16 @@ export default {
           text: "客户构成分析"
         },
         tooltip: {},
+        toolbox:{
+          show: true,
+          feature: {
+            saveAsImage: {
+              show:true,
+              excludeComponents :['toolbox'],
+              pixelRatio: 2
+            }
+          }
+        },
         xAxis: {
           type: "category",
           data: toRaw([])
@@ -76,6 +86,16 @@ export default {
       let option = {
         tooltip: {
           trigger: 'item'
+        },
+        toolbox:{
+          show: true,
+          feature: {
+            saveAsImage: {
+              show:true,
+              excludeComponents :['toolbox'],
+              pixelRatio: 2
+            }
+          }
         },
         legend: {
           orient: 'vertical',

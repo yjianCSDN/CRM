@@ -260,6 +260,7 @@ export default {
 .Dictionary{
   height: 100%;
   width: 100%;
+  /*background-color: #8c6fd0;*/
 }
 .search{
   width: 60%;

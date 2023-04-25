@@ -23,6 +23,6 @@ export default {
 .Index{
   width: 100%;
   height: 675px;
-
 }
+
 </style>

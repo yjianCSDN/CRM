@@ -5,15 +5,15 @@
         v-model="noticeQuery.title"
         class="w-50 m-2"
         placeholder="标题"
-        style="position: relative;width: 12%;margin: 0 0 0 0"
+        style="position: relative;width: 12%;margin: 1% 0 0 0"
     />
     <el-input
         v-model="noticeQuery.publisher"
         class="w-50 m-2"
         placeholder="创建人"
-        style="position: relative;width: 12%;margin: 5px"
+        style="position: relative;width: 12%;margin: 1% 0 0 10px"
     />
-    <el-select v-model="noticeQuery.type" class="m-2" placeholder="类 型">
+    <el-select v-model="noticeQuery.type" class="m-2" placeholder="类 型" style="margin: 1% 0 0 10px">
       <el-option label="" value=""/>
       <el-option label="平台公告" value="平台公告"/>
       <el-option label="新闻动态" value="新闻动态"/>
@@ -23,23 +23,24 @@
       <el-option label="公司通知" value="公司通知"/>
     </el-select>
     &nbsp;&nbsp;
-    <el-button type="primary" style="left: 30px" @click="queryBySth">点 击 查 询</el-button>
-    <el-button type="primary" style="left: 30px" @click="addNoticeInit">添 加 公 告</el-button>
+    <el-button type="primary"  style="margin: 1% 0 0 10px" @click="queryBySth" v-show="selectVisible">点 击 查 询</el-button>
+    <el-button type="primary" style="margin: 1% 0 0 10px" @click="addNoticeInit" v-show="addVisible">添 加 公 告</el-button>
+    <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
   </div>
   <div>
     <el-table :data="noticeList" class="tableMenu" max-height="500"
               :default-sort="{ prop: 'createDate', order: 'descending' }"
               :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
       <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
-      <el-table-column prop="title" label="标题" width="100" header-align="center" align="center"/>
-      <el-table-column prop="type" label="公告类型" width="100" header-align="center" align="center">
-        <template #defailt="scope">
+      <el-table-column prop="title" label="标题" width="200" header-align="center" align="center"/>
+      <el-table-column label="公告类型" width="100" header-align="center" align="center">
+        <template #default="scope">
           <span v-if="scope.row.type==='平台公告'" style="color: #37B328">{{scope.row.type}}</span>
-          <span v-if="scope.row.type==='新闻动态'" style="color: #8c6fd0">{{scope.row.type}}</span>
-          <span v-if="scope.row.type==='营销机会'" style="color: orangered">{{scope.row.type}}</span>
-          <span v-if="scope.row.type==='行业资讯'" style="color: skyblue">{{scope.row.type}}</span>
-          <span v-if="scope.row.type==='其他公告'" style="color: orange">{{scope.row.type}}</span>
-          <span v-if="scope.row.type==='公司通知'" style="color: aqua">{{scope.row.type}}</span>
+          <span v-else-if="scope.row.type==='新闻动态'"  style="color: #8c6fd0">{{scope.row.type}}</span>
+          <span v-else-if="scope.row.type==='营销机会'" style="color: orangered">{{scope.row.type}}</span>
+          <span v-else-if="scope.row.type==='行业资讯'" style="color: skyblue">{{scope.row.type}}</span>
+          <span v-else-if="scope.row.type==='其他公告'" style="color: orange">{{scope.row.type}}</span>
+          <span v-else-if="scope.row.type==='公司通知'" style="color: aqua">{{scope.row.type}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="publisher" label="发起者" width="130" header-align="center" align="center"/>
@@ -62,7 +63,7 @@
       <el-table-column prop="updateDate" label="修改日期" width="200" header-align="center" align="center"/>
       <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center">
         <template #default="scope">
-          <el-button link type="primary" size="small" @click="updateInit(scope.row)"
+          <el-button link type="primary" size="small" @click="updateInit(scope.row)" v-show="updateVisible"
           >修 改
           </el-button
           >
@@ -75,11 +76,14 @@
               >
             </div>
             <template #reference>
-              <el-button link size="small" type="danger" @click="visible = false">删 除</el-button>
+              <el-button link size="small" type="danger" @click="visible = false" v-show="deleteVisible">删 除</el-button>
             </template>
           </el-popover>
         </template>
       </el-table-column>
+      <template v-slot:empty>
+        <p>暂时没有发布公告消息哦</p>
+      </template>
     </el-table>
   </div>
   <div class="page">
@@ -137,8 +141,10 @@
 </template>
 
 <script>
-import {reactive, ref} from "@vue/reactivity";
+import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
+// eslint-disable-next-line no-unused-vars
+import {saveJsonToExcel} from "@/tools/utils";
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -151,11 +157,38 @@ export default {
     let addNoticeVisible = ref(false)
     let topper = ref("")
     let ii = ref(false)
+
+
+    let list = reactive([])
+    let selectVisible = ref(false)
+    let addVisible = ref(false)
+    let updateVisible = ref(false)
+    let deleteVisible = ref(false)
     return{
-      noticeQuery,noticeInfo,noticeList,total,addNoticeVisible,topper,ii
+      noticeQuery,noticeInfo,noticeList,total,addNoticeVisible,topper,ii,list,selectVisible,addVisible,updateVisible,deleteVisible
     }
   },
   methods:{
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.noticeList.length; i++) {
+        json_fields.push({
+          "编号":this.noticeList[i].id,
+          "标题":this.noticeList[i].title,
+          "公告类型":this.noticeList[i].type,
+          "发起者":this.noticeList[i].publisher,
+          "公告者":this.noticeList[i].content,
+          "创建日期":new Date(this.noticeList[i].createDate).toLocaleString(),
+          "更新日期":new Date(this.noticeList[i].updateDate).toLocaleString()
+        })
+      }
+      if (json_fields.length===0){
+        this.common("warning","列表无内容,无数据可导出!")
+      }else {
+        // console.log("json_fields",json_fields)
+        saveJsonToExcel(json_fields, '公告信息.xlsx')
+      }
+    },
     common(type,message){
       ElMessage({
         type:type,
@@ -244,6 +277,19 @@ export default {
   },
   mounted() {
     this.initParams()
+    this.list = this.$store.getters.getPermissionList
+    if (JSON.stringify(toRaw(this.list)).includes("90200101")) {
+      this.selectVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("90200102")) {
+      this.addVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("90200103")) {
+      this.updateVisible = true
+    }
+    if (JSON.stringify(toRaw(this.list)).includes("90200104")) {
+      this.deleteVisible = true
+    }
   }
 }
 </script>
@@ -255,7 +301,7 @@ export default {
 }
 .search{
   position: relative;
-  width: 60%;
+  width: 90%;
   height: 50px;
   display: block;
   left: 3%;

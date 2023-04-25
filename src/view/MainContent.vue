@@ -1,7 +1,7 @@
 <template>
 <div class="MainContent">
-  <div style="width: 100%;height: 5%">
-    <bread/>
+  <div style="width: 100%;height: 2%">
+<!--    <bread/>-->
   </div>
   <div class="content">
     <router-view></router-view>

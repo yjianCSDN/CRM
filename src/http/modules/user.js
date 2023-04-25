@@ -34,3 +34,6 @@ export function queryAllRoles(url,params) {
 export function queryUserByName(url,params) {
     return get(url,params)
 }
+export function getAllPhoneInfo(url,params) {
+    return get(url,params)
+}

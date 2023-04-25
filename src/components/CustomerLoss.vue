@@ -22,6 +22,7 @@
     &nbsp;&nbsp;
     <el-button type="primary"  style="margin: 1% 0 0 5px" @click="queryListBySth" v-show="selectVisible">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
     <el-button type="primary"   style="margin: 1% 0 0 5px" @click="insertVisible=true" v-show="addVisible">添加流失客户</el-button>
+    <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
 
   </div>
 
@@ -136,7 +137,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="CustomerLossExpandVisible=false">取 消</el-button>
-        <el-button type="primary" >
+        <el-button type="primary" @click="CustomerLossExpandVisible=false">
           确认
         </el-button>
       </span>
@@ -260,6 +261,7 @@
 <script>
 import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage,ElMessageBox} from "element-plus";
+import { saveJsonToExcel } from '../tools/utils.js'
 
 export default {
   name: "CustomerLoss",
@@ -297,6 +299,25 @@ export default {
     }
   },
   methods:{
+    //导出excel表格
+    handleDownload(){
+      let json_fields = []
+      for (let i = 0; i < this.customerLossList.length; i++) {
+        json_fields.push({
+          "编号":this.customerLossList[i].id,
+          "客户编号":this.customerLossList[i].cusNo,
+          "客户名称":this.customerLossList[i].cusName,
+          "客户经理":this.customerLossList[i].cusManager,
+          "最后下单时间":this.customerLossList[i].lastOrderTime,
+          "流失原因":this.customerLossList[i].lossReason,
+          "确认流失时间":this.customerLossList[i].confirmLossTime,
+          "创建时间":this.customerLossList[i].createDate,
+          "更新时间":this.customerLossList[i].updateDate
+        })
+      }
+      // console.log("json_fields",json_fields)
+      saveJsonToExcel(json_fields, '客户流失信息.xlsx')
+    },
     queryLossList(){
       this.$api.CustomerInformation.queryCustomerLossByParams("/customerLoss/list",this.customerLossQuery).then(res=>{
         // console.log(res)
@@ -428,7 +449,6 @@ export default {
         })
       }
     },
-
     //添加流失客户
     addLoss(){
       let result = false
@@ -507,11 +527,10 @@ export default {
 .CustomerLoss{
   width: 100%;
   height: 93.5%;
-  /*background-color: sandybrown;*/
 }
 .search{
   position: relative;
-  width: 60%;
+  width: 98%;
   height: 50px;
   display: block;
   left: 1%;
