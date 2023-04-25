@@ -62,12 +62,12 @@ public class OrderDetailsController {
 
     @PostMapping("updateOrderDetails")
     public ResultInfo updateOrderInfo(@RequestBody OrderDetails orderDetails){
-        System.out.println(orderDetails.getUnit());
-        System.out.println(orderDetails.getOrderId());
-        System.out.println(orderDetails.getGoodsName());
-        System.out.println(orderDetails.getGoodsNum());
-        System.out.println(orderDetails.getSum());
-        System.out.println(orderDetails.getPrice());
+//        System.out.println(orderDetails.getUnit());
+//        System.out.println(orderDetails.getOrderId());
+//        System.out.println(orderDetails.getGoodsName());
+//        System.out.println(orderDetails.getGoodsNum());
+//        System.out.println(orderDetails.getSum());
+//        System.out.println(orderDetails.getPrice());
         Integer integer = orderDetailsService.updateOrderInfo(orderDetails);
         if (integer<1){
             return ResultInfo.error("更新失败");

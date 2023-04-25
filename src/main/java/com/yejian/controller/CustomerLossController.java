@@ -54,6 +54,11 @@ public class CustomerLossController {
     }
 
 
+    /**
+     * 添加流失客户
+     * @param customerLoss
+     * @return com.yejian.utils.ResultInfo
+     */
     @PostMapping("addLossInfo")
     public ResultInfo addLossInfo(@RequestBody CustomerLoss customerLoss){
         System.out.println(customerLoss.getLastOrderTime());

@@ -9,13 +9,14 @@
         <result column="sex" property="sex" jdbcType="INTEGER" />
         <result column="email" property="email" jdbcType="VARCHAR" />
         <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="img" property="img" jdbcType="VARCHAR" />
         <result column="is_valid" property="isValid" jdbcType="INTEGER" />
         <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
         <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, user_name, user_pwd, true_name, sex, email, phone, is_valid, create_date, update_date
+        id, user_name, user_pwd, true_name, sex, email, phone, is_valid, create_date, update_date, img
     </sql>
     <!--通过主键查询用户信息-->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -85,6 +86,9 @@
             <if test="updateDate != null" >
                 update_date,
             </if>
+            <if test="img != null" >
+                img,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="id != null" >
@@ -117,6 +121,9 @@
             <if test="updateDate != null" >
                 #{updateDate,jdbcType=TIMESTAMP},
             </if>
+            <if test="img != null" >
+                #{img,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.yejian.bean.User" >
@@ -148,6 +155,9 @@
             </if>
             <if test="updateDate != null" >
                 update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="img != null" >
+                img = #{img,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -267,6 +277,17 @@
             r.is_valid = 1
           and
             r.role_name = '客户经理'
+    </select>
+    <select id="getAllPhone" resultType="java.lang.String">
+        SELECT phone FROM `t_user` WHERE is_valid=1
+    </select>
+    <select id="getAllUserName" resultType="java.lang.String">
+        select
+               user_name
+        from
+                t_user
+        where
+                is_valid=1
     </select>
 
 </mapper>

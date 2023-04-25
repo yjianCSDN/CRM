@@ -7,6 +7,7 @@ import com.yejian.utils.ResultInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,24 +73,14 @@ public class CustomerController {
      */
     @PostMapping("updateCustomer")
     public ResultInfo updateCustomer(@RequestBody Customer customer){
-        System.out.println("-----------------------------------");
-        System.out.println(customer.getArea());
-        System.out.println(customer.getAddress());
-        System.out.println(customer.getDsdjh());
-        System.out.println(customer.getKhno());
-        System.out.println(customer.getDsdjh());
-        System.out.println(customer.getFax());
-        System.out.println(customer.getFr());
-        System.out.println(customer.getGsdjh());
-        System.out.println(customer.getName());
-        System.out.println(customer.getKhzh());
-        System.out.println(customer.getKhyh());
-        System.out.println(customer.getLevel());
         Integer integer = customerService.updateCustomer(customer);
-        if (integer<1){
+        if (integer==3){
+            return ResultInfo.error("用户名重复");
+        }else if (integer<1){
             return ResultInfo.error("更新失败");
         }else {
             return ResultInfo.ok("更新成功!");
+
         }
     }
 
@@ -108,7 +99,6 @@ public class CustomerController {
         }else {
             return ResultInfo.ok("删除成功,请重试!");
         }
-//        return ResultInfo.ok("123");
     }
 
     /**
@@ -159,4 +149,14 @@ public class CustomerController {
         }
     }
 
+
+    @GetMapping("phone")
+    public ResultInfo getCusPhones(){
+        List<String> phones = customerService.getCusPhones();
+        if (null==phones){
+            return ResultInfo.error("error");
+        }else {
+            return ResultInfo.ok(phones,"ok");
+        }
+    }
 }

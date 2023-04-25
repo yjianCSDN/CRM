@@ -71,9 +71,10 @@ public class CusDevPlanServiceImpl implements CusDevPlanService {
         // 设置记录无效（删除）
         cusDevPlan.setIsValid(0);
         cusDevPlan.setUpdateDate(new Date());
+        Integer integer = cusDevPlanMapper.updateByPrimaryKeySelective(cusDevPlan);
         // 执行更新操作
-        AssertUtil.isTrue(cusDevPlanMapper.updateByPrimaryKeySelective(cusDevPlan) != 1, "计划项数据删除失败！");
-        return 1;
+        AssertUtil.isTrue(integer != 1, "计划项数据删除失败！");
+        return integer;
     }
 
     /***

@@ -3,6 +3,7 @@ package com.yejian.service;
 import com.yejian.bean.Customer;
 import com.yejian.bean.query.CustomerQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,4 +20,6 @@ public interface CustomerService {
     Map<String,Object> queryCustomerContributionByParams(CustomerQuery customerQuery);
     Map<String, Object> countCustomerMake();
     Map<String, Object> countCustomerMake02();
+
+    List<String> getCusPhones();
 }

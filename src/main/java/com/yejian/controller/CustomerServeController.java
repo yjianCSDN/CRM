@@ -62,11 +62,11 @@ public class CustomerServeController {
      */
     @PostMapping("add")
     public ResultInfo addCustomerServe(@RequestBody CustomerServe customerServe, HttpServletRequest request){
-        System.out.println("headers :"+request.getHeader("userName"));
-        System.out.println(customerServe.getCustomer());
-        System.out.println(customerServe.getServeType());
-        System.out.println(customerServe.getDicValue());
-        System.out.println(customerServe.getOverview());
+//        System.out.println("headers :"+request.getHeader("userName"));
+//        System.out.println(customerServe.getCustomer());
+//        System.out.println(customerServe.getServeType());
+//        System.out.println(customerServe.getDicValue());
+//        System.out.println(customerServe.getOverview());
         customerServe.setCreatePeople(request.getHeader("userName"));
 //        System.out.println(customerServe.getCreatePeople()+"-----------------------<>");
         Integer integer = customerServeService.addCustomerServe(customerServe);

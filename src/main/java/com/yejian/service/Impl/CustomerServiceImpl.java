@@ -140,16 +140,24 @@ public class CustomerServiceImpl extends BaseService<Customer,Integer> implement
         // 通过客户名称查询客户记录
         temp = customerMapper.queryCustomerByName(customer.getName());
         // 判断客户记录 是否存在，且客户id是否与更新记录的id一致
-        AssertUtil.isTrue(null != temp && !(temp.getId()).equals(customer.getId()), "客户名称已存在，请重新输入！");
+        System.out.println("1111111 "+ (null != temp && !(temp.getId()).equals(customer.getId())));
+        if (null != temp && !(temp.getId()).equals(customer.getId())){
+            return 3;
+        }else {
+            customer.setUpdateDate(new Date());
+            Integer update = customerMapper.updateByPrimaryKeySelective(customer);
+            return update;
+        }
+//        AssertUtil.isTrue(null != temp && !(temp.getId()).equals(customer.getId()), "客户名称已存在，请重新输入！");
 
         /* 2. 设置参数的默认值  */
-        customer.setUpdateDate(new Date());
+//        customer.setUpdateDate(new Date());
 
-        Integer update = customerMapper.updateByPrimaryKeySelective(customer);
+//        Integer update = customerMapper.updateByPrimaryKeySelective(customer);
         /* 3. 执行更新操作，判断受影响的行数 */
 //        AssertUtil.isTrue(customerMapper.updateByPrimaryKeySelective(customer) < 1, "修改客户信息失败！");
 
-        return update;
+//        return update;
     }
 
     /**
@@ -342,6 +350,12 @@ public class CustomerServiceImpl extends BaseService<Customer,Integer> implement
         map.put("data2",data2);
 
         return map;
+    }
+
+    @Override
+    public List<String> getCusPhones() {
+        List<String> phones = customerMapper.getCusPhones();
+        return phones;
     }
 
 }

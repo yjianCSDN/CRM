@@ -39,4 +39,8 @@ public interface UserService {
      User queryUserByUserName(String userName);
 
      User queryUserById(Integer id);
+
+     List<String> getAllPhone();
+
+     List<String> getAllUser();
 }

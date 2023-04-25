@@ -64,6 +64,7 @@ public class UserServiceImpl extends BaseService<User,Integer> implements UserSe
         model.setUserName(user.getUserName());
         model.setTrueName(user.getTrueName());
         model.setUserIdStr(UserIDBase64.encoderUserID(user.getId()));
+        model.setImg(user.getImg());
         return model;
     }
 
@@ -333,6 +334,18 @@ public class UserServiceImpl extends BaseService<User,Integer> implements UserSe
     public User queryUserById(Integer id){
         User user = userMapper.selectByPrimaryKey(id);
         return user;
+    }
+
+    @Override
+    public List<String> getAllPhone() {
+        List<String> phones = userMapper.getAllPhone();
+        return phones;
+    }
+
+    @Override
+    public List<String> getAllUser() {
+        List<String> names = userMapper.getAllUserName();
+        return names;
     }
 
 }

@@ -1,11 +1,10 @@
 package com.yejian;
 
-import com.yejian.bean.query.DictionaryQuery;
+import com.yejian.bean.Notice;
+import com.yejian.bean.query.CustomerServeQuery;
 import com.yejian.bean.query.SaleChanceQuery;
-import com.yejian.service.CustomerServeService;
-import com.yejian.service.DictionaryService;
-import com.yejian.service.SaleChanceService;
-import com.yejian.service.UserService;
+import com.yejian.bean.query.UserQuery;
+import com.yejian.service.*;
 import com.yejian.utils.MD5Utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,9 @@ class CrmApplicationTests {
     @Autowired
     private CustomerServeService customerServeService;
     @Autowired
-    private DictionaryService dictionaryService;
+    private NoticeService noticeService;
+    @Autowired
+    private CustomerService customerService;
 
     @Test
     void contextLoads() {
@@ -57,15 +58,30 @@ class CrmApplicationTests {
     }
     @Test
     void b(){
-        Map<String, Object> map = dictionaryService.queryByParams(new DictionaryQuery());
-        System.out.println(map.isEmpty());
-        System.out.println(map);
+        Notice notice = new Notice();
+        notice.setType("正常");
+        notice.setPublisher("admin");
+        notice.setContent("今天下班时间提前30分钟，销售人员进行客户调研");
+        notice.setUserId(93);
+//        notice.setId(20);
+        notice.setTitle("乐");
+//        Integer integer = noticeService.delNotice(20);
+        Integer integer = noticeService.addNotice(notice);
+        System.out.println(integer);
     }
 
     @Test
     void c(){
-//        dictionaryService.
+        System.out.println(userService.queryByParamsForTable(new UserQuery()));
     }
 
+    @Test
+    void d(){
+        System.out.println(customerService.getCusPhones());
+    }
 
+    @Test
+    void f(){
+        System.out.println(customerServeService.queryCustomerServeByParams(new CustomerServeQuery()));
+    }
 }

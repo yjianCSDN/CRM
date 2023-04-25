@@ -16,4 +16,6 @@ public class UserModel {
 
     private String userIdStr;
 
+    private String img;
+
 }

@@ -472,4 +472,12 @@
         GROUP BY
             `level`
     </select>
+    <select id="getCusPhones" resultType="java.lang.String">
+        select
+            phone
+        from
+            t_customer
+        where
+            is_valid=1
+    </select>
 </mapper>

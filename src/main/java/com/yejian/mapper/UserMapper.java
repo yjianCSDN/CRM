@@ -41,4 +41,7 @@ public interface UserMapper extends BaseMapper<User,Integer> {
      */
     int deleteByIds(Integer id);
 
+    List<String> getAllPhone();
+
+    List<String> getAllUserName();
 }

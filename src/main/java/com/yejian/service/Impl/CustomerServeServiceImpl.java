@@ -8,7 +8,6 @@ import com.yejian.bean.query.CustomerServeQuery;
 import com.yejian.enums.CustomerServeStatus;
 import com.yejian.mapper.CustomerMapper;
 import com.yejian.mapper.CustomerServeMapper;
-import com.yejian.mapper.UserMapper;
 import com.yejian.service.CustomerServeService;
 import com.yejian.utils.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,6 @@ public class CustomerServeServiceImpl extends BaseService<CustomerServe,Integer>
     private CustomerServeMapper customerServeMapper;
     @Autowired
     public CustomerMapper customerMapper;
-    @Autowired
-    private UserMapper userMapper;
 
 
     /**

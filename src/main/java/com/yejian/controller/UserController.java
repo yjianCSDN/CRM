@@ -81,6 +81,16 @@ public class UserController extends BaseController {
         return ResultInfo.ok(map);
     }
 
+    @GetMapping("userName")
+    public ResultInfo getAllUser(){
+        List<String> user = userService.getAllUser();
+        if (null==user){
+            return ResultInfo.error("error");
+        }else {
+            return ResultInfo.ok(user,"ok");
+        }
+    }
+
 
 
 
@@ -102,12 +112,6 @@ public class UserController extends BaseController {
      */
     @PostMapping("addUser")
     public ResultInfo addUser(@RequestBody User user){
-//        System.out.println(user.getTrueName());
-//        System.out.println(user.getUserName());
-//        System.out.println(user.getEmail());
-//        System.out.println(user.getPhone());
-//        System.out.println(user.getUserPwd());
-//        System.out.println("RoleIds:   "+user.getRoleIds());
         userService.addUser(user);
         return ResultInfo.ok("添加成功!");
     }
@@ -121,30 +125,14 @@ public class UserController extends BaseController {
     public ResultInfo updateUser(@RequestBody User user,  HttpServletRequest request){
         String name = request.getHeader("userName");
         User user1 = userService.queryUserByUserName(name);
-//        System.out.println("flag:---------------------------------------->"+flag);
-//        System.out.println(user.getTrueName());
-//        System.out.println(user.getUserName());
-//        System.out.println(user.getEmail());
-//        System.out.println(user.getPhone());
-//        System.out.println(user.getUserPwd());
-//        System.out.println(user.getRoleIds());
-//        System.out.println(user.getSex());
         if (user1.getUserPwd().equals(user.getUserPwd())){
-//            System.out.println("用户没有修改密码");
         }else {
-//            System.out.println("用户更新了密码");
             String encode = Md5Util.encode(user.getUserPwd());
             user.setUserPwd(encode);
         }
         /**
          * 判断是否为个人中心修改资料，如果是，需要将权限码取出然后赋值
          */
-//        if (flag==1){
-//            System.out.println("用户是从个人中心进行信息修改的");
-//            User user2 = userService.queryUserById(user.getId());
-//            System.out.println("asdasdasdasdasdasd"+user2.getRoleIds());
-//            user.setRoleIds(user2.getRoleIds());
-//        }
         userService.updateUser(user);
         return ResultInfo.ok("用户更新成功!");
     }
@@ -157,7 +145,6 @@ public class UserController extends BaseController {
      */
     @PostMapping("deleteUser")
     public ResultInfo deleteUser(@RequestBody Integer id){
-//        System.out.println("del Id:  "+id);
         userService.deleteByIds(id);
         return ResultInfo.ok();
     }
@@ -170,9 +157,6 @@ public class UserController extends BaseController {
      */
     @PostMapping("confirmPwd")
     public ResultInfo confirmUserPwd(@RequestBody PwdModel pwdModel){
-//        System.out.println(pwdModel.getUserIdStr());
-//        System.out.println(Integer.valueOf(pwdModel.getUserIdStr()));
-//        System.out.println(pwdModel.getOldPwd());
         boolean b = userService.confirmUserPwd(pwdModel);
         if (b){
             return ResultInfo.ok("正确!");
@@ -195,6 +179,16 @@ public class UserController extends BaseController {
             return ResultInfo.error("error!");
         }else {
             return ResultInfo.ok(user,"ok!");
+        }
+    }
+
+    @GetMapping("phone")
+    public ResultInfo getAllPhone(){
+        List<String> phone = userService.getAllPhone();
+        if (null==phone){
+            return ResultInfo.error("查询失败");
+        }else {
+            return ResultInfo.ok(phone,"查询成功");
         }
     }
 

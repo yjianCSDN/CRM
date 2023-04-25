@@ -89,14 +89,6 @@ public class SaleChanceController extends BaseController {
      */
     @PostMapping("/updateSaleChance")
     public ResultInfo updateSaleChance(@RequestBody SaleChance saleChance) {
-//        System.out.println("1111111111112222222222222222223333333333333333");
-//        System.out.println(saleChance);
-//        System.out.println(saleChance.getAssignMan());
-//        System.out.println(saleChance.getChanceSource());
-//        System.out.println(saleChance.getAssignTime());
-//        System.out.println(saleChance.getCgjl());
-//        System.out.println(saleChance.getCustomerName());
-//        System.out.println(saleChance.getCreateDate());
         saleChanceService.updateSaleChance(saleChance);
         return ResultInfo.ok("更新数据成功！");
     }

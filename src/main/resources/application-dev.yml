@@ -31,3 +31,11 @@ logging:
     com:
       yejian:
         mapper: debug
+
+#图片上传
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+  resources:
+    static-locations: classpath:src/main/resources/pic

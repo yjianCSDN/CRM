@@ -6,8 +6,8 @@
         <result column="cus_no" property="cusNo" jdbcType="VARCHAR" />
         <result column="cus_name" property="cusName" jdbcType="VARCHAR" />
         <result column="cus_manager" property="cusManager" jdbcType="VARCHAR" />
-        <result column="last_order_time" property="lastOrderTime" jdbcType="DATE" />
-        <result column="confirm_loss_time" property="confirmLossTime" jdbcType="DATE" />
+        <result column="last_order_time" property="lastOrderTime" jdbcType="TIMESTAMP" />
+        <result column="confirm_loss_time" property="confirmLossTime" jdbcType="TIMESTAMP" />
         <result column="state" property="state" jdbcType="INTEGER" />
         <result column="loss_reason" property="lossReason" jdbcType="VARCHAR" />
         <result column="is_valid" property="isValid" jdbcType="INTEGER" />
@@ -94,10 +94,10 @@
                 #{cusManager,jdbcType=VARCHAR},
             </if>
             <if test="lastOrderTime != null" >
-                #{lastOrderTime,jdbcType=DATE},
+                #{lastOrderTime,jdbcType=TIMESTAMP},
             </if>
             <if test="confirmLossTime != null" >
-                #{confirmLossTime,jdbcType=DATE},
+                #{confirmLossTime,jdbcType=TIMESTAMP},
             </if>
             <if test="state != null" >
                 #{state,jdbcType=INTEGER},
@@ -130,10 +130,10 @@
                 cus_manager = #{cusManager,jdbcType=VARCHAR},
             </if>
             <if test="lastOrderTime != null" >
-                last_order_time = #{lastOrderTime,jdbcType=DATE},
+                last_order_time = #{lastOrderTime,jdbcType=TIMESTAMP},
             </if>
             <if test="confirmLossTime != null" >
-                confirm_loss_time = #{confirmLossTime,jdbcType=DATE},
+                confirm_loss_time = #{confirmLossTime,jdbcType=TIMESTAMP},
             </if>
             <if test="state != null" >
                 state = #{state,jdbcType=INTEGER},
