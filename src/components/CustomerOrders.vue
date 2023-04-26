@@ -64,7 +64,7 @@
             <scan v-else-if="scope.row.state===0" style="color:red;">未支付</scan>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操 作" width="150" header-align="center" align="center">
+        <el-table-column fixed="right" label="操 作" width="200" header-align="center" align="center">
           <template #default="scope">
             <el-button link size="small" type="primary" @click="CustomerOrderVisible=true,addCustomerInfo=JSON.parse(JSON.stringify(scope.row)),
                         queryOrderList(scope.row),PaymentStatus=scope.row.state">订单查看
@@ -73,6 +73,18 @@
                         updateCustomerId=scope.row.orderId,updateId=scope.row.orderId" v-show="updateVisible"
             >订单修改
             </el-button>
+            <el-popover :visible="visible" placement="top" :width="160" trigger="hover">
+              <p>确认要删除该订单吗？</p>
+              <div style="text-align: right">
+                <el-button size="small" text @click="visible = false">取消</el-button>
+                <el-button size="small" type="primary" @click="deleteInit(scope.row)"
+                >确认</el-button
+                >
+              </div>
+              <template #reference>
+                <el-button link size="small" type="danger" @click="visible = false" v-show="deleteVisible">删 除</el-button>
+              </template>
+            </el-popover>
           </template>
         </el-table-column>
         <template v-slot:empty>
@@ -349,6 +361,7 @@ export default {
     let addItemVisible = ref(false)//订单子项添加
     let updateItemVisible = ref(false)//订单子项修改
     let delItemVisible = ref(false)//订单子项删除
+    let deleteVisible = ref(false)//订单删除
     return {
       customerList,
       total,
@@ -377,10 +390,17 @@ export default {
       updateItemVisible,
       delItemVisible,
       selectVisible,
-      ruleForm
+      ruleForm,
+      deleteVisible
     }
   },
   methods: {
+    common(type,message){
+      ElMessage({
+        type:type,
+        message:message
+      })
+    },
     handleDownload(){
       let json_fields = []
       for (let i = 0; i < this.customerList.length; i++) {
@@ -427,17 +447,19 @@ export default {
       this.$api.CustomerServer.queryCustomerServeOrder("/customerServeOrder/lists", this.customerQuery).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          ElMessage({
-            type: "success",
-            message: "查询成功!"
-          })
+          // ElMessage({
+          //   type: "success",
+          //   message: "查询成功!"
+          // })
+          this.common("success","查询成功")
           this.customerList = res.result.data
           this.total = res.result.count
         } else {
-          ElMessage({
-            type: "error",
-            message: "查询失败，请重试!"
-          })
+          this.common("error","查询失败，请重试!")
+          // ElMessage({
+          //   type: "error",
+          //   message: "查询失败，请重试!"
+          // })
         }
       })
     },
@@ -448,39 +470,37 @@ export default {
       }else {
         this.$api.CustomerServer.getInfoByName("/customerServe/getInfoByName", {customer}).then(res => {
           if (res.code === 200) {
-            // console.log("yejian",res)
             this.customerOrder.cusId = res.result.id
-            // this.customerOrder.address=res.result.address
-            console.log(this.customerOrder)
+            // console.log(this.customerOrder)
             this.$api.CustomerInformation.addCustomerOrder("/customerServeOrder/addOrder", this.customerOrder).then(res => {
               // console.log(res)
               if (res.code === 200) {
-                ElMessage({type: "success", message: "添加成功"})
+                this.common("success","添加成功")
+                // ElMessage({type: "success", message: "添加成功"})
               } else {
-                ElMessage({type: "error", message: "添加失败，请稍后再试"})
+                this.common("error","添加失败，请稍后再试!")
+                // ElMessage({type: "error", message: "添加失败，请稍后再试"})
               }
               this.customerOrder = {}
               this.addOrderVisible = false
               this.handleCurrentChange(this.customerQuery.page)
             })
           } else {
-            ElMessage({
-              type: "info",
-              message: "暂无该用户数据，也可能该用户不存在!"
-            })
+            this.common("info","暂无该用户数据，也可能该用户不存在!")
+            // ElMessage({
+            //   type: "info",
+            //   message: "暂无该用户数据，也可能该用户不存在!"
+            // })
           }
         })
       }
     },
     //查询所有订单
     queryOrderList(msg) {
-      // console.log(msg)
-      // console.log(msg.orderId)
       this.orderDetails.orderId = msg.orderId
       this.orderDetailsQuery.orderId = msg.orderId
       this.updateId = msg.orderId
       this.$api.CustomerInformation.queryCustomerOrderByParams("/orderDetail/lists", this.orderDetailsQuery).then(res => {
-        // console.log("/customerOrder/orderDetail:---------------->",res)
         this.orderDetailsList = res.result.data
         this.orderTotal=res.result.count
       })
@@ -518,12 +538,14 @@ export default {
         this.$api.CustomerServer.updateOrderDetails("/orderDetail/updateOrderDetails", this.orderDetails).then(res => {
           // console.log(res)
           if (res.code === 200) {
-            ElMessage({type: "success", message: "更新成功"})
+            this.common("success", "更新成功")
+            // ElMessage({type: "success", message: "更新成功"})
             this.orderDetails = {}
             this.orderDetailsVisible = false
             this.commonMethod()
           } else {
-            ElMessage({type: "error", message: "更新失败，请重试"})
+            this.common("error", "更新失败，请重试!")
+            // ElMessage({type: "error", message: "更新失败，请重试"})
           }
         })
       } else {
@@ -533,16 +555,16 @@ export default {
           ElMessage({type: "info", message: "信息没有输入完全"})
         } else {
           this.orderDetails.sum = this.orderDetails.price * this.orderDetails.goodsNum
-          // console.log(this.orderDetails)
           this.$api.CustomerServer.addOrderDetails("/orderDetail/addOrderInfo", this.orderDetails).then(res => {
-            // console.log(res)
             this.orderDetails = {}
             this.orderDetailsVisible = false
             this.commonMethod()
             if (res.code === 200) {
-              ElMessage({type: "success", message: "添加子项成功"})
+              this.common("success","添加子项成功!")
+              // ElMessage({type: "success", message: "添加子项成功"})
             } else {
-              ElMessage({type: "error", message: "添加失败，请稍后再试"})
+              this.common("error","添加失败，请稍后再试!")
+              // ElMessage({type: "error", message: "添加失败，请稍后再试"})
             }
           })
         }
@@ -563,17 +585,20 @@ export default {
         this.$api.CustomerServer.deleteOrderDetailsInfo("/orderDetail/deleteOrderDetails", id).then(res => {
           // console.log(res)
           if (res.code === 200) {
-            ElMessage({type: "success", message: "删除成功"})
+            this.common("success","删除成功!")
+            // ElMessage({type: "success", message: "删除成功"})
             this.commonMethod()
           } else {
-            ElMessage({type: "error", message: "删除失败，请稍后重试!"})
+            this.common("error","删除失败，请稍后重试!")
+            // ElMessage({type: "error", message: "删除失败，请稍后重试!"})
           }
         })
       }).catch(() => {
-        ElMessage({
-          message: "取消操作",
-          type: "info"
-        })
+        this.common("info","取消操作")
+        // ElMessage({
+        //   message: "取消操作",
+        //   type: "info"
+        // })
       })
     },
     commonMethod() {
@@ -590,11 +615,13 @@ export default {
       this.$api.CustomerInformation.setStateIsPay("/customerOrder/setStateIsPay", {id}).then(res => {
         // console.log(res)
         if (res.code === 200) {
-          ElMessage({type: "success", message: "修改状态成功"})
+          this.common("success","修改状态成功!")
+          // ElMessage({type: "success", message: "修改状态成功"})
           this.CustomerOrderVisible = false
           this.queryCustomer()
         } else {
-          ElMessage({type: "error", message: "修改失败，请重试"})
+          this.common("error","修改失败，请重试!")
+          // ElMessage({type: "error", message: "修改失败，请重试"})
         }
       })
     },
@@ -606,14 +633,32 @@ export default {
         this.$api.CustomerInformation.updateOrderInfo("/customerOrder/updateInfo", this.updateCustomerInfo).then(res => {
           // console.log(res)
           if (res.code === 200) {
-            ElMessage({type: "success", message: "修改成功"})
+            this.common("success","修改成功!")
+            // ElMessage({type: "success", message: "修改成功"})
             this.updateCustomerVisible = false
             this.queryCustomer()
           } else {
-            ElMessage({type: "error", message: "修改失败，请重试"})
+            this.common("error","修改失败，请重试!")
+            // ElMessage({type: "error", message: "修改失败，请重试"})
           }
         })
       }
+    },
+  //  删除订单
+    deleteInit(msg){
+      let customerOrder = msg
+      customerOrder.id = customerOrder.orderId
+      customerOrder.isValid = 0
+      console.log("111111111111111111111111",customerOrder)
+      this.$api.CustomerInformation.updateOrderInfo("/customerOrder/updateInfo",customerOrder).then(res=>{
+        console.log(res)
+        if (res.code===200){
+          this.common("success","删除成功!")
+          this.queryCustomer()
+        }else {
+          this.common("error","删除失败，请重试!")
+        }
+      })
     }
   },
   mounted() {
@@ -636,6 +681,9 @@ export default {
     }
     if (JSON.stringify(this.list).includes("203006")){
       this.updateVisible=true
+    }
+    if (JSON.stringify(this.list).includes("203007")){
+      this.deleteVisible=true
     }
   }
 }

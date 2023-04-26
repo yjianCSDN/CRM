@@ -320,7 +320,6 @@ export default {
     },
     queryLossList(){
       this.$api.CustomerInformation.queryCustomerLossByParams("/customerLoss/list",this.customerLossQuery).then(res=>{
-        // console.log(res)
         this.customerLossList = res.result.data
         this.total = res.result.count
       })

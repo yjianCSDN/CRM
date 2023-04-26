@@ -3,7 +3,6 @@ import index from "@/components/Index";
 import HomePage from "@/components/HomePage";
 import SaleChance from "@/components/SaleChance";
 import Cookies from "js-cookie";
-import PersonCenter from "@/components/PersonCenter";
 import CusDevPlan from "@/components/CusDevPlan";
 import UserManagement from "@/components/UserManagement";
 import RoleManagement from "@/components/RoleManagement";
@@ -25,6 +24,8 @@ import DictionaryManagement from "@/components/DictionaryManagement";
 import welcome from "@/components/welcome";
 import AllAnnouncements from "@/components/AllAnnouncements";
 import Announcement from "@/components/Announcement";
+import CustomerOrderAnalysis from "@/components/CustomerOrderAnalysis";
+import MyReview from "@/components/MyReview";
 const routes = [
     {
         path:"/",
@@ -49,17 +50,7 @@ const routes = [
                     name:"初始页面"
                 },
             },
-            {
-                path:"/index/PersonCenter",
-                component:PersonCenter,
-                name:"PersonCenter",
-                meta: {
-                    title: '个人中心',
-                    path:"/index/PersonCenter",
-                    breadNumber: 2,
-                    name:"个人中心"
-                },
-            },
+
             {
                 path: "/index/SaleChance",
                 component: SaleChance,
@@ -204,6 +195,17 @@ const routes = [
                 },
             },
             {
+                path: "/index/MyReview",
+                component: MyReview,
+                name: MyReview,
+                meta: {
+                    title: '我的服务',
+                    path: "/index/MyReview",
+                    breadNumber: 2,
+                    name:"MyReview"
+                },
+            },
+            {
                 path: "/index/CustomerContribution",
                 component: CustomerContribution,
                 name: CustomerContribution,
@@ -245,6 +247,17 @@ const routes = [
                     path: "/index/CustomerChurn",
                     breadNumber: 2,
                     name:"客户流失"
+                },
+            },
+            {
+                path: "/index/CustomerOrderAnalysis",
+                component: CustomerOrderAnalysis,
+                name: CustomerOrderAnalysis,
+                meta: {
+                    title: '客户订单分析',
+                    path: "/index/CustomerOrderAnalysis",
+                    breadNumber: 2,
+                    name:"客户订单分析"
                 },
             },
             {

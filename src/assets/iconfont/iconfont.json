@@ -1,0 +1,219 @@
+{
+  "id": "4039767",
+  "name": "My",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "9945105",
+      "name": "审核",
+      "font_class": "shenhe",
+      "unicode": "e6a1",
+      "unicode_decimal": 59041
+    },
+    {
+      "icon_id": "2115112",
+      "name": "创建话题",
+      "font_class": "chuangjianhuati",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "3826357",
+      "name": "03-展示屏",
+      "font_class": "-zhanshiping",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "5388070",
+      "name": "个人信息_o",
+      "font_class": "gerenxinxi_o",
+      "unicode": "ebcc",
+      "unicode_decimal": 60364
+    },
+    {
+      "icon_id": "16429105",
+      "name": "后台管理-发布公告",
+      "font_class": "houtaiguanli-fabugonggao",
+      "unicode": "e6d8",
+      "unicode_decimal": 59096
+    },
+    {
+      "icon_id": "1296319",
+      "name": "用户反馈",
+      "font_class": "yonghufankui",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "1454750",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
+    },
+    {
+      "icon_id": "1722999",
+      "name": "营销",
+      "font_class": "yingxiao",
+      "unicode": "e7c0",
+      "unicode_decimal": 59328
+    },
+    {
+      "icon_id": "2125161",
+      "name": "创建服务",
+      "font_class": "chuangjianfuwu",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "3542161",
+      "name": "公告",
+      "font_class": "gonggao",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "3597675",
+      "name": "员工分配",
+      "font_class": "yuangongfenpei",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "6134651",
+      "name": "流失会员",
+      "font_class": "liushihuiyuan",
+      "unicode": "e6ca",
+      "unicode_decimal": 59082
+    },
+    {
+      "icon_id": "6627754",
+      "name": "字典管理",
+      "font_class": "zidianguanli",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "7769376",
+      "name": "客户信息",
+      "font_class": "kehuxinxi",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "7898737",
+      "name": "数据分析-宝贝分析",
+      "font_class": "shujufenxi-baobeifenxi",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "8570286",
+      "name": "归档",
+      "font_class": "guidang",
+      "unicode": "e6dd",
+      "unicode_decimal": 59101
+    },
+    {
+      "icon_id": "9501462",
+      "name": "客户服务分析",
+      "font_class": "kehufuwufenxi",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "9589362",
+      "name": "处理",
+      "font_class": "chuli",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "11661914",
+      "name": "用户管理",
+      "font_class": "yonghuguanli1",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
+      "icon_id": "13026756",
+      "name": "发布公告",
+      "font_class": "fabugonggao",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "14408229",
+      "name": "防流失预警",
+      "font_class": "fangliushiyujing",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    },
+    {
+      "icon_id": "17537307",
+      "name": "业务机会",
+      "font_class": "yewujihui",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "18164076",
+      "name": "统计分析,统计报表,研判",
+      "font_class": "board-full",
+      "unicode": "e855",
+      "unicode_decimal": 59477
+    },
+    {
+      "icon_id": "18442751",
+      "name": "系统管理",
+      "font_class": "xitongguanli",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "18564906",
+      "name": "锤子 开发者",
+      "font_class": "chuizi",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "18681365",
+      "name": "1-基础服务管理",
+      "font_class": "1-jichufuwuguanli",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "20669043",
+      "name": "菜单栏-客户-客户联系人",
+      "font_class": "caidanlan-kehu-kehulianxiren",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "26438710",
+      "name": "员工构成",
+      "font_class": "yuangonggoucheng",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "26506645",
+      "name": "客户订单",
+      "font_class": "kehudingdan",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "26841824",
+      "name": "分析",
+      "font_class": "fenxi",
+      "unicode": "ea3f",
+      "unicode_decimal": 59967
+    }
+  ]
+}

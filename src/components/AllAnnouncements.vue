@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column prop="createDate" label="发布日期" :formatter="formData" width="200" header-align="center" align="center"/>
       <el-table-column prop="updateDate" label="修改日期" :formatter="formData" width="200" header-align="center" align="center"/>
-      <el-table-column fixed="right" label="操作" width="150" header-align="center" align="center">
+      <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="updateInit(scope.row)" v-show="updateVisible"
           >修 改
@@ -273,7 +273,7 @@ export default {
 }
 .search{
   position: relative;
-  width: 90%;
+  width: 94%;
   height: 50px;
   display: block;
   left: 3%;
@@ -282,7 +282,7 @@ export default {
   header-align: center;
   left: 3%;
   position: relative;
-  width: 90%;
+  width: 94%;
 }
 .page{
   position: relative;

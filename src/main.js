@@ -8,4 +8,5 @@ import store from "@/store";
 import Cookies from 'js-cookie'
 import * as echarts from 'echarts'
 import JsonExcel from 'vue-json-excel'
-createApp(App).use(JsonExcel).use(echarts).use(store).use(Cookies).use(router).use(api).use(ElementUI).use(ElementUI).mount('#app')
+import icon from './assets/iconfont/iconfont.css'
+createApp(App).use(icon).use(JsonExcel).use(echarts).use(store).use(Cookies).use(router).use(api).use(ElementUI).use(ElementUI).mount('#app')

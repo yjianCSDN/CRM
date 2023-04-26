@@ -128,7 +128,7 @@ export default {
 .page{
   position: absolute;
   top: 85%;
-  width: 100%;
+  width: 60%;
   color: #ffffff;
 }
 .search{

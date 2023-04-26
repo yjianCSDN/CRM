@@ -63,10 +63,12 @@ export default {
           this.x.push(res.result.dataFirst[i])
         }
         x = this.x
+        console.log("x",x)
         for (let i = 0; i < res.result.dataSecond.length; i++) {
           this.y.push(res.result.dataSecond[i])
         }
         y = this.y
+        console.log("y",y)
 
         myChart.setOption({
           xAxis: {

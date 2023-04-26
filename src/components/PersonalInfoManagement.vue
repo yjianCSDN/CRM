@@ -3,14 +3,14 @@
     <div>
       <el-avatar
           :src="img"
-          style="margin: 5% 0 0 40%;width: 150px;height: 150px"
+          class="avatar"
       />
-
       <el-form
           label-position="left"
           label-width="100px"
           :model="userinfo"
-          style="max-width: 460px;margin: 0 0 0 30%;position: relative"
+          class="form"
+          style=""
       >
 
         <el-form-item label="用户名">
@@ -247,5 +247,15 @@ export default {
 </script>
 
 <style scoped>
-
+.avatar{
+  margin: 3% 0 0 40%;
+  width: 150px;
+  height: 150px;
+}
+.form{
+  max-width: 460px;
+  margin: 0 0 0 30%;
+  position: relative;
+  /*background-color: #8c6fd0;*/
+}
 </style>

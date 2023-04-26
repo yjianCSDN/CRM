@@ -14,7 +14,7 @@
         style="position: relative;width: 12%;margin: 1% 0 0 10px"
     />
     <el-select v-model="noticeQuery.type" class="m-2" placeholder="类 型" style="margin: 1% 0 0 10px">
-      <el-option label="" value=""/>
+      <el-option label="(全部)" value=""/>
       <el-option label="平台公告" value="平台公告"/>
       <el-option label="新闻动态" value="新闻动态"/>
       <el-option label="营销机会" value="营销机会"/>
@@ -59,8 +59,8 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="createDate" label="发布日期" width="200" header-align="center" align="center"/>
-      <el-table-column prop="updateDate" label="修改日期" width="200" header-align="center" align="center"/>
+      <el-table-column prop="createDate" :formatter="formData" label="发布日期" width="200" header-align="center" align="center"/>
+      <el-table-column prop="updateDate" :formatter="formData" label="修改日期" width="200" header-align="center" align="center"/>
       <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="updateInit(scope.row)" v-show="updateVisible"
@@ -273,6 +273,11 @@ export default {
       this.noticeInfo={}
       this.addNoticeVisible=true
       this.ii=true
+    },
+    formData(row, column, cellValue){
+      console.log("cellValue",cellValue)
+      var s =	new Date(cellValue).toLocaleString();
+      return s
     },
   },
   mounted() {

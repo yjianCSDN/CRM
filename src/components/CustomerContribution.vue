@@ -66,8 +66,6 @@ export default {
     let customerList = reactive([])
     return{
       customerQuery,total,customerList,
-      x: [],
-      y: [],
     }
   },
   methods:{
@@ -79,6 +77,8 @@ export default {
         this.total = res.result.count
         if (res.code===200){
           ElMessage({type:"success",message:"查找成功"})
+          setTimeout(this.initRound,50)
+          setTimeout(this.receiveParams,50)
         }else {ElMessage({type:"error",message:"查找失败，请重试!"})}
       })
     },
@@ -147,8 +147,6 @@ export default {
         item.value=item.total
         data.push(item)
       })
-      // console.log("x",x)
-      // console.log("y",y)
       let myChartRound = echarts.init(this.$refs.contributionRound)
       let option = {
         tooltip: {
@@ -183,14 +181,6 @@ export default {
               }
             }
           },
-          // {
-          //   name: "面积模式",
-          //   type: 'pie',
-          //   radius: [30, 110],
-          //   center: ['75%', '50%'],
-          //   roseType: 'area',
-          //   data: []
-          // }
         ]
       }
       myChartRound.setOption(option)
@@ -208,10 +198,6 @@ export default {
     this.$api.CustomerServer.queryCustomerContributionByParams("/customer/queryCustomerContributionByParams",this.customerQuery).then(res=>{
       this.customerList=res.result.data
       this.total=res.result.count
-      this.customerList.forEach(item=>{
-        this.x.push(item.name)
-        this.y.push(item.total)
-      })
     })
     setTimeout(this.initRound,50)
     setTimeout(this.receiveParams,50)

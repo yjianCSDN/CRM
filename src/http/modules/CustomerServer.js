@@ -34,3 +34,6 @@ export function updateOrderDetails(url,params) {
 export function deleteOrderDetailsInfo(url,params) {
     return post(url,params)
 }
+export function countOrderByCustomer(url,params) {
+    return get(url,params)
+}

@@ -289,8 +289,7 @@
 
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage, ElMessageBox} from "element-plus";
-// eslint-disable-next-line no-unused-vars
-import { readExcelToJson, saveJsonToExcel } from '../tools/utils.js'
+import { saveJsonToExcel } from '../tools/utils.js'
 export default {
   name: "CustomerInformationManagement",
   components:{
@@ -556,11 +555,6 @@ export default {
 </script>
 
 <style scoped>
-.icon {
-  position: absolute;
-  color: red;
-
-}
 .CustomerInformationManagement{
   height: 100%;
   width: 100%;

@@ -13,6 +13,11 @@
         <el-option label="投诉"   value="7" />
         <el-option label="建议"   value="8" />
       </el-select>
+      <el-select  class="m-2" placeholder="审核状态" v-model="customerServeQuery.auditStatus" style="margin: 1% 0 0 10px">
+        <el-option label="无"      value="" />
+        <el-option label="已通过"   value="1"/>
+        <el-option label="未通过"   value="0"/>
+      </el-select>
       &nbsp;&nbsp;
       <el-button type="primary"  style="margin: 1% 0 0 0" @click="queryServiceListByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
       <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
@@ -32,9 +37,15 @@
         <el-table-column prop="assigner" label="分配人" width="135" header-align="center"  align="center"/>
         <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center"  align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center">
+          <template #default="scope">
+            <span v-if="scope.row.auditStatus===0" style="color: red">未审核</span>
+            <span v-else-if="scope.row.auditStatus===1" style="color: green">已审核</span>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" width="150" header-align="center" align="center">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="ArchivingVisible=true,updateServeInfo=scope.row,distribution(scope.row)"
+            <el-button link type="primary" size="small" @click="ArchivingVisible=true,updateServeInfo=JSON.parse(JSON.stringify(scope.row)),distribution(scope.row)"
             >查看详细信息</el-button
             >
           </template>
@@ -72,7 +83,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="服务类型">
-              <el-select  class="m-2" placeholder="请选择" disabled v-model="updateServeInfo.serveType" style="width: 80%">
+              <el-select  class="m-2" placeholder="(空)" disabled v-model="updateServeInfo.serveType" style="width: 80%">
                 <el-option label="无"     value="" />
                 <el-option label="咨询"   value="6" />
                 <el-option label="建议"   value="7" />
@@ -82,22 +93,22 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="客户" style="margin: 0 0 0 -50px">
-              <el-input v-model="updateServeInfo.customer" disabled placeholder="空" style="width: 70%"/>
+              <el-input v-model="updateServeInfo.customer" disabled placeholder="(空)" style="width: 70%"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="服务内容">
           <el-input v-model="updateServeInfo.serviceRequest" disabled style="width: 70%;" type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="空"/>
+                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="(空)"/>
         </el-form-item>
         <el-form-item label="服务概要">
           <el-input v-model="updateServeInfo.overview" disabled style="width: 70%;" type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }" placeholder="空"/>
+                    :autosize="{ minRows: 2, maxRows: 4 }" placeholder="(空)"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="指派人">
-              <el-select  class="m-2" v-model="updateServeInfo.label" disabled placeholder="请选择"  style="width: 70%;">
+              <el-select  class="m-2" v-model="updateServeInfo.label" disabled placeholder="(空)"  style="width: 70%;">
               </el-select>
             </el-form-item>
           </el-col>
@@ -113,22 +124,26 @@
         </el-row>
         <el-form-item label="服务处理">
           <el-input v-model="updateServeInfo.serviceProce" disabled  style="width: 70%;" type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="空"/>
+                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="(空)"/>
         </el-form-item>
 
         <el-form-item label="反馈结果">
           <el-input v-model="updateServeInfo.serviceProceResult"  disabled style="width: 70%;" type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="请输入用户反馈结果"/>
+                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="(空)"/>
         </el-form-item>
 
         <el-form-item label="满意度">
-          <el-select  class="m-2" placeholder="请选择满意度" disabled v-model="updateServeInfo.myd" style="width: 80%">
+          <el-select  class="m-2" placeholder="(空)" disabled v-model="updateServeInfo.myd" style="width: 80%">
             <el-option label="☆"    value="☆" />
             <el-option label="☆☆"    value="☆☆" />
             <el-option label="☆☆☆"    value="☆☆☆" />
             <el-option label="☆☆☆☆"    value="☆☆☆☆" />
             <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="审核结果">
+          <span v-if="updateServeInfo.auditStatus===1" style="color: greenyellow">已通过</span>
+          <span v-else-if="updateServeInfo.auditStatus===0" style="color: red">未通过</span>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -155,12 +170,12 @@ import {saveJsonToExcel} from "@/tools/utils";
 export default {
   name: "ServiceArchiving",
   data(){
-    let customerServeQuery = reactive({page:1,limit:10,customer:"",serveType:"",state:"fw_005",assigner:""})
+    let customerServeQuery = reactive({page:1,limit:10,customer:"",serveType:"",state:"fw_005",assigner:"",auditStatus:""})
     let serveList = reactive([])
     let total = ref("")
     let ArchivingVisible = ref(false)
     let updateServeInfo = reactive({serveType:"",customer:"",overview:"",assignTime:"",
-      serviceRequest:"",assigner:"",label:"",serviceProce:"",serviceProcePeople:"",serviceProceResult:"",myd:""})
+      serviceRequest:"",assigner:"",label:"",serviceProce:"",serviceProcePeople:"",serviceProceResult:"",myd:"",auditStatus:""})
     let customerManagers = reactive({})
     return{
       customerServeQuery,serveList,total,ArchivingVisible,updateServeInfo,customerManagers
@@ -179,7 +194,8 @@ export default {
           "创建时间":this.serveList[i].createDate,
           "分配人":this.serveList[i].assigner,
           "分配时间":this.serveList[i].assignTime,
-          "更新时间":this.serveList[i].updateDate
+          "更新时间":this.serveList[i].updateDate,
+          "管理员审核结果":this.serveList[i].auditStatus===1?'审核通过':'审核未通过'
         })
       }
       // console.log("json_fields",json_fields)
