@@ -39,7 +39,7 @@
         FROM
         `t_customer` o
         RIGHT JOIN `t_customer_order` t ON o.id = t.cus_id
-        where 1 = 1
+        where o.is_valid=1 AND t.is_valid = 1
             <if test="null != customerName and customerName != ''">
                 and  NAME like concat('%',#{customerName},'%')
             </if>

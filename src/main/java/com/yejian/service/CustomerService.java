@@ -22,4 +22,6 @@ public interface CustomerService {
     Map<String, Object> countCustomerMake02();
 
     List<String> getCusPhones();
+
+    Map<String, Object> countOrderByCustomer(String userName);
 }

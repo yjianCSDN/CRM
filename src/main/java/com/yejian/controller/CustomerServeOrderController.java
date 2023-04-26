@@ -26,9 +26,6 @@ public class CustomerServeOrderController {
      */
     @GetMapping("/lists")
     public ResultInfo getList(CustomerQuery customerQuery){
-//        System.out.println(customerQuery.getCustomerNo());
-//        System.out.println(customerQuery.getCustomerName());
-//        System.out.println(customerQuery.getLevel());
         Map<String, Object> map = customerServeOrderService.selectParams(customerQuery);
         if (null==map){
             return ResultInfo.error("查找出错");

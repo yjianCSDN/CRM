@@ -84,4 +84,16 @@ class CrmApplicationTests {
     void f(){
         System.out.println(customerServeService.queryCustomerServeByParams(new CustomerServeQuery()));
     }
+    @Test
+    void g(){
+        Map<String, Object> map = customerService.countOrderByCustomer("");
+        System.out.println(map);
+    }
+    @Test
+    void dd(){
+        CustomerServeQuery query = new CustomerServeQuery();
+        query.setAuditStatus(0);
+        query.setCreatePeople("admin");
+        System.out.println(customerServeService.queryCustomerServeByParams(query));
+    }
 }

@@ -35,6 +35,7 @@ public class CustomerServeController {
         System.out.println("flag"+flag);
         System.out.println("getCustomer"+customerServeQuery.getCustomer());
         System.out.println("getServeType"+customerServeQuery.getServeType());
+        System.out.println("hasdhasdnaskjfhwqoinfdasjvgasuojrfasndaisopdopasjndblajshfpq        "+customerServeQuery.getCreatePeople());
         int id = LoginUserUtil.releaseUserIdFromCookie(request);
         System.out.println("id:    ----->"+id);
         // 判断是否执行服务处理，如果是则查询分配给当前登录用户的服务记录

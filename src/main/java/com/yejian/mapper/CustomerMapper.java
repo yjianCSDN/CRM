@@ -30,5 +30,9 @@ public interface CustomerMapper extends BaseMapper<Customer,Integer> {
     // 查询客户构成
     List<Map<String,Object>> countCustomerMake();
 
+    List<Map<String,Object>> countOrderByCustomer(String userName);
+
     List<String> getCusPhones();
+
+
 }

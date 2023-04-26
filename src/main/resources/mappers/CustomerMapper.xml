@@ -472,6 +472,22 @@
         GROUP BY
             `level`
     </select>
+    <select id="countOrderByCustomer" resultType="map" parameterType="string">
+        SELECT
+            c.`name`,count(1) total
+        FROM
+            t_customer c LEFT JOIN t_customer_order o ON c.id=o.cus_id
+        <where>
+            c.is_valid = 1 AND o.is_valid = 1
+            <if test="null!=userName and userName!=''">
+                and c.name like concat('%',#{userName},'%')
+            </if>
+        </where>
+        GROUP BY
+            c.`name`
+    </select>
+
+
     <select id="getCusPhones" resultType="java.lang.String">
         select
             phone

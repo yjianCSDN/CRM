@@ -20,12 +20,13 @@
         <result column="is_valid" property="isValid" jdbcType="INTEGER" />
         <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
         <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="AuditStatus" property="auditStatus" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List" >
         id, serve_type, overview, customer, state, service_request, create_people, assigner,
     assign_time, service_proce, service_proce_people, service_proce_time, service_proce_result,
-    myd, is_valid, update_date, create_date
+    myd, is_valid, update_date, create_date, AuditStatus
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -89,6 +90,9 @@
             <if test="createDate != null" >
                 create_date,
             </if>
+            <if test="auditStatus != null" >
+                AuditStatus,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="id != null" >
@@ -141,6 +145,9 @@
             </if>
             <if test="createDate != null" >
                 #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="auditStatus != null" >
+                #{auditStatus,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -196,6 +203,9 @@
             <if test="createDate != null" >
                 create_date = #{createDate,jdbcType=TIMESTAMP},
             </if>
+            <if test="auditStatus != null" >
+                AuditStatus = #{auditStatus,jdbcType=INTEGER},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -222,6 +232,12 @@
             </if>
             <if test="null != assigner">
                 and assigner = #{assigner}
+            </if>
+            <if test="null != auditStatus">
+                and AuditStatus = #{auditStatus}
+            </if>
+            <if test="null != createPeople">
+                and create_people = #{createPeople}
             </if>
         </where>
     </select>

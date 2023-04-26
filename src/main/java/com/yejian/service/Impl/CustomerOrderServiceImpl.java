@@ -95,6 +95,9 @@ public class CustomerOrderServiceImpl extends BaseService<CustomerOrder,Integer>
         order.setOrderNo(customerOrder.getOrderNo());
         order.setAddress(customerOrder.getAddress());
         order.setOrderDate(customerOrder.getOrderDate());
+        if (customerOrder.getIsValid()==0){
+            order.setIsValid(0);
+        }
         Integer integer = customerOrderMapper.updateByPrimaryKeySelective(order);
         return integer;
     }

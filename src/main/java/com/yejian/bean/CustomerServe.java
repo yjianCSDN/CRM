@@ -50,6 +50,8 @@ public class CustomerServe {
 
     private String dicValue; // 服务类型
 
+    private Integer auditStatus;//审核状态
+
     public String getDicValue() {
         return dicValue;
     }

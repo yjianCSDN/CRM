@@ -358,4 +358,31 @@ public class CustomerServiceImpl extends BaseService<Customer,Integer> implement
         return phones;
     }
 
+    @Override
+    public Map<String, Object> countOrderByCustomer(String userName) {
+        Map<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> dataList = customerMapper.countOrderByCustomer(userName);
+        // 饼状图数据   数组（数组中是字符串）
+        List<String> data1 = new ArrayList<>();
+        // 饼状图的数据  数组（数组中是对象）
+        List<Map<String, Object>> data2 = new ArrayList<>();
+
+        // 判断数据列表 循环设置数据
+        if (dataList != null && dataList.size() > 0) {
+            // 遍历集合
+            dataList.forEach(m -> {
+                // 饼状图数据   数组（数组中是字符串）
+                data1.add(m.get("name").toString());
+                // 饼状图的数据  数组（数组中是对象）
+                Map<String, Object> dataMap = new HashMap<>();
+                dataMap.put("name", m.get("name"));
+                dataMap.put("value", m.get("total"));
+                data2.add(dataMap);
+            });
+        }
+        map.put("data1",data1);
+        map.put("data2",data2);
+        return map;
+    }
+
 }

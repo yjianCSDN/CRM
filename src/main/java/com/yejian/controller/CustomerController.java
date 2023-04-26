@@ -118,7 +118,7 @@ public class CustomerController {
     }
 
     /**
-     * 查询客户构成 （折线图）
+     * 查询客户构成 （条形图）
      *
      * @param
      * @return com.yejian.utils.ResultInfo
@@ -132,6 +132,23 @@ public class CustomerController {
             return ResultInfo.ok(map,"查询成功");
         }
     }
+
+    /**
+     * 查询客户订单数量
+     *
+     * @param
+     * @return com.yejian.utils.ResultInfo
+     */
+    @GetMapping("countOrderByCustomer")
+    public ResultInfo countOrderByCustomer(String userName){
+        Map<String, Object> map = customerService.countOrderByCustomer(userName);
+        if (null==map){
+            return ResultInfo.error("查询客户订单 （饼状图）失败!");
+        }else{
+            return ResultInfo.ok(map,"查询成功");
+        }
+    }
+
 
     /**
      * 查询客户构成 （饼状图）

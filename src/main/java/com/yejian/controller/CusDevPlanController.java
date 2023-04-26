@@ -8,6 +8,7 @@ import com.yejian.utils.ResultInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -75,11 +76,11 @@ public class CusDevPlanController {
      */
     @PostMapping("update")
     public ResultInfo updateCusDevPlan(@RequestBody CusDevPlan updateCusDevPlan) {
-        System.out.println(updateCusDevPlan);
-        System.out.println(updateCusDevPlan.getPlanDate());
-        System.out.println(updateCusDevPlan.getPlanItem());
-        System.out.println(updateCusDevPlan.getExeAffect());
-        System.out.println(updateCusDevPlan.getSaleChanceId());
+//        System.out.println(updateCusDevPlan);
+//        System.out.println(updateCusDevPlan.getPlanDate());
+//        System.out.println(updateCusDevPlan.getPlanItem());
+//        System.out.println(updateCusDevPlan.getExeAffect());
+//        System.out.println(updateCusDevPlan.getSaleChanceId());
         cusDevPlanService.updateCusDevPlan(updateCusDevPlan);
         return ResultInfo.ok("计划项更新成功！");
     }
@@ -94,5 +95,14 @@ public class CusDevPlanController {
         cusDevPlanService.deleteCusDevPlan(id);
         System.out.println(id);
         return ResultInfo.ok("计划项更新成功！");
+    }
+
+    /**
+     * 查看我的计划项
+     * @return
+     */
+    @GetMapping("myItem")
+    public ResultInfo getMyItems(HttpServletRequest request){
+        return null;
     }
 }

@@ -2,9 +2,11 @@ package com.yejian.bean.query;
 
 
 import com.yejian.utils.BaseQuery;
+import lombok.Data;
 
 /**
  */
+@Data
 public class CustomerServeQuery extends BaseQuery {
 
     private String customer; // 客户名称
@@ -12,6 +14,9 @@ public class CustomerServeQuery extends BaseQuery {
     private String state; // 服务状态  服务创建=fw_001  服务分配=fw_002  服务处理=fw_003  服务反馈=fw_004  服务归档=fw_005
 
     private Integer assigner; // 分配人
+    private String createPeople;   //创建人
+
+    private Integer auditStatus;
 
     public Integer getAssigner() {
         return assigner;
