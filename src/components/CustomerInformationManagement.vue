@@ -27,10 +27,10 @@
     </div>
     <div>
       <el-table :data="customerList"  class="tableMenu"
-                max-height="450"  :default-sort="{ prop: 'createDate', order: 'descending' }"
+                max-height="510"  :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="name" label="客户名称" width="170" header-align="center"  align="center"/>
         <el-table-column prop="fr" label="法人" width="100" header-align="center"  align="center"/>
         <el-table-column prop="khno" label="客户编号" width="200" header-align="center"  align="center"/>
@@ -50,7 +50,7 @@
         <el-table-column prop="khzh" label="开户账号" width="200" header-align="center"  align="center"/>
         <el-table-column prop="gsdjh" label="国税" width="150" header-align="center"  align="center"/>
         <el-table-column prop="dsdjh" label="地税" width="150" header-align="center"  align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="200" header-align="center"  align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
         <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
           <template #default="scope">
@@ -104,7 +104,7 @@
         <el-form-item label="客户经理">
           <el-input v-model="addCustomerInfo.cusManager" placeholder="请输入客户经理"/>
         </el-form-item>
-        <el-form-item label="客户级别">
+        <el-form-item label="客户级别" prop="level">
           <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.level" style="width: 195px">
             <el-option label="战略合作伙伴"    value="战略合作伙伴" />
             <el-option label="大 客 户"    value="大客户" />
@@ -142,7 +142,7 @@
           <el-input v-model="addCustomerInfo.fax" placeholder="请输入传真"/>
         </el-form-item>
         <el-form-item label="营业执照">
-          <el-input v-model="addCustomerInfo.yyzzzch" placeholder="请输入营业执照"/>
+          <el-input v-model="addCustomerInfo.yyzzzch" placeholder="请输入营业执照编号"/>
         </el-form-item>
         <el-form-item label="网站">
           <el-input v-model="addCustomerInfo.webSite" placeholder="请输入网站"/>
@@ -289,6 +289,7 @@
 
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage, ElMessageBox} from "element-plus";
+// eslint-disable-next-line no-unused-vars
 import { saveJsonToExcel } from '../tools/utils.js'
 export default {
   name: "CustomerInformationManagement",
@@ -322,40 +323,49 @@ export default {
       vv,CustomerOrderVisible,customerOrderLists,customerOrderQuery,OrderDetailsVisible,oldPhone,
       orderDetailsList,orderDetailsQuery,goodList,list,selectVisible,addVisible,updateVisible,delVisible,
       formRules:{name:[{required:true,message:"请输入客户名称",trigger:'blur'}],
-                phone:[{required:true,message:"请输入联系电话",trigger:'blur'}]},
+                phone:[{required:true,message:"请输入联系电话",trigger:'blur'}],
+                level:[{required:true,message:"请选择用户级别",trigger:'blur'}]},
     }
   },
   methods:{
     //导出excel表格
     handleDownload(){
-      let json_fields = []
-      for (let i = 0; i < this.customerList.length; i++) {
-        json_fields.push({
-          "编号":this.customerList[i].id,
-          "客户名称":this.customerList[i].name,
-          "法人":this.customerList[i].fr,
-          "客户编号":this.customerList[i].khno,
-          "地区":this.customerList[i].area,
-          "客户经理":this.customerList[i].cusManager,
-          "满意度":this.customerList[i].myd,
-          "客户级别":this.customerList[i].level,
-          "信用度":this.customerList[i].xyd,
-          "详细地址":this.customerList[i].address,
-          "邮编":this.customerList[i].postCode,
-          "联系电话":this.customerList[i].phone,
-          "网站":this.customerList[i].webSite,
-          "传真":this.customerList[i].fax,
-          "注册资金":this.customerList[i].zczj,
-          "营业执照注册号":this.customerList[i].yyzzzch,
-          "开户行":this.customerList[i].khyh,
-          "开户账号":this.customerList[i].khzh,
-          "国税":this.customerList[i].gsdjh,
-          "地税":this.customerList[i].dsdjh,
-          "创建时间":this.customerList[i].createDate,
-          "更新时间":this.customerList[i].updateDate,
-        })
-      }
-      saveJsonToExcel(json_fields, '客户信息.xlsx')
+      let customerList = []
+      let customerQuery = reactive({page:1,limit:1000,customerName:this.customerQuery.customerName,customerNo:this.customerQuery.customerNo,level:this.customerQuery.level,time:this.customerQuery.time,type:this.customerQuery.type})
+      this.$api.CustomerInformation.queryCustomerByParams("/customer/lists",customerQuery).then(res=>{
+        customerList = res.result.data
+        // console.log("customerList:",customerList)
+        let json_fields = []
+        for (let i = 0; i < customerList.length; i++) {
+          json_fields.push({
+            "编号":customerList[i].id,
+            "客户名称":customerList[i].name,
+            "法人":customerList[i].fr,
+            "客户编号":customerList[i].khno,
+            "地区":customerList[i].area,
+            "客户经理":customerList[i].cusManager,
+            "满意度":customerList[i].myd,
+            "客户级别":customerList[i].level,
+            "信用度":customerList[i].xyd,
+            "详细地址":customerList[i].address,
+            "邮编":customerList[i].postCode,
+            "联系电话":customerList[i].phone,
+            "网站":customerList[i].webSite,
+            "传真":customerList[i].fax,
+            "注册资金":customerList[i].zczj,
+            "营业执照注册号":customerList[i].yyzzzch,
+            "开户行":customerList[i].khyh,
+            "开户账号":customerList[i].khzh,
+            "国税":customerList[i].gsdjh,
+            "地税":customerList[i].dsdjh,
+            "创建时间":customerList[i].createDate,
+            "更新时间":customerList[i].updateDate,
+          })
+          // console.log(customerList[i])
+        }
+        saveJsonToExcel(json_fields, '客户信息.xlsx')
+      })
+
     },
     selectCustomer(){
       console.log(this.customerQuery)
@@ -399,7 +409,7 @@ export default {
     },
     addInfo(){
       let result = true
-      if (this.addCustomerInfo.name===undefined||this.addCustomerInfo.phone===undefined){
+      if (this.addCustomerInfo.name===undefined||this.addCustomerInfo.phone===undefined||this.addCustomerInfo.level===undefined){
         ElMessage({type:"warning",message:"必填项未填写"})
       }else if (!(/^1[34578]\d{9}$/.test(this.addCustomerInfo.phone))){
         ElMessage({type:"warning",message:"联系电话格式错误"})
@@ -571,7 +581,7 @@ export default {
 }
 .page{
   position: absolute;
-  top: 87%;
+  top: 82%;
   width: 60%;
   color: #ffffff;
 }

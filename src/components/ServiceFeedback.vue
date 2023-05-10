@@ -23,12 +23,12 @@
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center" align="center"/>
         <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center" align="center"/>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center" align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center" align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="210" header-align="center" align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center" align="center"/>
         <el-table-column prop="label" label="分配人" width="135" header-align="center" align="center"/>
         <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
@@ -199,6 +199,7 @@ export default {
         } else {
           ElMessage({type: "error", message: "查找失败，请重试"})
         }
+        setTimeout(this.distribution, 50)
       })
     },
     //页面初始化（查找数据）
@@ -274,7 +275,7 @@ export default {
 }
 .page{
   position: absolute;
-  margin: 25% 0 0 1%;
+  margin: 31.5% 0 0 1%;
   width: 60%;
   color: #ffffff;
 }

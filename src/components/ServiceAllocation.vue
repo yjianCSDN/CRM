@@ -23,12 +23,12 @@
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center"  align="center"/>
         <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center"  align="center"/>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center"  align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center"  align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="210" header-align="center"  align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center"  align="center"/>
 <!--        <el-table-column prop="assigner" label="分配人" width="135" header-align="center"  align="center"/>-->
 <!--        <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center"  align="center"/>-->
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
@@ -200,12 +200,16 @@ export default {
         // console.log(res)
         if (res.code===200){
           ElMessage({type:"success",message:"指派成功!"})
-        }else {ElMessage({type:"error",message:"指派失败，请稍后重试"})}
+          this.paramsInitialization()
+          setTimeout(this.distribution,50)
+        }else {ElMessage({type:"error",message:"指派失败，请稍后重试"})
+          this.paramsInitialization()
+          setTimeout(this.distribution,50)
+        }
       })
       this.updateServeVisible=false
       this.updateServeInfo={}
-      this.paramsInitialization()
-      setTimeout(this.distribution,50)
+
     }
   },
   mounted() {
@@ -239,7 +243,7 @@ export default {
 }
 .page{
   position: absolute;
-  margin: 29% 0 0 1%;
+  margin: 27% 0 0 1%;
   width: 60%;
   color: #ffffff;
 }

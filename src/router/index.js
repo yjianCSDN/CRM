@@ -44,10 +44,10 @@ const routes = [
                 component:welcome,
                 name:"welcome",
                 meta: {
-                    title: '个人中心',
+                    title: '首页',
                     path:"/index/welcome",
                     breadNumber: 0,
-                    name:"初始页面"
+                    name:"首页"
                 },
             },
 

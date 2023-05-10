@@ -58,6 +58,7 @@ export default {
         ElMessage({type: "info", message: "没有输入验证码"})
       } else if (this.code !== this.identifyCode) {
         ElMessage({type: "error", message: "验证码错误,请重新输入"})
+        this.refreshCode()
       } else if (this.user.userName===""||this.user.userPwd===""){
         ElMessage({type:"info",message:"用户信息输入缺失"})
       }else {
@@ -66,14 +67,20 @@ export default {
           if (res.code === 200) {
             if (this.RememberMe === true) {
               Cookies.set("userName", res.result.userName, {expires: 7})
-              Cookies.set("trueName", res.result.trueName, {expires: 7})
+              // sessionStorage.setItem("userName",res.result.userName)
+              // Cookies.set("trueName", res.result.trueName, {expires: 7})
+              // sessionStorage.setItem("trueName",res.result.trueName)
+              // sessionStorage.setItem("userIdStr",res.result.userIdStr)
               Cookies.set("userIdStr", res.result.userIdStr, {expires: 7})
               sessionStorage.setItem("img",res.result.img)
               Cookies.set("img", res.result.img, {expires: 7})
             } else {
               Cookies.set("userName", res.result.userName)
-              Cookies.set("trueName", res.result.trueName)
+              // Cookies.set("trueName", res.result.trueName)
               Cookies.set("userIdStr", res.result.userIdStr)
+              // sessionStorage.setItem("userName",res.result.userName)
+              // sessionStorage.setItem("trueName",res.result.trueName)
+              // sessionStorage.setItem("userIdStr",res.result.userIdStr)
               Cookies.set("img",res.result.img)
             }
             ElNotification({
@@ -81,7 +88,7 @@ export default {
               message: '登录成功 欢迎回来',
               type: 'success',
             });
-            this.$router.push("/index")
+            this.$router.push("/index/welcome")
           } else {
             ElNotification({
               title: "error",

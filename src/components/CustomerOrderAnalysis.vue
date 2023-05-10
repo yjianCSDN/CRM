@@ -10,8 +10,8 @@
     &nbsp;&nbsp;
     <el-button type="primary"  style="margin: 2.5% 0 0 0" @click="search">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
   </div>
-  <div style="width: 430px;height: 250px;margin: 0 0 0 61%;display: block" ref="contribution"/>
-  <div style="width: 460px;height: 290px;margin: -2% 0 0 61%;position: relative" ref="contributionRound"/>
+  <div style="width: 500px;height: 250px;margin: 0 0 0 61%;display: block" ref="contribution"/>
+  <div style="width: 500px;height: 290px;margin: -2% 0 0 61%;position: relative" ref="contributionRound"/>
   <el-table :data="customerOrderLists"  class="tableMenu"
             max-height="550"  :default-sort="{ prop: 'createDate', order: 'descending' }"
             :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"

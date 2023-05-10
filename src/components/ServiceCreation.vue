@@ -24,7 +24,7 @@
                   :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                   row-style="rowStyle"
         >
-          <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+          <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
           <el-table-column prop="customer" label="客户名" width="150" header-align="center"  align="center"/>
           <el-table-column prop="dicValue" label="服务类型" width="200" header-align="center"  align="center"/>
           <el-table-column prop="overview" label="概要信息" width="200" header-align="center"  align="center"/>
@@ -117,7 +117,7 @@ export default {
     let serveList = reactive([])
     let total = ref("")
     let addServeVisible = ref(false)
-    let addServeInfo = reactive({serveType:"",customer:"",overview:"",serviceRequest:""})
+    let addServeInfo = reactive({serveType:"",customer:"",overview:"",serviceRequest:"",auditStatus:0})
 
 
     let list = reactive([])
@@ -157,6 +157,7 @@ export default {
           this.addServeInfo.overview==="" || this.addServeInfo.serviceRequest===""){
         ElMessage({type:"info",message:"内容填写不完整"})
       }else {
+        this.addServeInfo.auditStatus=0
         this.$api.CustomerServer.getInfoByName("/customerServe/getInfoByName",{customer}).then(res=>{
           if (res.code===200){
             this.$api.CustomerServer.addCustomerServeInfo("/customerServe/add",this.addServeInfo).then(res=>{
@@ -195,8 +196,9 @@ export default {
 
 <style scoped>
 .ServiceCreation{
-  height: 95%;
+  height: 100%;
   width: 100%;
+  /*background-color: #8c6fd0;*/
 }
 .search{
   width: 96%;
@@ -211,7 +213,7 @@ export default {
 }
 .page{
   position: absolute;
-  margin: 29% 0 0 1%;
+  margin: 27% 0 0 1%;
   width: 60%;
   color: #ffffff;
 }

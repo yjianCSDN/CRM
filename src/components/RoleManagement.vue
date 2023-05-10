@@ -17,10 +17,10 @@
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="roleName" label="角色" width="200" header-align="center"  align="center"/>
         <el-table-column prop="roleRemark" label="角色备注" width="200" header-align="center"  align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="300" header-align="center"  align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="300" header-align="center"  align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="300" header-align="center"  align="center"/>
         <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
           <template #default="scope">
@@ -330,9 +330,10 @@ export default {
     //权限选择清空
     empowerCancel(){
       this.empowerVisible = false
-      this.$nextTick(() => {
-        this.$refs.tree.setCheckedKeys(this.empowerList)
-      })
+      this.checkedKeys=[]
+      // this.$nextTick(() => {
+      //   this.$refs.tree.setCheckedKeys(this.empowerList)
+      // })
     },
     //获取权限列表
     getAllEmpower(){
@@ -436,7 +437,9 @@ export default {
         //     this.checkedKeys.push(item.id)
         //   }
         // })
+        // console.log(this.checkedKeys)
         this.empowerList = this.PermissionEchoList
+        console.log("this.empowerList",this.empowerList)
         // this.$refs.tree.setCheckedKeys(this.checkedKeys)
         // console.log("PermissionEchoList",toRaw(this.PermissionEchoList))
         // console.log("checkedKeys:   ",this.checkedKeys)

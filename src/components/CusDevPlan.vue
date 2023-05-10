@@ -24,27 +24,41 @@
       <el-button size="small" type="success" style="float: right;margin: 2% 0 0 0" @click="handleDownload">导出EXCEL表格</el-button>
     </div>
     <div>
-      <el-table :data="saleChance" class="tableMenu" max-height="520"
+      <el-table :data="saleChance" class="tableMenu" max-height="510"
                 :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 :row-style="rowStyle"
       >
-        <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
+        <el-table-column prop="id" sortable label="编号" width="100" fixed="left" align="center"/>
         <el-table-column prop="chanceSource" label="机会来源" width="100" header-align="center" align="center"/>
         <el-table-column prop="customerName" label="客户名称" width="100" header-align="center" align="center"/>
         <el-table-column prop="cgjl" label="成功几率(%)" width="130" header-align="center" align="center"/>
         <el-table-column prop="overview" label="概要" width="150" header-align="center" align="center"/>
         <el-table-column prop="linkMan" label="联系人" width="100" header-align="center" align="center"/>
         <el-table-column prop="linkPhone" label="联系电话" width="130" header-align="center" align="center"/>
-        <el-table-column prop="description" label="描述" width="200" header-align="center" align="center"/>
+        <el-table-column label="描述" width="200" header-align="center" align="center">
+          <template #default="scope">
+            <el-popover
+                placement="right-start"
+                title="描述信息"
+                :width="400"
+                trigger="hover"
+                :content="scope.row.description"
+            >
+              <template #reference>
+                <el-button class="m-2" size="small">描述</el-button>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="createMan" label="创建人" width="100" header-align="center" align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="devResult" label="开发状态" width="100" header-align="center" align="center">
           <template #default="scope">
-            <span v-if="scope.row.devResult==='开发中'" style="color:skyblue">{{ scope.row.devResult }}</span>
-            <span v-else-if="scope.row.devResult==='开发完成'" style="color: #37B328">{{ scope.row.devResult }}</span>
-            <span v-else-if="scope.row.devResult==='开发失败'" style="color: #e81a5c">{{ scope.row.devResult }}</span>
-            <span v-else-if="scope.row.devResult==='未开发'" style="color: #8c6fd0">{{ scope.row.devResult }}</span>
+            <el-tag v-if="scope.row.devResult==='开发中'">{{ scope.row.devResult }}</el-tag>
+            <el-tag v-else-if="scope.row.devResult==='开发完成'" class="ml-2" type="success">{{ scope.row.devResult }}</el-tag>
+            <el-tag v-else-if="scope.row.devResult==='开发失败'" class="ml-2" type="danger">{{ scope.row.devResult }}</el-tag>
+            <el-tag v-else-if="scope.row.devResult==='未开发'" class="ml-2" type="info">{{ scope.row.devResult }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="70" header-align="center">
@@ -82,7 +96,7 @@
     <el-dialog
         v-model="DetailedVisible"
         title="计划项数据详情"
-        width="70%"
+        width="68%"
     >
       <el-form
           label-position="left"
@@ -110,12 +124,26 @@
           <el-input v-model="DetailedInformation.cgjl" disabled placeholder="成功几率"/>
         </el-form-item>
       </el-form>
-      <el-button size="small" type="success" style="float: right;margin: 0 3.3% 0 0 " @click="handleDownloadItem">导出EXCEL表格</el-button>
+      <el-button size="small" type="success" style="float: right;margin: 0 0 0 0 " @click="handleDownloadItem">导出EXCEL表格</el-button>
       <el-table :data="cusDevPlan" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
         <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
         <el-table-column prop="planItem" label="计划项" width="100" header-align="center" align="center"/>
-        <el-table-column prop="exeAffect" label="执行效果" width="200" header-align="center" align="center"/>
+        <el-table-column label="执行效果" width="200" header-align="center" align="center">
+          <template #default="scope">
+            <el-popover
+                placement="right-start"
+                title="效果"
+                :width="400"
+                trigger="hover"
+                :content="scope.row.exeAffect"
+            >
+              <template #reference>
+                <el-button class="m-2" size="small">执行效果</el-button>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="planDate" label="执行时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
@@ -131,7 +159,7 @@
           :disabled="false"
           :background="true"
           layout="prev,pager,next,jumper"
-          :total="total"
+          :total="DevTotal"
           @current-change="CDPHandleCurrentChange"
       />
 
@@ -148,7 +176,7 @@
     <el-dialog
         v-model="DevelopmentVisible"
         title="计划项数据维护"
-        width="70%"
+        width="68%"
     >
 
       <el-form
@@ -190,7 +218,21 @@
                   :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
           <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
           <el-table-column prop="planItem" label="计划项" width="100" header-align="center" align="center"/>
-          <el-table-column prop="exeAffect" label="执行效果" width="200" header-align="center" align="center"/>
+          <el-table-column  label="执行效果" width="200" header-align="center" align="center">
+            <template #default="scope">
+              <el-popover
+                  placement="right-start"
+                  title="效果"
+                  :width="400"
+                  trigger="hover"
+                  :content="scope.row.exeAffect"
+              >
+                <template #reference>
+                  <el-button class="m-2" size="small">执行效果</el-button>
+                </template>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column prop="planDate" label="执行时间" width="200" header-align="center" align="center"/>
           <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
           <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
@@ -214,7 +256,7 @@
           :disabled="false"
           :background="true"
           layout="prev,pager,next,jumper"
-          :total="total"
+          :total="DevTotal"
           @current-change="CDPHandleCurrentChange"
       />
       <template #footer>
@@ -259,7 +301,7 @@
       </el-form>
       <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false,this.addCusDevPlan={}">取 消</el-button>
+        <el-button @click="AddScheduleItemVisible = false,this.addCusDevPlan={}">取 消</el-button>
         <el-button type="primary" @click="addCDP">
           确 认 添 加
         </el-button>
@@ -335,6 +377,8 @@ export default {
       cusDevPlanQueryTotal: "",
       //营销机会总条数
       total: "",
+      //客户开发计划总数
+      DevTotal:"",
 
       //计划项数据详情
       DetailedVisible: false,
@@ -382,65 +426,101 @@ export default {
   methods: {
     //excel导出
     handleDownload(){
+      let saleChance = []
+      // eslint-disable-next-line no-unused-vars
       let json_fields = []
-      for (let i = 0; i < this.saleChance.length; i++) {
-        json_fields.push({
-          "编号":this.saleChance[i].id,
-          "机会来源":this.saleChance[i].chanceSource,
-          "客户名称":this.saleChance[i].customerName,
-          "成功几率(%)":this.saleChance[i].cgjl,
-          "概要":this.saleChance[i].overview,
-          "联系人":this.saleChance[i].linkMan,
-          "联系电话":this.saleChance[i].linkPhone,
-          "描述":this.saleChance[i].description,
-          "创建人":this.saleChance[i].createMan,
-          "分配人":this.saleChance[i].assignMan,
-          "分配时间":this.saleChance[i].assignTime,
-          "创建时间":this.saleChance[i].createDate,
-          "修改时间":this.saleChance[i].updateDate,
-          "开发状态":this.saleChance[i].devResult
-        })
-      }
-      // console.log("json_fields",json_fields)
-      saveJsonToExcel(json_fields, '客户开发计划信息.xlsx')
+      this.$api.SaleChance.querySaleChanceByParams("/SaleChance/lists?flag=1").then(res => {
+        if (res.code == 200) {
+          saleChance = res.result.data
+          for (let i = 0; i < saleChance.length; i++) {
+            if (saleChance[i].devResult === 0) {
+              saleChance[i].devResult = "未开发"
+            } else if (saleChance[i].devResult === 1) {
+              saleChance[i].devResult = "开发中"
+            } else if (saleChance[i].devResult === 2) {
+              saleChance[i].devResult = "开发完成"
+            } else {
+              saleChance[i].devResult = "开发失败"
+            }
+          }
+          // console.log("saleChance", saleChance)
+          for (let i = 0; i < saleChance.length; i++) {
+            json_fields.push({
+              "编号":saleChance[i].id,
+              "机会来源":saleChance[i].chanceSource,
+              "客户名称":saleChance[i].customerName,
+              "成功几率(%)":saleChance[i].cgjl,
+              "概要":saleChance[i].overview,
+              "联系人":saleChance[i].linkMan,
+              "联系电话":saleChance[i].linkPhone,
+              "描述":saleChance[i].description,
+              "创建人":saleChance[i].createMan,
+              "分配人":saleChance[i].assignMan,
+              "分配时间":saleChance[i].assignTime,
+              "创建时间":saleChance[i].createDate,
+              "修改时间":saleChance[i].updateDate,
+              "开发状态":saleChance[i].devResult
+            })
+          }
+          saveJsonToExcel(json_fields, '客户开发计划信息.xlsx')
+        }
+      })
+
     },
     handleDownloadItem(){
+      // eslint-disable-next-line no-unused-vars
       let json_fields = []
-      for (let i = 0; i < this.cusDevPlan.length; i++) {
-        json_fields.push({
-          "编号":this.cusDevPlan[i].id,
-          "计划项":this.cusDevPlan[i].planItem,
-          "执行效果":this.cusDevPlan[i].exeAffect,
-          "执行时间":this.cusDevPlan[i].planDate,
-          "创建时间":this.cusDevPlan[i].createDate,
-          "更新时间":this.cusDevPlan[i].updateDate
-        })
-      }
-      if (json_fields.length===0){
-        ElMessage({type:"warning",message:"该客户开发计划项子项无数据，无法导出!"})
-      }else {
-        // console.log("json_fields",json_fields)
-        saveJsonToExcel(json_fields, '客户开发计划项子项信息.xlsx')
-      }
+      let cusDevPlanQuery = {page: 1, limit: 100, saleChanceId: this.cusDevPlanQuery.saleChanceId}
+      let cusDevPlan = []
+      this.$api.CusDevPlan.queryCusDevPlanByParams("/CusDevPlan/lists", cusDevPlanQuery).then(res => {
+        console.log(res)
+        if (res.code===200){
+          cusDevPlan = res.result.data
+          for (let i = 0; i < cusDevPlan.length; i++) {
+            json_fields.push({
+              "编号":cusDevPlan[i].id,
+              "计划项":cusDevPlan[i].planItem,
+              "执行效果":cusDevPlan[i].exeAffect,
+              "执行时间":cusDevPlan[i].planDate,
+              "创建时间":cusDevPlan[i].createDate,
+              "更新时间":cusDevPlan[i].updateDate
+            })
+          }
+          if (json_fields.length===0){
+            ElMessage({type:"warning",message:"该客户开发计划项子项无数据，无法导出!"})
+          }else {
+            // console.log("json_fields",json_fields)
+            saveJsonToExcel(json_fields, '客户开发计划项子项信息.xlsx')
+          }
+        }
+      })
+
     },
     handleDownloadItem02(){
       let json_fields = []
-      for (let i = 0; i < this.cusDevPlan.length; i++) {
-        json_fields.push({
-          "编号":this.cusDevPlan[i].id,
-          "计划项":this.cusDevPlan[i].planItem,
-          "执行效果":this.cusDevPlan[i].exeAffect,
-          "执行时间":this.cusDevPlan[i].planDate,
-          "创建时间":this.cusDevPlan[i].createDate,
-          "更新时间":this.cusDevPlan[i].updateDate
-        })
-      }
-      if (json_fields.length===0){
-        ElMessage({type:"warning",message:"该客户开发计划项子项无数据，无法导出!"})
-      }else {
-        // console.log("json_fields",json_fields)
-        saveJsonToExcel(json_fields, '客户开发计划项子项信息.xlsx')
-      }
+      let cusDevPlanQuery = {page: 1, limit: 100, saleChanceId: this.cusDevPlanQuery.saleChanceId}
+      let cusDevPlan = []
+      this.$api.CusDevPlan.queryCusDevPlanByParams("/CusDevPlan/lists", cusDevPlanQuery).then(res => {
+        if (res.code===200){
+          cusDevPlan = res.result.data
+          for (let i = 0; i < cusDevPlan.length; i++) {
+            json_fields.push({
+              "编号":cusDevPlan[i].id,
+              "计划项":cusDevPlan[i].planItem,
+              "执行效果":cusDevPlan[i].exeAffect,
+              "执行时间":cusDevPlan[i].planDate,
+              "创建时间":cusDevPlan[i].createDate,
+              "更新时间":cusDevPlan[i].updateDate
+            })
+          }
+          if (json_fields.length===0){
+            ElMessage({type:"warning",message:"该客户开发计划项子项无数据，无法导出!"})
+          }else {
+            // console.log("json_fields",json_fields)
+            saveJsonToExcel(json_fields, '客户开发计划项子项信息.xlsx')
+          }
+        }
+      })
     },
 
     //根据开发状态显示字体颜色
@@ -461,7 +541,19 @@ export default {
       this.saleChanceQuery.page = msg
       this.$api.SaleChance.querySaleChanceByParams("/SaleChance/lists?flag=1", toRaw(this.saleChanceQuery)).then(res => {
         if (res.code === 200) {
+          // console.log(res)
           this.saleChance = res.result.data
+          for (let i = 0; i < this.saleChance.length; i++) {
+            if (this.saleChance[i].devResult === 0) {
+              this.saleChance[i].devResult = "未开发"
+            } else if (this.saleChance[i].devResult === 1) {
+              this.saleChance[i].devResult = "开发中"
+            } else if (this.saleChance[i].devResult === 2) {
+              this.saleChance[i].devResult = "开发完成"
+            } else {
+              this.saleChance[i].devResult = "开发失败"
+            }
+          }
         }
       })
     },
@@ -470,6 +562,11 @@ export default {
       this.cusDevPlanQuery.page = msg
       this.$api.CusDevPlan.queryCusDevPlanByParams("/CusDevPlan/lists", toRaw(this.cusDevPlanQuery)).then(res => {
         console.log(res)
+        if (res.code===200){
+          this.DevTotal = res.result.count
+          this.cusDevPlan = res.result.data
+          console.log(this.DevelopmentInformation)
+        }
       })
     },
     //查询营销机会
@@ -503,9 +600,9 @@ export default {
       this.DetailedInformation = msg
       this.cusDevPlanQuery.saleChanceId = toRaw(msg.id)
       // console.log(toRaw(msg.id),777)
-      this.cusDevPlanQuery.saleChanceId = toRaw(msg.id)
+      // this.cusDevPlanQuery.saleChanceId = toRaw(msg.id)
       this.queryByParams()
-      this.getTotal(toRaw(msg.id))
+      // this.getTotal(toRaw(msg.id))
     },
     //计划项数据操作
     Development(msg) {
@@ -514,7 +611,7 @@ export default {
       this.cusDevPlanQuery.saleChanceId = toRaw(msg.id)
       this.addCusDevPlan.saleChanceId = toRaw(msg.id)
       this.queryByParams()
-      this.getTotal(toRaw(msg.id))
+      // this.getTotal(toRaw(msg.id))
     },
     //添加计划项
     addCDP() {
@@ -548,12 +645,14 @@ export default {
       this.cusDevPlanQuery.saleChanceId = msg
       this.$api.CusDevPlan.getTotal("/CusDevPlan/Total", this.cusDevPlanQuery).then(res => {
         this.cusDevPlanQueryTotal = res.result
+        console.log("获取客户开发计划总数",res)
       })
     },
     //根据id查询客户开发计划
     queryByParams() {
       this.$api.CusDevPlan.queryCusDevPlanByParams("/CusDevPlan/lists", this.cusDevPlanQuery).then(res => {
         this.cusDevPlan = res.result.data
+        this.DevTotal = res.result.count
         console.log(res, 4566541234567)
         console.log(res.result.data)
       })
@@ -619,13 +718,9 @@ export default {
     },
     //开发成功
     success() {
-      // let id = this.cusDevPlanQuery.saleChanceId
-      // let devResult = this.SaleChanceSuccess
       this.tableList.id = this.cusDevPlanQuery.saleChanceId
       this.tableList.devResult = this.SaleChanceSuccess
-      // console.log(id, devResult)
       this.$api.SaleChance.updateSaleChanceDevResult("/SaleChance/updateSaleChanceDevResult", this.tableList).then(res => {
-        // console.log(res)
         if (res.code === 200) {
           ElMessage({
             type: "success",
@@ -638,7 +733,7 @@ export default {
           })
         }
         this.DevelopmentVisible = false
-        this.query()
+        this.handleCurrentChange(this.saleChanceQuery.page)
       })
     },
     //开发失败
@@ -663,15 +758,16 @@ export default {
           })
         }
         this.DevelopmentVisible = false
-        this.query()
+        this.handleCurrentChange(this.saleChanceQuery.page)
       })
     },
     query() {
       this.$api.SaleChance.querySaleChanceByParams("/SaleChance/lists?flag=1").then(res => {
         if (res.code == 200) {
           this.saleChance = res.result.data
-          this.total = this.saleChance.length
-          // console.log("saleChance", this.saleChance)
+          this.total = res.result.count
+          console.log("saleChance", this.saleChance)
+          console.log(this.total)
           for (let i = 0; i < this.saleChance.length; i++) {
             if (this.saleChance[i].devResult === 0) {
               this.saleChance[i].devResult = "未开发"
@@ -718,7 +814,6 @@ export default {
   width: 100%;
   height: 95%;
   position: relative;
-  /*background-color: seashell;*/
 }
 .search{
   position: relative;
@@ -733,8 +828,8 @@ export default {
   width: 98%;
 }
 .page{
-  position: relative;
-  margin: 1% 0 0 1%;
+  position: absolute;
+  top: 99%;
   width: 60%;
   color: #ffffff;
 }

@@ -5,12 +5,14 @@
           class="w-50 m-2"
           v-model="customerQuery.customerName"
           placeholder="客户名"
+          clearable
           style="position: relative;width: 12%;margin: 1% 0 0 0"
       />
       <el-input
           class="w-50 m-2"
           v-model="customerQuery.customerNo"
           placeholder="客户编号"
+          clearable
           style="position: relative;width: 12%;margin: 1% 0 0 10px"
       />
       <el-select class="m-2" placeholder="请选择" v-model="customerQuery.level" style="width: 150px;margin: 1% 0 0 5px">
@@ -30,15 +32,15 @@
     </div>
     <div>
       <el-table :data="customerList" class="tableMenu"
-                max-height="450" :default-sort="{ prop: 'createDate', order: 'descending' }"
+                max-height="510" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
       >
-        <el-table-column fixed="left" prop="orderId" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="orderId" label="编号" width="100" align="center"/>
         <el-table-column prop="khno" label="客户编号" width="200" header-align="center" align="center"/>
         <el-table-column prop="name" label="客户名称" width="170" header-align="center" align="center"/>
         <el-table-column prop="level" label="客户级别" width="150" header-align="center" align="center"/>
         <el-table-column prop="cusManager" label="客户经理" width="100" header-align="center" align="center"/>
-        <el-table-column label="详细地址" width="200" header-align="center" align="center">
+        <el-table-column label="详细地址" width="100" header-align="center" align="center">
           <template #default="scope">
             <el-popover
                 placement="right-start"
@@ -56,12 +58,12 @@
         <el-table-column prop="phone" label="电话" width="200" header-align="center" align="center"/>
         <el-table-column prop="orderNo" label="订单编号" width="150" header-align="center" align="center"/>
         <el-table-column prop="orderDate" label="订单日期" width="200" header-align="center" align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="state" label="状态" width="100" header-align="center" align="center">
           <template #default="scope">
-            <scan v-if="scope.row.state===1" style="color:green;">已支付</scan>
-            <scan v-else-if="scope.row.state===0" style="color:red;">未支付</scan>
+            <el-tag v-if="scope.row.state===1" class="ml-2" type="success">已支付</el-tag>
+            <el-tag v-else-if="scope.row.state===0" class="ml-2" type="danger">未支付</el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操 作" width="200" header-align="center" align="center">
@@ -362,6 +364,7 @@ export default {
     let updateItemVisible = ref(false)//订单子项修改
     let delItemVisible = ref(false)//订单子项删除
     let deleteVisible = ref(false)//订单删除
+    let nameList = reactive([])//客户名称列表
     return {
       customerList,
       total,
@@ -391,7 +394,8 @@ export default {
       delItemVisible,
       selectVisible,
       ruleForm,
-      deleteVisible
+      deleteVisible,
+      nameList
     }
   },
   methods: {
@@ -402,64 +406,67 @@ export default {
       })
     },
     handleDownload(){
-      let json_fields = []
-      for (let i = 0; i < this.customerList.length; i++) {
-        json_fields.push({
-          "id":this.customerList[i].orderId,
-          "客户编号":this.customerList[i].khno,
-          "客户名称":this.customerList[i].name,
-          "客户级别":this.customerList[i].level,
-          "客户经理":this.customerList[i].cusManager,
-          "详细地址":this.customerList[i].address,
-          "电话":this.customerList[i].phone,
-          "订单编号":this.customerList[i].orderNo,
-          "订单日期":this.customerList[i].orderDate,
-          "创建日期":this.customerList[i].createDate,
-          "更新日期":this.customerList[i].updateDate,
-          "支付状态":this.customerList[i].state===1?'已支付':'未支付'
-        })
-      }
-      // console.log(json_fields)
-      saveJsonToExcel(json_fields, '客户订单信息.xlsx')
+      // eslint-disable-next-line no-unused-vars
+      let customerList = []
+      let customerQuery = reactive({page: 1, limit: 1000, customerName: this.customerQuery.customerName, customerNo: this.customerQuery.customerNo, level: this.customerQuery.level, time: this.customerQuery.time, type: this.customerQuery.type})
+      this.$api.CustomerServer.queryCustomerServeOrder("/customerServeOrder/lists",customerQuery).then(res => {
+        // console.log(res)
+        customerList = res.result.data
+        let json_fields = []
+        for (let i = 0; i < customerList.length; i++) {
+          json_fields.push({
+            "id":customerList[i].orderId,
+            "客户编号":customerList[i].khno,
+            "客户名称":customerList[i].name,
+            "客户级别":customerList[i].level,
+            "客户经理":customerList[i].cusManager,
+            "详细地址":customerList[i].address,
+            "电话":customerList[i].phone,
+            "订单编号":customerList[i].orderNo,
+            "订单日期":customerList[i].orderDate,
+            "创建日期":customerList[i].createDate,
+            "更新日期":customerList[i].updateDate,
+            "支付状态":customerList[i].state===1?'已支付':'未支付'
+          })
+        }
+        saveJsonToExcel(json_fields, '客户订单信息.xlsx')
+      })
     },
     //订单子项数据excel
     handleDownloadItems(){
-      let json_fields = []
-      for (let i = 0; i < this.orderDetailsList.length; i++) {
-        json_fields.push({
-          "编号":this.orderDetailsList[i].id,
-          "物品名称":this.orderDetailsList[i].goodsName,
-          "物品数量":this.orderDetailsList[i].goodsNum,
-          "单位":this.orderDetailsList[i].unit,
-          "单价":this.orderDetailsList[i].price,
-          "总价":this.orderDetailsList[i].sum
-        })
-      }
-      if (json_fields.length===0){
-        ElMessage({type:"warning",message:"该订单下无内容,无数据可导出!"})
-      }else {
-        saveJsonToExcel(json_fields, '客户订单子项信息.xlsx')
-      }
+      // eslint-disable-next-line no-unused-vars
+      let orderDetailsList = []
+      this.$api.CustomerInformation.queryCustomerOrderByParams("/orderDetail/lists", {orderId:this.orderDetailsQuery.orderId,page:1,limit:100}).then(res => {
+        orderDetailsList = res.result.data
+        // console.log(res)
+        let json_fields = []
+        for (let i = 0; i < orderDetailsList.length; i++) {
+          json_fields.push({
+            "编号":orderDetailsList[i].id,
+            "物品名称":orderDetailsList[i].goodsName,
+            "物品数量":orderDetailsList[i].goodsNum,
+            "单位":orderDetailsList[i].unit,
+            "单价":orderDetailsList[i].price,
+            "总价":orderDetailsList[i].sum
+          })
+        }
+        if (json_fields.length===0){
+          ElMessage({type:"warning",message:"该订单下无内容,无数据可导出!"})
+        }else {
+          saveJsonToExcel(json_fields, '客户订单子项信息.xlsx')
+        }
+      })
+
     },
     //条件查询
     selectCustomer() {
-      // console.log(this.customerQuery)
       this.$api.CustomerServer.queryCustomerServeOrder("/customerServeOrder/lists", this.customerQuery).then(res => {
-        // console.log(res)
         if (res.code === 200) {
-          // ElMessage({
-          //   type: "success",
-          //   message: "查询成功!"
-          // })
           this.common("success","查询成功")
           this.customerList = res.result.data
           this.total = res.result.count
         } else {
           this.common("error","查询失败，请重试!")
-          // ElMessage({
-          //   type: "error",
-          //   message: "查询失败，请重试!"
-          // })
         }
       })
     },
@@ -471,15 +478,12 @@ export default {
         this.$api.CustomerServer.getInfoByName("/customerServe/getInfoByName", {customer}).then(res => {
           if (res.code === 200) {
             this.customerOrder.cusId = res.result.id
-            // console.log(this.customerOrder)
             this.$api.CustomerInformation.addCustomerOrder("/customerServeOrder/addOrder", this.customerOrder).then(res => {
               // console.log(res)
               if (res.code === 200) {
                 this.common("success","添加成功")
-                // ElMessage({type: "success", message: "添加成功"})
               } else {
                 this.common("error","添加失败，请稍后再试!")
-                // ElMessage({type: "error", message: "添加失败，请稍后再试"})
               }
               this.customerOrder = {}
               this.addOrderVisible = false
@@ -487,10 +491,6 @@ export default {
             })
           } else {
             this.common("info","暂无该用户数据，也可能该用户不存在!")
-            // ElMessage({
-            //   type: "info",
-            //   message: "暂无该用户数据，也可能该用户不存在!"
-            // })
           }
         })
       }
@@ -523,7 +523,6 @@ export default {
     //初始数据渲染
     queryCustomer() {
       this.$api.CustomerServer.queryCustomerServeOrder("/customerServeOrder/lists").then(res => {
-        // console.log("123456789", res)
         this.customerList = res.result.data
         this.total = res.result.count
       })
@@ -603,7 +602,6 @@ export default {
     },
     commonMethod() {
       this.$api.CustomerInformation.queryCustomerOrderByParams("/orderDetail/lists", this.orderDetailsQuery).then(res => {
-        // console.log("/customerOrder/orderDetail:---------------->",res)
         this.orderDetailsList = res.result.data
       })
     },
@@ -618,7 +616,8 @@ export default {
           this.common("success","修改状态成功!")
           // ElMessage({type: "success", message: "修改状态成功"})
           this.CustomerOrderVisible = false
-          this.queryCustomer()
+          console.log(this.customerQuery.page)
+          this.handleCurrentChange(this.customerQuery.page)
         } else {
           this.common("error","修改失败，请重试!")
           // ElMessage({type: "error", message: "修改失败，请重试"})
@@ -636,7 +635,9 @@ export default {
             this.common("success","修改成功!")
             // ElMessage({type: "success", message: "修改成功"})
             this.updateCustomerVisible = false
-            this.queryCustomer()
+            // this.queryCustomer()
+            console.log(this.customerQuery.page)
+            this.handleCurrentChange(this.customerQuery.page)
           } else {
             this.common("error","修改失败，请重试!")
             // ElMessage({type: "error", message: "修改失败，请重试"})
@@ -659,10 +660,19 @@ export default {
           this.common("error","删除失败，请重试!")
         }
       })
-    }
+    },
+    queryCustomerNameList(){
+      this.$api.CustomerInformation.queryCustomerByParams("/customer/lists",{page:1,Limit:1000}).then(res=>{
+        res.result.data.forEach(item=>{
+          this.nameList.push(item.name)
+        })
+        console.log("名称列表为：：：：:",this.nameList)
+      })
+    },
   },
   mounted() {
     this.queryCustomer()
+    this.queryCustomerNameList()
     this.list=this.$store.getters.getPermissionList
     if (JSON.stringify(this.list).includes("203001")){
       this.addVisible=true
@@ -703,8 +713,8 @@ export default {
   left: 1%;
 }
 .page{
-  position: relative;
-  margin: 1% 0 0 1%;
+  position: absolute;
+  top: 80%;
   width: 60%;
   color: #ffffff;
 }

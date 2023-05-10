@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div style="width: 400px;height: 250px;margin: 0 0 0 65%;display: block;" ref="contribution"></div>
-    <div style="width: 430px;height: 290px;margin: -2% 0 0 65%;position: relative" ref="contributionRound"></div>
+    <div style="width: 470px;height: 250px;margin: 0 0 0 63%;display: block" ref="contribution"></div>
+    <div style="width: 470px;height: 290px;margin: 1% 0 0 63%;position: relative" ref="contributionRound"></div>
     <div class="search">
       <el-input
           v-model="customerQuery.customerName"
           class="w-50 m-2"
           placeholder="客户名"
-          style="position: relative;width: 10%;margin: -74% 0 0 3%"
+          style="position: relative;width: 10%;margin: -80% 0 0 3%"
       />
-      <el-select  class="m-2" v-model="customerQuery.type" placeholder="选择客户金额区间"  style="margin: -74% 0 0 1%;width: 10%">
+      <el-select  class="m-2" v-model="customerQuery.type" placeholder="选择客户金额区间"  style="margin: -80% 0 0 1%;width: 10%">
         <el-option label="无"     value="" />
         <el-option label="1--1000"      value="1" />
         <el-option label="1000--3000"   value="2" />
@@ -20,10 +20,10 @@
           v-model="customerQuery.time"
           type="datetime"
           placeholder="起始时间"
-          style="margin: -74% 0 0 1%"
+          style="margin: -80% 0 0 1%"
       />
       &nbsp;&nbsp;
-      <el-button type="primary"  style="margin: -74% 0 0 0" @click="paramsInitialization">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
+      <el-button type="primary"  style="margin: -80% 0 0 0" @click="paramsInitialization">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
     </div>
 
     <el-table :data="customerList"  class="tableMenu"
@@ -55,13 +55,12 @@
 <script>
 import {reactive, toRaw} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
-// eslint-disable-next-line no-unused-vars
 import * as echarts from 'echarts';
 
 export default {
   name: "CustomerContribution",
   data(){
-    let customerQuery = reactive({customerName:"",customerNo:"",level:"",time:"",type:"",page:1,limit:5})
+    let customerQuery = reactive({customerName:"",customerNo:"",level:"",time:"",type:"",page:1,limit:10})
     let total = ""
     let customerList = reactive([])
     return{
@@ -198,23 +197,25 @@ export default {
     this.$api.CustomerServer.queryCustomerContributionByParams("/customer/queryCustomerContributionByParams",this.customerQuery).then(res=>{
       this.customerList=res.result.data
       this.total=res.result.count
+      if (res.code===200){
+        setTimeout(this.initRound,70)
+        setTimeout(this.receiveParams,70)
+      }
     })
-    setTimeout(this.initRound,50)
-    setTimeout(this.receiveParams,50)
-  }
+    }
 }
 </script>
 
 <style scoped>
 .tableMenu{
-  margin: -35% 0 0 0;
+  margin: -38% 0 0 0;
   left: 3%;
   position: relative;
-  width: 60%;
+  width: 55%;
 }
 .page{
   position: absolute;
-  top: 85%;
+  top: 80%;
   width: 100%;
   color: #ffffff;
 }

@@ -1,111 +1,93 @@
 <template>
-  <div id="app">
-    <div class="home">
-      <download-excel
-          class="export-excel-wrapper"
-          :data="json_data"
-          :fields="json_fields"
-          type="xls"
-          worksheet="My Worksheet"
-          name="用户信息"
-      >
-        <el-button>导出EXCELsssss</el-button>
-      </download-excel>
+  <div class="welcome">
+    <div class="TimeLine">
+      <el-scrollbar wrapClass="scrollbar-wrap"
+                    style="height: 550px"
+                    ref="scrollbarContainer">
+        <div>
+      <el-timeline :reverse="true" style="margin: 40px 0 0 0">
+        <el-timeline-item
+            placement="top"
+            v-for="(notice, index) in noticeList"
+            :key="index"
+            :color="notice.color"
+            :timestamp="notice.updateDate"
+        >
+          <el-card>
+          <h4>{{notice.title}}</h4>
+            <h5>类型: &nbsp;&nbsp; {{notice.type}}</h5>
+            <h5>发布人: &nbsp;&nbsp; {{notice.publisher}}</h5>
+            <p> {{ notice.content }} </p>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
+        </div>
+      </el-scrollbar>
     </div>
-    <i class="iconFont icon-caidanlan-kehu-kehulianxiren"></i>
-    <el-button
-        style="margin-left: 20px"
-        size="small"
-        icon="el-icon-download"
-        @click="handleDownload"
-    >导出Excel</el-button
-    >
   </div>
+
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import { readExcelToJson, saveJsonToExcel } from '../tools/utils.js'
-import axios from 'axios';
+
+import {reactive, ref} from "@vue/reactivity";
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "welcome",
   data() {
+    let noticeQuery = reactive({page:1,limit:100,type:null,title:null,publisher:null})
+    let noticeList = reactive([])
+    let total = ref("")
     return {
-      json_fields: {
-        年龄: "age", //常规字段
-        姓名: "info.name", //支持嵌套属性
-        密码: {
-          field: "info.phone",
-          //自定义回调函数
-          callback: value => {
-            return `+86 ${value}`;
-          }
-        }
-      },
-      tableDate:[
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
-      json_data: [
-        {
-          age: 22,
-          info: {
-            name: "张三",
-            phone: 12222222222
-          },
-          sex: "男"
-        },
-        {
-          age: 23,
-          info: {
-            name: "李四",
-            phone: 13333333333
-          },
-          sex: "女"
-        }
-      ]
+      noticeQuery,noticeList,total,
     }
   },
-  methods:{
-    async fetchData(){
-      const response = await axios.get('https://holidayapi.com/v1/holidays?key=a4b2083b-1577-4acd-9408-6e529996b129&country=US&year=2017&month=09');
-      console.log(response);
-      return response.data.holidays;
-    },
-    startDownload(){
-      alert('show loading');
-    },
-    finishDownload(){
-      alert('hide loading');
-    },
-    handleDownload() {
-      saveJsonToExcel(this.tableDate, 'data.xlsx')
+  methods: {
+    initParams(){
+      console.log("123456789")
+      console.log(this.noticeQuery,"4564sa6d54as")
+      this.$api.Notice.queryNotice("/notice/lists").then(res=> {
+        console.log(res)
+        if (res.code===200){
+          res.result.data.forEach(item=>{
+            if (item.type==='平台公告'){
+              item.color='#37B328'
+            }else if (item.type==='新闻动态'){
+              item.color='#8c6fd0'
+            }else if (item.type==='营销机会'){
+              item.color='orangered'
+            }else if (item.type==='行业资讯'){
+              item.color='skyblue'
+            }else if (item.type==='其他公告'){
+              item.color='orange'
+            }else if (item.type==='公司通知'){
+              item.color='aqua'
+            }
+          })
+          this.noticeList=res.result.data
+          this.total=res.result.count
+          // console.log("noticeList:::",this.noticeList)
+        }
+      })
     },
   },
-  // created() {
-  //   this.list = this.tableDate
-  // },
+  created() {
+    this.initParams()
+  }
 }
 </script>
 
 <style scoped>
+.welcome{
+  height: 100%;
+  width: 100%;
+}
+.TimeLine{
+  width: 99%;
+  height: 100%;
+  position: relative;
+}
+
+
 </style>

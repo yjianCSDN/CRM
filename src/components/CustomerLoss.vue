@@ -28,18 +28,24 @@
 
   <div>
     <el-table :data="customerLossList"  class="tableMenu"
-              max-height="520"  :default-sort="{ prop: 'createDate', order: 'descending' }"
+              max-height="510"  :default-sort="{ prop: 'createDate', order: 'descending' }"
               :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
     >
-      <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+      <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
       <el-table-column prop="cusNo" label="客户编号" width="170" header-align="center"  align="center"/>
       <el-table-column prop="cusName" label="客户名称" width="150" header-align="center"  align="center"/>
       <el-table-column prop="cusManager" label="客户经理" width="200" header-align="center"  align="center"/>
       <el-table-column prop="lastOrderTime" label="最后下单时间" width="200" header-align="center"  align="center"/>
-      <el-table-column prop="lossReason" label="流失原因" width="100" header-align="center"  align="center"/>
+      <el-table-column prop="lossReason" label="流失原因" width="200" header-align="center"  align="center"/>
       <el-table-column prop="confirmLossTime" label="确认流失时间" width="200" header-align="center"  align="center"/>
-      <el-table-column prop="createDate" label="创建时间" width="200" header-align="center"  align="center"/>
+      <el-table-column prop="createDate" sortable label="创建时间" width="200" header-align="center"  align="center"/>
       <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
+      <el-table-column label="客户状态" width="200" header-align="center"  align="center">
+        <template #default="scope">
+          <el-tag v-if="scope.row.state===0"  class="ml-2" type="success">暂缓流失</el-tag>
+          <el-tag v-else-if="scope.row.state===1"  class="ml-2" type="danger">确认流失</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操 作" width="200" header-align="center"  align="center">
         <template #default="scope">
           <el-button  size="small" type="primary" v-if="scope.row.state===1" @click="watchDetail(scope.row)"
@@ -94,7 +100,7 @@
         >
           添加暂缓
         </el-button>
-        <el-button type="primary" style="margin: 10px 0 10px 10px" v-if="title==='流失管理-暂缓措施维护'"
+        <el-button type="danger" style="margin: 10px 0 10px 10px" v-if="title==='流失管理-暂缓措施维护'"
                     @click="ConfirmLossVisible=true" v-show="confirmLossVisible"
         >
           确认流失
@@ -370,7 +376,8 @@ export default {
         if (res.code===200){
           ElMessage({type:"success",message:"添加成功"})
           this.AddCustomerReprieveVisible=false
-          this.customerReprieve={}
+          // this.customerReprieve={}
+          this.customerReprieve.measure=""
           //重新渲染列表
           console.log("渲染列表中。。。")
           this.$api.CustomerInformation.queryCustomerReprieveByParams("/customerReprieve/lists",this.customerReprieveQuery).then(res=>{
@@ -389,6 +396,12 @@ export default {
         console.log(res)
         if (res.code===200){
           ElMessage({type:"success",message:"修改成功"})
+          this.customerReprieve.measure=""
+          this.$api.CustomerInformation.queryCustomerReprieveByParams("/customerReprieve/lists",this.customerReprieveQuery).then(res=>{
+            // console.log(res)
+            this.customerReprieveList = res.result.data
+            this.customerReprieveQueryTotal = res.result.count
+          })
           this.UpdateCustomerReprieveVisible=false
         }else {ElMessage({type:"error",message:"修改失败，请重试!"})}
       })
@@ -535,8 +548,8 @@ export default {
   left: 1%;
 }
 .page{
-  position: relative;
-  margin: 1% 0 0 1%;
+  position: absolute;
+  top: 80%;
   width: 60%;
   color: #ffffff;
 }

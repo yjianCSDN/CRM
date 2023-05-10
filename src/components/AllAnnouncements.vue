@@ -31,7 +31,7 @@
     <el-table :data="noticeList" class="tableMenu" max-height="500"
               :default-sort="{ prop: 'createDate', order: 'descending' }"
               :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
-      <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
+      <el-table-column prop="id" sortable label="编号" width="100" fixed="left" align="center"/>
       <el-table-column prop="title" label="标题" width="200" header-align="center" align="center"/>
       <el-table-column  label="公告类型" width="100" header-align="center" align="center">
         <template #default="scope">
@@ -60,8 +60,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="createDate" label="发布日期" :formatter="formData" width="200" header-align="center" align="center"/>
-      <el-table-column prop="updateDate" label="修改日期" :formatter="formData" width="200" header-align="center" align="center"/>
-      <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center">
+      <el-table-column prop="updateDate" sortable label="修改日期" :formatter="formData" width="200" header-align="center" align="center"/>
+      <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center" v-if="updateVisible||deleteVisible">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="updateInit(scope.row)" v-show="updateVisible"
           >修 改
@@ -141,6 +141,7 @@
 <script>
 import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
+// eslint-disable-next-line no-unused-vars
 import {saveJsonToExcel} from "@/tools/utils";
 
 export default {
@@ -162,24 +163,31 @@ export default {
   },
   methods:{
     handleDownload(){
-      let json_fields = []
-      for (let i = 0; i < this.noticeList.length; i++) {
-        json_fields.push({
-          "编号":this.noticeList[i].id,
-          "标题":this.noticeList[i].title,
-          "公告类型":this.noticeList[i].type,
-          "发起者":this.noticeList[i].publisher,
-          "公告者":this.noticeList[i].content,
-          "创建日期":new Date(this.noticeList[i].createDate).toLocaleString(),
-          "更新日期":new Date(this.noticeList[i].updateDate).toLocaleString()
-        })
-      }
-      if (json_fields.length===0){
-        this.common("warning","列表无内容,无数据可导出!")
-      }else {
-        // console.log("json_fields",json_fields)
-        saveJsonToExcel(json_fields, '公告信息.xlsx')
-      }
+      let noticeQuery = reactive({page:1,limit:1000,type:this.noticeQuery.type,title:this.noticeQuery.title,publisher:this.noticeQuery.publisher})
+      let noticeList = []
+      this.$api.Notice.queryNotice("/notice/lists",noticeQuery).then(res=> {
+        if (res.code===200){
+          noticeList=res.result.data
+          let json_fields = []
+          for (let i = 0; i < noticeList.length; i++) {
+            json_fields.push({
+              "编号":noticeList[i].id,
+              "标题":noticeList[i].title,
+              "公告类型":noticeList[i].type,
+              "发起者":noticeList[i].publisher,
+              "公告者":noticeList[i].content,
+              "创建日期":new Date(noticeList[i].createDate).toLocaleString(),
+              "更新日期":new Date(noticeList[i].updateDate).toLocaleString()
+            })
+          }
+          if (json_fields.length===0){
+            this.common("warning","列表无内容,无数据可导出!")
+          }else {
+            saveJsonToExcel(json_fields, '公告信息.xlsx')
+          }
+        }
+      })
+
     },
     common(type,message){
       ElMessage({
@@ -244,7 +252,7 @@ export default {
       })
     },
     formData(row, column, cellValue){
-      console.log("cellValue",cellValue)
+      // console.log("cellValue",cellValue)
       var s =	new Date(cellValue).toLocaleString();
       return s
     },
@@ -269,7 +277,6 @@ export default {
 .AllAnnouncements{
   width: 96%;
   height: 91%;
-
 }
 .search{
   position: relative;
@@ -285,7 +292,7 @@ export default {
   width: 94%;
 }
 .page{
-  position: relative;
+  position: absolute;
   margin: 1% 0 0 1%;
   width: 60%;
   color: #ffffff;

@@ -1,7 +1,7 @@
 <template>
 <div class="MainContent">
   <div style="width: 100%;height: 2%">
-<!--    <bread/>-->
+    <bread style="height: 30px;margin: 5px 0 5px 1%"/>
   </div>
   <div class="content">
     <router-view></router-view>
@@ -33,9 +33,9 @@ export default {
   float: right;
 }
 .content{
-  height: 90%;
+  height: 80%;
   width: 98%;
-  margin: 0 0 0 1%;
+  margin: 2% 0 0 1%;
   background-color: white;
   border-radius: 5px;
   box-shadow: 0 0 10px  rgba(0,0,0,0.5);

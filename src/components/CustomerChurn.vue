@@ -24,11 +24,11 @@
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
-        <el-table-column prop="cusNo" label="客户编号" width="150" header-align="center"  align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
+        <el-table-column prop="cusNo" label="客户编号" width="200" header-align="center"  align="center"/>
         <el-table-column prop="cusName" label="客户名称" width="200" header-align="center"  align="center"/>
         <el-table-column prop="cusManager" label="客户经理" width="200" header-align="center"  align="center"/>
-        <el-table-column prop="lastOrderTime" label="最后下单时间" width="200" header-align="center"  align="center"/>
+        <el-table-column prop="lastOrderTime" sortable label="最后下单时间" width="200" header-align="center"  align="center"/>
         <el-table-column prop="lossReason" label="流失原因" width="210" header-align="center"  align="center"/>
         <el-table-column prop="confirmLossTime" label="确认流失时间" width="200" header-align="center"  align="center"/>
 
@@ -79,7 +79,7 @@ export default {
           "客户经理":this.customerList[i].cusManager,
           "最后下单原因":this.customerList[i].lastOrderTime,
           "流失原因":this.customerList[i].lossReason,
-          "确认六十时间":this.customerList[i].confirmLossTime
+          "确认流失时间":this.customerList[i].confirmLossTime
         })
       }
       // console.log("json_fields",json_fields)
@@ -91,7 +91,7 @@ export default {
     },
     query(){
       this.$api.CustomerInformation.queryLossCustomer("/customerLoss/list",this.customerLossQuery).then(res=>{
-        console.log(res)
+        // console.log(res)
         this.customerList=res.result.data
         this.total=res.result.count
         if (res.code===200){
@@ -101,7 +101,7 @@ export default {
     },
     queryLossList(){
       this.$api.CustomerInformation.queryLossCustomer("/customerLoss/list",this.customerLossQuery).then(res=>{
-        console.log(res)
+        // console.log(res)
         this.customerList=res.result.data
         this.total=res.result.count
       })
@@ -109,7 +109,7 @@ export default {
     handleCurrentChange(msg){
       this.customerLossQuery.page=msg
       this.queryLossList()
-      console.log(msg)
+      // console.log(msg)
     }
   },
   mounted() {
@@ -127,7 +127,7 @@ export default {
 }
 .page{
   position: absolute;
-  top: 85%;
+  top: 80%;
   width: 60%;
   color: #ffffff;
 }

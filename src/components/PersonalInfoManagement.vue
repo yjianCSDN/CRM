@@ -1,16 +1,17 @@
 <template>
-  <div>
+  <div class="mainContent">
+    <div class="message">
     <div>
       <el-avatar
           :src="img"
           class="avatar"
+          style="margin: 5% 0 0 50%"
       />
       <el-form
           label-position="left"
           label-width="100px"
           :model="userinfo"
           class="form"
-          style=""
       >
 
         <el-form-item label="用户名">
@@ -44,7 +45,18 @@
         </el-form-item>
       </el-form>
     </div>
-    <el-button type="primary" style="position: relative;margin: 0 0 0 41%" @click="checkInfoIsRight">修改个人资料</el-button>
+    <el-button type="primary" style="position: relative;margin: 0 0 0 53%" @click="checkInfoIsRight">修改个人资料</el-button>
+    </div>
+    <div class="calendar">
+      <el-calendar class="el-calendar">
+        <template v-slot:dateCell="{data}">
+          {{ data.day.split('-').slice(2).join('-') }}
+          <div v-for="item in CalendarTime" :key="item">
+            <el-badge is-dot class="item" v-if="(item).indexOf(data.day.split('-').slice(0).join('-'))!==-1" @click="details(item)"></el-badge>
+          </div>
+        </template>
+      </el-calendar>
+    </div>
   </div>
   <!--更新角色确认密码-->
   <el-dialog
@@ -73,6 +85,41 @@
       </span>
     </template>
   </el-dialog>
+<!--事项表具体内容-->
+  <el-drawer v-model="drawer"
+             :with-header="false">
+    <span>当天计划</span>
+    <table class="detail" v-for="item in list" :key="item" >
+      <tr>
+        <th colspan="2">计划项信息</th>
+      </tr>
+      <tr v-show="item.planItem">
+        <td>计划项标题</td>
+        <td>{{item.planItem}}</td>
+      </tr>
+      <tr/>
+      <tr v-show="item.planDate">
+        <td>计划项时间</td>
+        <td>{{item.planDate}}</td>
+      </tr>
+      <tr/>
+      <tr v-show="item.exeAffect">
+        <td>计划项内容</td>
+        <td>{{item.exeAffect}}</td>
+      </tr>
+      <tr/>
+      <tr v-show="item.createDate">
+        <td>创建时间</td>
+        <td>{{item.createDate}}</td>
+      </tr>
+      <tr/>
+      <tr v-show="item.updateDate">
+        <td>计划项更新时间</td>
+        <td>{{item.updateDate}}</td>
+      </tr>
+    </table>
+    <el-button type="primary" @click="drawer=false" style="float: left;margin-top: 25%">确定</el-button>
+  </el-drawer>
 </template>
 
 <script>
@@ -88,6 +135,13 @@ export default {
     let updateRoleId = reactive([])
     let phoneList = reactive([])
     let oldPhone = ref("")
+    let SaleItem = reactive([])
+    let detailsInfo = reactive({})
+    let drawer = ref(false)
+    let direction = ref("rtl")
+    let CalendarTime = reactive([])
+    let list = reactive([])
+
     return {
       userinfo: {
         id: "",
@@ -109,10 +163,12 @@ export default {
       updateRoleId,
       phoneList,
       oldPhone,
-      img:Cookies.get("img")
+      img:Cookies.get("img"),
+      SaleItem,detailsInfo,drawer,direction,CalendarTime,list,
     }
   },
   methods: {
+
     checkInfoIsRight() {
       var e = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/
       if (this.userinfo.userName == "" || this.userinfo.trueName == "" || this.userinfo.email == "" || this.userinfo.phone == "") {
@@ -129,7 +185,6 @@ export default {
       } else {
         this.confirmUserPwdVisible = true
       }
-
     },
     //获取初始信息
     getInfo() {
@@ -157,7 +212,7 @@ export default {
         }
       })
     },
-
+    //获取权限id
     getRoleId() {
       let userId = ""
       console.log("this.userinfo.id:   ", this.userinfo.id)
@@ -231,22 +286,59 @@ export default {
         console.log(res.result)
       })
     },
-
     onSuccess(res){
       console.log(res.url)
       this.userinfo.imgUrl=res.url
       this.img=res.url
+    },
+    getServeInit(){
+      this.$api.CustomerServer.getServeByAssigner("/CusDevPlan/myItem").then(res=>{
+        if (res.code===200){
+          // console.log(res)
+          res.result.forEach(item=>{
+            if (item!==null){
+              // console.log("calendar:::::::::::",item.planDate.split(" ").splice(0,1).toString())
+              item.calendar = item.planDate.split(" ").splice(0,1).toString()
+              this.SaleItem.push(item)
+              if (this.CalendarTime.indexOf(item.calendar)===-1){
+                this.CalendarTime.push(item.calendar)
+              }
+            }
+          })
+          console.log("asdasdasdasd:::::",this.SaleItem)
+          console.log("this.CalendarTime:",this.CalendarTime)
+        }
+      })
+      console.log(new Date().toLocaleString())
+    },
+    details(msg){
+      this.list = []
+      console.log("msg:",msg)
+      this.SaleItem.forEach(item=>{
+        if (item.calendar.indexOf(msg)!==-1){
+          this.list.push(item)
+        }
+      })
+      this.drawer=true
+      this.detailsInfo = JSON.parse(JSON.stringify(msg))
+      console.log("this.list::::",this.list)
     }
   },
   mounted() {
     this.getInfo()
     this.getAllPhone()
     setTimeout(this.getRoleId, 50)
+    this.getServeInit()
   }
 }
 </script>
 
 <style scoped>
+.mainContent{
+  width: 100%;
+  height: 100%;
+  /*background-color: #8c6fd0;*/
+}
 .avatar{
   margin: 3% 0 0 40%;
   width: 150px;
@@ -257,5 +349,28 @@ export default {
   margin: 0 0 0 30%;
   position: relative;
   /*background-color: #8c6fd0;*/
+}
+.message{
+  /*background-color: #c1c1c1;*/
+  height: 100%;
+  width: 50%;
+  float: left;
+  /*background-color: #8c6fd0;*/
+}
+.el-calendar{
+  height: 50%;
+  width: 35%;
+  /*background-color: skyblue;*/
+  float: right;
+  --el-calendar-cell-width:55px;
+  margin: 5% 10% 0 0;
+}
+.detail{
+  width: 100%;
+  border: solid 2px goldenrod;
+  margin: 30% 0 0 0;
+}
+.detail td{
+  border: solid 1px goldenrod;
 }
 </style>

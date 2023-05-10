@@ -25,36 +25,51 @@
     </div>
 
     <div>
-      <el-table :data="saleChance" class="tableMenu" max-height="500"
+      <el-table :data="saleChance" class="tableMenu" max-height="510"
                 :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }">
-        <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
+        <el-table-column prop="id" sortable label="编号" width="100" fixed="left" align="center"/>
         <el-table-column prop="chanceSource" label="机会来源" width="100" header-align="center" align="center"/>
         <el-table-column prop="customerName" label="客户名称" width="100" header-align="center" align="center"/>
         <el-table-column prop="cgjl" label="成功几率(%)" width="130" header-align="center" align="center"/>
         <el-table-column prop="overview" label="概要" width="150" header-align="center" align="center"/>
         <el-table-column prop="linkMan" label="联系人" width="100" header-align="center" align="center"/>
         <el-table-column prop="linkPhone" label="联系电话" width="130" header-align="center" align="center"/>
-        <el-table-column prop="description" label="描述" width="150" header-align="center" align="center"/>
+        <el-table-column label="描述" width="150" header-align="center" align="center">
+          <template #default="scope">
+            <el-popover
+                placement="right-start"
+                title="描述信息"
+                :width="400"
+                trigger="hover"
+                :content="scope.row.description"
+            >
+              <template #reference>
+                <el-button class="m-2" size="small">描述</el-button>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="createMan" label="创建人" width="100" header-align="center" align="center"/>
         <el-table-column prop="assignMan" label="分配人" width="100" header-align="center" align="center"/>
         <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center" align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="修改时间" width="200" header-align="center" align="center"/>
         <el-table-column label="分配状态" width="100" header-align="center" align="center">
           <template #default="scope">
-            <span v-if="scope.row.state==='已分配'" style="color:skyblue">{{ scope.row.state }}</span>
-            <span v-else-if="scope.row.state==='未分配'" style="color: red">{{ scope.row.state }}</span>
+            <el-tag v-if="scope.row.state==='已分配'">{{ scope.row.state }}</el-tag>
+            <el-tag v-else-if="scope.row.state==='未分配'" class="ml-2" type="danger">{{ scope.row.state }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="devResult" label="开发状态" width="100" header-align="center" align="center">
           <template #default="scope">
-            <span v-if="scope.row.devResult==='开发完成'" style="color:#65a108">{{ scope.row.devResult }}</span>
-            <span v-else-if="scope.row.devResult==='开发中'" style="color: skyblue">{{ scope.row.devResult }}</span>
-            <span v-else-if="scope.row.devResult==='未开发'" style="color: red">{{ scope.row.devResult }}</span>
+            <el-tag v-if="scope.row.devResult==='开发完成'" class="ml-2" type="success">{{ scope.row.devResult }}</el-tag>
+            <el-tag v-else-if="scope.row.devResult==='开发中'">{{ scope.row.devResult }}</el-tag>
+            <el-tag v-else-if="scope.row.devResult==='未开发'" class="ml-2" type="info">{{ scope.row.devResult }}</el-tag>
+            <el-tag v-else-if="scope.row.devResult==='开发失败'" class="ml-2" type="danger">{{ scope.row.devResult }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="110" header-align="center">
+        <el-table-column fixed="right" label="操作" width="110" header-align="center" v-if="updateVisible||delVisible">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="updateSC(scope.row)" v-if="updateVisible"
             >修 改
@@ -252,28 +267,65 @@ export default {
   },
   methods: {
     handleDownload(){
+      let saleChance = []
+      // eslint-disable-next-line no-unused-vars
       let json_fields = []
-      for (let i = 0; i < this.saleChance.length; i++) {
-        json_fields.push({
-          "编号":this.saleChance[i].id,
-          "机会来源":this.saleChance[i].chanceSource,
-          "客户名称":this.saleChance[i].customerName,
-          "成功几率(%)":this.saleChance[i].cgjl,
-          "概要":this.saleChance[i].overview,
-          "联系人":this.saleChance[i].linkMan,
-          "联系电话":this.saleChance[i].linkPhone,
-          "描述":this.saleChance[i].description,
-          "创建人":this.saleChance[i].createMan,
-          "分配人":this.saleChance[i].assignMan,
-          "分配时间":this.saleChance[i].assignTime,
-          "创建时间":this.saleChance[i].createDate,
-          "修改时间":this.saleChance[i].updateDate,
-          "分配状态":this.saleChance[i].state===1?'已分配':'未分配',
-          "开发状态":this.saleChance[i].devResult
-        })
-      }
-      // console.log("json_fields",json_fields)
-      saveJsonToExcel(json_fields, '营销机会信息.xlsx')
+      let saleChanceQuery = {//多条件查询
+            customerName: this.saleChanceQuery.customerName,
+            createMan: this.saleChanceQuery.createMan,
+            state: this.saleChanceQuery.state,
+            page: 1,
+            limit: 1000,
+          }
+      this.$api.SaleChance.querySaleChanceByParams("/SaleChance/lists",saleChanceQuery).then(res => {
+        if (res.code == 200) {
+          // console.log(toRaw(this.AssignmentList), 987)
+          saleChance = res.result.data
+          for (let i = 0; i < saleChance.length; i++) {
+            if (saleChance[i].state === 0) {
+              saleChance[i].state = "未分配"
+            } else {
+              saleChance[i].state = "已分配"
+            }
+
+            if (saleChance[i].devResult === 0) {
+              saleChance[i].devResult = "未开发"
+            } else if (saleChance[i].devResult === 1) {
+              saleChance[i].devResult = "开发中"
+            } else if (saleChance[i].devResult === 2){
+              saleChance[i].devResult = "开发完成"
+            } else if (saleChance[i].devResult === 3){
+              saleChance[i].devResult = "开发失败"
+            }
+
+            for (let j = 0; j < this.AssignmentList.length; j++) {
+              if (saleChance[i].assignMan == this.AssignmentList[j].id) {
+                saleChance[i].assignMan = this.AssignmentList[j].uname
+              }
+            }
+          }
+          for (let i = 0; i < saleChance.length; i++) {
+            json_fields.push({
+              "编号": saleChance[i].id,
+              "机会来源": saleChance[i].chanceSource,
+              "客户名称": saleChance[i].customerName,
+              "成功几率(%)": saleChance[i].cgjl,
+              "概要": saleChance[i].overview,
+              "联系人": saleChance[i].linkMan,
+              "联系电话": saleChance[i].linkPhone,
+              "描述": saleChance[i].description,
+              "创建人":  saleChance[i].createMan,
+              "分配人":  saleChance[i].assignMan,
+              "分配时间": saleChance[i].assignTime,
+              "创建时间": saleChance[i].createDate,
+              "修改时间": saleChance[i].updateDate,
+              "分配状态": saleChance[i].state === 1 ? '已分配' : '未分配',
+              "开发状态": saleChance[i].devResult
+            })
+          }
+          saveJsonToExcel(json_fields, '营销机会信息.xlsx')
+        }
+      })
     },
     updateSC(msg) {
       this.updateDialogVisible = true
@@ -406,8 +458,10 @@ export default {
               this.saleChance[i].devResult = "未开发"
             } else if (this.saleChance[i].devResult === 1) {
               this.saleChance[i].devResult = "开发中"
-            } else {
+            } else if (this.saleChance[i].devResult === 2){
               this.saleChance[i].devResult = "开发完成"
+            }else if (this.saleChance[i].devResult === 3){
+              this.saleChance[i].devResult = "开发失败"
             }
 
             for (let j = 0; j < this.AssignmentList.length; j++) {
@@ -495,8 +549,10 @@ export default {
               this.saleChance[i].devResult = "未开发"
             } else if (this.saleChance[i].devResult === 1) {
               this.saleChance[i].devResult = "开发中"
-            } else {
+            } else if (this.saleChance[i].devResult === 2){
               this.saleChance[i].devResult = "开发完成"
+            }else if (this.saleChance[i].devResult === 3){
+              this.saleChance[i].devResult = "开发失败"
             }
 
             for (let j = 0; j < this.AssignmentList.length; j++) {
@@ -557,8 +613,8 @@ export default {
   width: 98%;
 }
 .page{
-  position: relative;
-  margin: 1% 0 0 1%;
+  position: absolute;
+  top: 99%;
   width: 60%;
   color: #ffffff;
 }

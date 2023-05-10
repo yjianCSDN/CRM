@@ -37,3 +37,6 @@ export function deleteOrderDetailsInfo(url,params) {
 export function countOrderByCustomer(url,params) {
     return get(url,params)
 }
+export function getServeByAssigner(url,params) {
+    return get(url,params)
+}

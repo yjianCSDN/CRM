@@ -19,19 +19,25 @@
     </div>
     <div>
       <el-table :data="serveList" class="tableMenu"
-                max-height="550" :default-sort="{ prop: 'createDate', order: 'descending' }"
+                max-height="500" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center" align="center"/>
         <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center" align="center"/>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center" align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center" align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="210" header-align="center" align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center" align="center"/>
         <el-table-column prop="label" label="分配人" width="135" header-align="center" align="center"/>
         <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
+        <el-table-column label="审核状态" width="200" header-align="center" align="center">
+          <template #default="scope">
+            <span v-if="scope.row.auditStatus===0" style="color: #c1c1c1">未审核</span>
+            <span v-else-if="scope.row.auditStatus===2" style="color: red">审核未通过</span>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" width="70" header-align="center" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="processingVisible=true,updateServeInfo=JSON.parse(JSON.stringify(scope.row))"
@@ -167,6 +173,7 @@ export default {
         this.total = res.result.count
         if (res.code === 200) {
           ElMessage({type: "success", message: "查找成功"})
+          setTimeout(this.distribution, 50)
         } else {
           ElMessage({type: "error", message: "查找失败，请重试"})
         }
@@ -175,8 +182,10 @@ export default {
     //页面初始化（查找数据）
     paramsInitialization() {
       this.$api.CustomerServer.queryCustomerServeByParams("/customerServe/lists?flag=1", this.customerServeQuery).then(res => {
+        console.log(res)
         this.serveList = res.result.data
         this.total = res.result.count
+        setTimeout(this.distribution, 50)
       })
     },
     //翻页
@@ -254,7 +263,7 @@ export default {
 }
 .page{
   position: absolute;
-  margin: 25% 0 0 1%;
+  margin: 28.5% 0 0 1%;
   width: 60%;
   color: #ffffff;
 }

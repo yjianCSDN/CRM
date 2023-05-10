@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Cookies from "js-cookie";
 export default {
     baseUrl: 'http://localhost:8081',
@@ -5,5 +6,5 @@ export default {
     headers: {
         'Content-Type': 'application/json;charset=UTF-8'
     },
-    cookies:Cookies.get("userIdStr"),
+    // cookies:Cookies.get("userIdStr"),
 }

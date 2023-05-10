@@ -16,7 +16,7 @@
                 :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
       >
-        <el-table-column prop="id" label="编号" width="100" fixed="left" align="center"/>
+        <el-table-column prop="id" sortable label="编号" width="100" fixed="left" align="center"/>
         <el-table-column prop="dataDicName" label="字典名称" width="150" header-align="center" align="center"/>
         <el-table-column prop="dataDicValue" label="字典取值" width="150" header-align="center" align="center"/>
         <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>

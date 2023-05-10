@@ -8,7 +8,16 @@
       :collapse="collapse"
       unique-opened="true"
   >
-
+      <el-sub-menu index="0" >
+        <template #title>
+          <span class="iconfont icon-shouye" style="margin: 0 0 0 10px"/>
+          <span style="margin: 0 0 0 10px">系 统 首 页</span>
+        </template>
+        <el-menu-item index="/index/welcome" >
+          <span class="iconfont icon-zhanshijia" style="margin: 0 10px 0 0"/>
+          <span>公告展示</span>
+        </el-menu-item>
+      </el-sub-menu>
     <el-sub-menu index="1" v-if="CustomerManagementVisible">
       <template #title>
         <span class="iconfont icon-caidanlan-kehu-kehulianxiren" style="margin: 0 0 0 10px"/>
@@ -108,7 +117,7 @@
         <span style="margin: 0 0 0 10px">系 统 管 理</span>
       </template>
       <el-menu-item-group>
-        <el-menu-item index="/index/DictionaryManagement">
+        <el-menu-item index="/index/DictionaryManagement" v-show="false">
 <!--          <el-image style="width: 40px; height: 40px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/字典管理.png')"/>-->
           <span class="iconfont icon-zidianguanli" style="margin: 0 10px 0 0"/>
           字 典 管 理
@@ -173,7 +182,7 @@
           <el-menu-item index="/index/AllAnnouncements" v-show="ViewAnnouncement">
 <!--            <el-image style="width: 45px; height: 45px;top: -8px;margin: 0 10px 0 0;position: relative" :src="require('@/assets/招展管理.png')"/>-->
             <span class="iconfont icon--zhanshiping" style="margin: 0 10px 0 0"/>
-            公告展示
+            公告管理
           </el-menu-item>
         </el-menu-item-group>
       <el-menu-item-group>
@@ -237,13 +246,13 @@ export default {
     console.log(Cookies.get("userIdStr"))
     this.$api.Permission.queryUserHasRoleHasPermissionByUserId("/permission/lists", {userIdStr:Cookies.get("userIdStr")   }).then(res=>{
       if (res.code===200){
+        // console.log(res)
         this.list = toRaw(res.result)
         console.log("this.List:--->",this.list)
         this.$store.commit("setPermissionList",res.result)
       }
 
-      this.saleChance = false
-      if (JSON.stringify(toRaw(this.list)).includes("1000")){
+      if (JSON.stringify(toRaw(this.list)).includes("10000")){
         this.saleChance = true
       }
       if (JSON.stringify(toRaw(this.list)).includes("1010")){

@@ -22,7 +22,7 @@ export default {
 <style scoped>
 .Index{
   width: 100%;
-  height: 675px;
+  height: 750px;
 }
 
 </style>

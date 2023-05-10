@@ -31,11 +31,11 @@
     </div>
     <div>
       <el-table :data="userList" class="tableMenu"
-                max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
+                max-height="480" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="userName" label="用户名" width="120" header-align="center" align="center"/>
         <el-table-column prop="email" label="用户邮箱" width="200" header-align="center" align="center"/>
         <el-table-column prop="trueName" label="真实姓名" width="120" header-align="center" align="center"/>
@@ -46,7 +46,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="phone" label="手机号" width="150" header-align="center" align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
         <el-table-column label="用户头像" width="200" header-align="center" align="center">
           <template #default="scope">
@@ -287,7 +287,7 @@
       </el-form>
       <template #footer>
       <span class="dialog-footer">
-         <el-button type="primary" @click="this.confirmUserPwdVisible = false,this.PwdModel={}">
+         <el-button type="primary" @click="this.confirmUserPwdVisible2 = false,this.PwdModel.oldPwd=''">
           取 消
         </el-button>
         <el-button type="primary" @click="delUserConfirm">
@@ -400,16 +400,8 @@ export default {
         if (res.code === 200) {
           this.userList = toRaw(res.result.data)
           this.common("success", "查询成功")
-          // ElMessage({
-          //   type:"success",
-          //   message:"查询成功!"
-          // })
         } else {
           this.common("error", "查询失败，请重试!")
-          // ElMessage({
-          //   type:"error",
-          //   message:"查询失败，请重试!"
-          // })
         }
       })
       this.userQuery = {}
@@ -419,10 +411,6 @@ export default {
       this.result = true
       for (let i = 0; i < this.AllUserName.length; i++) {
         if (this.addUserInfo.userName === this.AllUserName[i]) {
-          // ElMessage({
-          //   type:"info",
-          //   message:"当前输入角色名称与原有角色名称重复"
-          // })
           this.common("info", "当前输入角色名称与原有角色名称重复!")
           this.result = false
         }
@@ -433,23 +421,11 @@ export default {
       var e = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/
       if (this.addUserInfo.userName === "" || this.addUserInfo.trueName === "" || this.addUserInfo.email === "" ||
           this.addUserInfo.phone === "" || this.addUserInfo.userPwd === "") {
-        // ElMessage({
-        //   type:"info",
-        //   message:"信息没有输入完全!"
-        // })
         this.common("info", "信息没有输入完全!")
       } else if (!(/^1[34578]\d{9}$/.test(this.addUserInfo.phone))) {//手机号格式检验
         //手机号非空的报错信息
-        //    ElMessage({
-        //      message: "手机号格式错误，请重试",
-        //      type: "error"
-        //    })
         this.common("warning", "手机号格式错误，请重试!")
       } else if (!e.test(this.addUserInfo.email)) {
-        // ElMessage({
-        //   type:"error",
-        //   message:"邮箱格式错误!"
-        // })
         this.common("warning", "邮箱格式错误!")
       } else if (this.addUserInfo.userPwd.length < 6) {
         // console.log("密码长度少于六位")
@@ -665,18 +641,17 @@ export default {
 .tableMenu {
   left: 3%;
   position: relative;
-  width: 80%;
+  width: 94%;
 }
 
 .UserManagement {
   width: 100%;
-
 }
 
 .page {
   position: absolute;
-  top: 88%;
+  /*margin: 10% 0 0 0;*/
   width: 60%;
-  color: #ffffff;
+  /*background-color: #8c6fd0;*/
 }
 </style>

@@ -7,14 +7,14 @@
           placeholder="客户名"
           style="position: relative;width: 10%;margin: 1% 0 0 1%"
       />
-      <el-select  class="m-2" placeholder="开发状态" v-model="customerServeQuery.serveType" style="margin: 1% 0 0 10px">
-        <el-option label="无"     value="" />
+      <el-select  class="m-2" placeholder="类型" v-model="customerServeQuery.serveType" style="margin: 1% 0 0 10px">
+        <el-option label="全部类型"     value="" />
         <el-option label="咨询"   value="6" />
         <el-option label="投诉"   value="7" />
         <el-option label="建议"   value="8" />
       </el-select>
       <el-select  class="m-2" placeholder="审核状态" v-model="customerServeQuery.auditStatus" style="margin: 1% 0 0 10px">
-        <el-option label="无"      value="" />
+        <el-option label="全部"      value="" />
         <el-option label="已通过"   value="1"/>
         <el-option label="未通过"   value="0"/>
       </el-select>
@@ -28,19 +28,20 @@
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
-        <el-table-column fixed="left" prop="id" label="编号" width="100" align="center"/>
+        <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center"  align="center"/>
         <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center"  align="center"/>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center"  align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center"  align="center"/>
-        <el-table-column prop="createDate" label="创建时间" width="210" header-align="center"  align="center"/>
-        <el-table-column prop="assigner" label="分配人" width="135" header-align="center"  align="center"/>
+        <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center"  align="center"/>
+        <el-table-column prop="label" label="分配给" width="135" header-align="center"  align="center"/>
         <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center"  align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center"/>
-        <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center"  align="center">
+        <el-table-column label="审核状态" width="200" header-align="center"  align="center">
           <template #default="scope">
-            <span v-if="scope.row.auditStatus===0" style="color: red">未审核</span>
-            <span v-else-if="scope.row.auditStatus===1" style="color: green">已审核</span>
+            <el-tag v-if="scope.row.auditStatus===0" class="ml-2" type="info">未审核</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus===1" class="ml-2" type="success">已通过</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus===2" type="danger">未通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="150" header-align="center" align="center">
@@ -142,8 +143,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="审核结果">
-          <span v-if="updateServeInfo.auditStatus===1" style="color: greenyellow">已通过</span>
-          <span v-else-if="updateServeInfo.auditStatus===0" style="color: red">未通过</span>
+          <span v-if="updateServeInfo.auditStatus===1" style="color: green">已通过</span>
+          <span v-else-if="updateServeInfo.auditStatus===0" style="color: #c1c1c1">未审核</span>
+          <span v-else-if="updateServeInfo.auditStatus===2" style="color: red">未通过</span>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -165,6 +167,7 @@
 <script>
 import {reactive, ref} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
+// eslint-disable-next-line no-unused-vars
 import {saveJsonToExcel} from "@/tools/utils";
 
 export default {
@@ -183,23 +186,45 @@ export default {
   },
   methods:{
     handleDownload(){
-      let json_fields = []
-      for (let i = 0; i < this.serveList.length; i++) {
-        json_fields.push({
-          "编号":this.serveList[i].id,
-          "客户名":this.serveList[i].customer,
-          "服务类型":this.serveList[i].dicValue,
-          "概要信息":this.serveList[i].overview,
-          "创建人":this.serveList[i].createProple,
-          "创建时间":this.serveList[i].createDate,
-          "分配人":this.serveList[i].assigner,
-          "分配时间":this.serveList[i].assignTime,
-          "更新时间":this.serveList[i].updateDate,
-          "管理员审核结果":this.serveList[i].auditStatus===1?'审核通过':'审核未通过'
-        })
-      }
-      // console.log("json_fields",json_fields)
-      saveJsonToExcel(json_fields, '客户意见服务信息.xlsx')
+      let customerServeQuery = reactive({page:1,limit:1000,customer:this.customerServeQuery.customer,serveType:this.customerServeQuery.serveType,state:"fw_005",assigner:this.customerServeQuery.assigner,auditStatus:this.customerServeQuery.auditStatus})
+      let serveList = []
+      this.$api.CustomerServer.queryCustomerServeByParams("/customerServe/lists",customerServeQuery).then(res=>{
+        // console.log(res)
+        serveList=res.result.data
+        for (let i = 0; i < serveList.length; i++) {
+          for (let j = 0; j < this.customerManagers.length; j++) {
+            if (serveList[i].assigner == this.customerManagers[j].id) {
+              serveList[i].label=this.customerManagers[j].uname
+              serveList[i].assigner = this.customerManagers[j].id
+            }
+          }
+        }
+        // console.log("111哥真的吗",serveList)
+        let json_fields = []
+        for (let i = 0; i < serveList.length; i++) {
+          if (serveList[i].auditStatus===0){
+            serveList[i].result='未审核'
+          }else if (serveList[i].auditStatus===1){
+            serveList[i].result='已通过'
+          }else if (serveList[i].auditStatus===2){
+            serveList[i].result='未通过'
+          }
+          json_fields.push({
+            "编号":serveList[i].id,
+            "客户名":serveList[i].customer,
+            "服务类型":serveList[i].dicValue,
+            "概要信息":serveList[i].overview,
+            "创建人":serveList[i].createPeople,
+            "创建时间":serveList[i].createDate,
+            "分配人":serveList[i].label,
+            "分配时间":serveList[i].assignTime,
+            "更新时间":serveList[i].updateDate,
+            "管理员审核结果": serveList[i].result
+          })
+        }
+        // console.log("json_fields",json_fields)
+        saveJsonToExcel(json_fields, '客户意见服务信息.xlsx')
+      })
     },
     queryServiceListByParams(){
       this.$api.CustomerServer.queryCustomerServeByParams("/customerServe/lists",this.customerServeQuery).then(res=>{
@@ -221,7 +246,7 @@ export default {
         for (let j = 0; j < this.customerManagers.length; j++) {
           if (this.serveList[i].assigner == this.customerManagers[j].id) {
             this.serveList[i].label=this.customerManagers[j].uname
-            this.serveList[i].assigner = this.customerManagers[j].uname
+            this.serveList[i].assigner = this.customerManagers[j].id
           }
         }
       }
@@ -240,7 +265,6 @@ export default {
   mounted() {
     this.paramsInitialization()
     this.$api.CustomerServer.queryAllCustomerManagers("/user/queryAllCustomerManagers").then(res=>{
-      // console.log(res)
       this.customerManagers=res.result
       setTimeout(this.distribution,50)
     })
@@ -262,7 +286,7 @@ export default {
 }
 .page{
   position: absolute;
-  margin: 7% 0 0 1%;
+  margin: 3% 0 0 1%;
   width: 60%;
   color: #ffffff;
 }
