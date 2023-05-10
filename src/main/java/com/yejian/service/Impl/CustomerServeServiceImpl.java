@@ -155,7 +155,9 @@ public class CustomerServeServiceImpl extends BaseService<CustomerServe,Integer>
         // 判断客户服务的服务状态
         if (CustomerServeStatus.ASSIGNED.getState().equals(customerServe.getState())) {
             customerServe.setState(CustomerServeStatus.PROCED.getState());
-            customerServe.setAssignTime(new Date());
+            if (customerServe.getAssignTime()==null){
+                customerServe.setAssignTime(new Date());
+            }
         //创建----->（已）分配
         } else if (CustomerServeStatus.PROCED.getState().equals(customerServe.getState())) {
             customerServe.setServiceProceTime(new Date());
@@ -163,6 +165,9 @@ public class CustomerServeServiceImpl extends BaseService<CustomerServe,Integer>
         //分配----->（已）进行处理
         } else if (CustomerServeStatus.FEED_BACK.getState().equals(customerServe.getState())) {
             customerServe.setServiceProceTime(new Date());
+            if (customerServe.getAuditStatus()!=2){
+                customerServe.setAuditStatus(0);
+            }
             customerServe.setState(CustomerServeStatus.ARCHIVED.getState());
         //进行处理----->（已）反馈
         }
@@ -286,6 +291,12 @@ public class CustomerServeServiceImpl extends BaseService<CustomerServe,Integer>
         map.put("data2",data2);
 
         return map;
+    }
+
+    @Override
+    public List<CustomerServe> getServeByAssigner(Integer id) {
+        List<CustomerServe> serve = customerServeMapper.getServeByAssigner(id);
+        return serve;
     }
 
 }

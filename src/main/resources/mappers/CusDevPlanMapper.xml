@@ -143,4 +143,10 @@
     <select id="getTotal" resultType="java.lang.Integer" parameterType="com.yejian.bean.query.CusDevPlanQuery">
         select count(0) from t_cus_dev_plan where is_valid=1 and sale_chance_id = #{saleChanceId}
     </select>
+    <select id="getItems" resultType="com.yejian.bean.CusDevPlan" parameterType="string">
+        SELECT p.*
+        FROM t_user u LEFT JOIN t_sale_chance s ON u.user_name = s.assign_man
+        LEFT JOIN t_cus_dev_plan p ON s.id = p.sale_chance_id
+        WHERE s.is_valid = 1 AND u.user_name = #{name}
+    </select>
 </mapper>

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +22,8 @@ public class CusDevPlanController {
 
     @Autowired
     private CusDevPlanService cusDevPlanService;
+//    @Autowired
+//    private UserService userService;
 
 
     /**
@@ -103,6 +106,14 @@ public class CusDevPlanController {
      */
     @GetMapping("myItem")
     public ResultInfo getMyItems(HttpServletRequest request){
-        return null;
+        String name = request.getHeader("userName");
+//        User user = userService.getUserByUserName(name);
+        List<Object> items = cusDevPlanService.getItems(name);
+        System.out.println(items);
+        if (null==items) {
+            return ResultInfo.error("error");
+        }else {
+            return ResultInfo.ok(items,"okkkkk");
+        }
     }
 }

@@ -37,6 +37,7 @@ public class UserController extends BaseController {
         UserModel model = userService.login(user.getUserName(),user.getUserPwd());
             info.setResult(model);
             info.setCode(200);
+        System.out.println(info);
         return info;
     }
 

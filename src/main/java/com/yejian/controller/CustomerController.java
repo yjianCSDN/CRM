@@ -44,19 +44,6 @@ public class CustomerController {
     @PostMapping("addCustomer")
     @ResponseBody
     public ResultInfo addCustomer(@RequestBody Customer customer) {
-//        System.out.println(customer.getCusManager());
-//        System.out.println(customer.getAddress());
-//        System.out.println(customer.getArea());
-//        System.out.println(customer.getKhno());
-//        System.out.println(customer.getDsdjh());
-//        System.out.println(customer.getFax());
-//        System.out.println(customer.getDsdjh());
-//        System.out.println(customer.getGsdjh());
-//        System.out.println(customer.getFr());
-//        System.out.println(customer.getName());
-//        System.out.println(customer.getKhzh());
-//        System.out.println(customer.getKhyh());
-//        System.out.println(customer.getLevel());
         Integer integer = customerService.addCustomer(customer);
         if (integer<1){
             return ResultInfo.error("添加失败!");

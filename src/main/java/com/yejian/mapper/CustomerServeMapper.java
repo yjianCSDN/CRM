@@ -15,4 +15,6 @@ import java.util.Map;
 public interface CustomerServeMapper extends BaseMapper<CustomerServe, Integer> {
 
     List<Map<String,Object>> countCustomerMake();
+
+    List<CustomerServe> getServeByAssigner(Integer id);
 }

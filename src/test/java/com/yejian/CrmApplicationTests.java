@@ -26,6 +26,8 @@ class CrmApplicationTests {
     private NoticeService noticeService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private CusDevPlanService cusDevPlanService;
 
     @Test
     void contextLoads() {
@@ -96,4 +98,10 @@ class CrmApplicationTests {
         query.setCreatePeople("admin");
         System.out.println(customerServeService.queryCustomerServeByParams(query));
     }
+    @Test
+    void ss(){
+    }
+
+
+
 }

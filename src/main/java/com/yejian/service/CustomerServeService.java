@@ -4,6 +4,7 @@ import com.yejian.bean.Customer;
 import com.yejian.bean.CustomerServe;
 import com.yejian.bean.query.CustomerServeQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,4 +21,6 @@ public interface CustomerServeService {
     Map<String, Object> countCustomerMake02();
 
     Map<String, Object> countCustomerMake();
+
+    List<CustomerServe> getServeByAssigner(Integer id);
 }

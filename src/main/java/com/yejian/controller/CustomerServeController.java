@@ -2,14 +2,17 @@ package com.yejian.controller;
 
 import com.yejian.bean.Customer;
 import com.yejian.bean.CustomerServe;
+import com.yejian.bean.User;
 import com.yejian.bean.query.CustomerServeQuery;
 import com.yejian.service.CustomerServeService;
+import com.yejian.service.UserService;
 import com.yejian.utils.LoginUserUtil;
 import com.yejian.utils.ResultInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +24,8 @@ import java.util.Map;
 public class CustomerServeController {
     @Autowired
     private CustomerServeService customerServeService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 多条件分页查询服务数据的列表
@@ -148,6 +153,19 @@ public class CustomerServeController {
             return ResultInfo.error("查询客户构成 （饼状图）失败!");
         }else{
             return ResultInfo.ok(map,"查询成功");
+        }
+    }
+
+
+    @GetMapping("getServeByAssigner")
+    public ResultInfo getServeByAssigner(HttpServletRequest request){
+        String name = request.getHeader("userName");
+        User user = userService.getUserByUserName(name);
+        List<CustomerServe> serve = customerServeService.getServeByAssigner(user.getId());
+        if (null==serve){
+            return ResultInfo.error("查找失败");
+        }else {
+            return ResultInfo.ok(serve,"成功Q!");
         }
     }
 }

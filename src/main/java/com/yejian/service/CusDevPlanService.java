@@ -3,6 +3,7 @@ package com.yejian.service;
 import com.yejian.bean.CusDevPlan;
 import com.yejian.bean.query.CusDevPlanQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,4 +21,6 @@ public interface CusDevPlanService {
     void addCusDevPlan(CusDevPlan cusDevPlan);
 
     void updateCusDevPlan(CusDevPlan cusDevPlan);
+
+    List<Object> getItems(String name);
 }

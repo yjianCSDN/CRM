@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -136,5 +137,11 @@ public class CusDevPlanServiceImpl implements CusDevPlanService {
         /* 3. 执行更新操作，判断受影响的行数 */
         AssertUtil.isTrue(cusDevPlanMapper.updateByPrimaryKeySelective(cusDevPlan) != 1, "计划项更新失败！");
 
+    }
+
+    @Override
+    public List<Object> getItems(String name) {
+        List<Object> items = cusDevPlanMapper.getItems(name);
+        return items;
     }
 }
