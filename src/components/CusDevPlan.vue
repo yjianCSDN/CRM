@@ -148,7 +148,7 @@
         <el-table-column prop="createDate" label="创建时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
         <template v-slot:empty>
-          <p>暂无记录</p>
+          <p>暂无客户开发计划项</p>
         </template>
       </el-table>
 
@@ -247,6 +247,9 @@
               </el-button>
             </template>
           </el-table-column>
+          <template v-slot:empty>
+            <p>暂无客户开发计划项</p>
+          </template>
         </el-table>
       </el-form>
       <el-pagination

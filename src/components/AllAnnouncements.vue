@@ -35,12 +35,12 @@
       <el-table-column prop="title" label="标题" width="200" header-align="center" align="center"/>
       <el-table-column  label="公告类型" width="100" header-align="center" align="center">
         <template #default="scope">
-          <span v-if="scope.row.type==='平台公告'" style="color: #37B328">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='新闻动态'"  style="color: #8c6fd0">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='营销机会'" style="color: orangered">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='行业资讯'" style="color: skyblue">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='其他公告'" style="color: orange">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='公司通知'" style="color: aqua">{{scope.row.type}}</span>
+          <el-tag v-if="scope.row.type==='平台公告'" style="color: #37B328">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='新闻动态'"  style="color: #8c6fd0">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='营销机会'" style="color: orangered">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='行业资讯'" style="color: skyblue">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='其他公告'" style="color: orange">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='公司通知'" style="color: #46c9c9">{{scope.row.type}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="publisher" label="发起者" width="130" header-align="center" align="center"/>
@@ -54,14 +54,14 @@
               :content="scope.row.content"
           >
             <template #reference>
-              <el-button class="m-2">公告信息</el-button>
+              <el-button class="m-2" link type="primary">公告信息</el-button>
             </template>
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="createDate" label="发布日期" :formatter="formData" width="200" header-align="center" align="center"/>
+      <el-table-column prop="createDate" sortable label="发布日期" :formatter="formData" width="200" header-align="center" align="center"/>
       <el-table-column prop="updateDate" sortable label="修改日期" :formatter="formData" width="200" header-align="center" align="center"/>
-      <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center" v-if="updateVisible||deleteVisible">
+      <el-table-column fixed="right" label="操作" width="150" header-align="center" align="center" v-if="updateVisible||deleteVisible">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="updateInit(scope.row)" v-show="updateVisible"
           >修 改
@@ -109,10 +109,10 @@
         style="max-width: 460px"
     >
       <el-form-item label="公告标题">
-        <el-input v-model="noticeInfo.title" placeholder="(空)"/>
+        <el-input v-model="noticeInfo.title" placeholder="请输入公告标题"/>
       </el-form-item>
       <el-form-item label="公告类型">
-        <el-select v-model="noticeInfo.type" class="m-2" placeholder="(空)">
+        <el-select v-model="noticeInfo.type" class="m-2" placeholder="请输入公告类型">
           <el-option label="平台公告" value="平台公告"/>
           <el-option label="新闻动态" value="新闻动态"/>
           <el-option label="营销机会" value="营销机会"/>
@@ -123,7 +123,7 @@
       </el-form-item>
       <el-form-item label="公告内容">
         <el-input v-model="noticeInfo.content" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }"
-                  placeholder="(空)"/>
+                  placeholder="请输入公告内容"/>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -208,6 +208,8 @@ export default {
           if (res.code===200){
             this.common("success","查找成功")
             this.noticeList=res.result.data
+            this.total = res.result.count
+            // console.log(res)
           }else {
             this.common("error","查找失败，请重试")
           }

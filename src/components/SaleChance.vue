@@ -14,7 +14,7 @@
           style="position: relative;width: 12%;margin: 5px"
       />
       <el-select v-model="saleChanceQuery.state" class="m-2" placeholder="分 配 状 态">
-        <el-option label="无" value=""/>
+        <el-option label="全 部" value=""/>
         <el-option label="已 分 配" value="1"/>
         <el-option label="未 分 配" value="0"/>
       </el-select>
@@ -251,7 +251,7 @@ export default {
       saleChanceQuery: {//多条件查询
         customerName: "",
         createMan: "",
-        state: "",
+        state: null,
         page: 1,
         limit: 10,
       },
@@ -360,7 +360,6 @@ export default {
               type: "success"
             })
             this.updateDialogVisible = false
-            this.saleChanceQuery.page = 1
             this.handleCurrentChange(this.saleChanceQuery.page)
           } else {
             ElMessage({
@@ -525,8 +524,7 @@ export default {
                 })
                 this.dialogVisible = false
                 this.addSaleChanceList = {}
-                this.saleChanceQuery.page = 1
-                this.getAll()
+                this.handleCurrentChange(this.saleChanceQuery.page)
               }
             })
           }

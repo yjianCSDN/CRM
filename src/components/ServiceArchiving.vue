@@ -8,15 +8,15 @@
           style="position: relative;width: 10%;margin: 1% 0 0 1%"
       />
       <el-select  class="m-2" placeholder="类型" v-model="customerServeQuery.serveType" style="margin: 1% 0 0 10px">
-        <el-option label="全部类型"     value="" />
+        <el-option label="无"     value="" />
         <el-option label="咨询"   value="6" />
-        <el-option label="投诉"   value="7" />
-        <el-option label="建议"   value="8" />
+        <el-option label="建议"   value="7" />
+        <el-option label="投诉"   value="8" />
       </el-select>
       <el-select  class="m-2" placeholder="审核状态" v-model="customerServeQuery.auditStatus" style="margin: 1% 0 0 10px">
         <el-option label="全部"      value="" />
         <el-option label="已通过"   value="1"/>
-        <el-option label="未通过"   value="0"/>
+        <el-option label="未审核"   value="0"/>
       </el-select>
       &nbsp;&nbsp;
       <el-button type="primary"  style="margin: 1% 0 0 0" @click="queryServiceListByParams">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
@@ -24,13 +24,19 @@
     </div>
     <div>
       <el-table :data="serveList"  class="tableMenu"
-                max-height="550"  :default-sort="{ prop: 'createDate', order: 'descending' }"
+                max-height="460"  :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
                 row-style="rowStyle"
       >
         <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center"  align="center"/>
-        <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center"  align="center"/>
+        <el-table-column label="服务类型" width="150" header-align="center"  align="center">
+          <template #default="scope">
+            <el-tag v-if="scope.row.dicValue==='投诉'" type="danger">{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='建议'" class="ml-2" >{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='咨询'" class="ml-2" type="success" >{{ scope.row.dicValue }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center"  align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center"  align="center"/>
         <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center"  align="center"/>
@@ -98,13 +104,13 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="服务内容">
-          <el-input v-model="updateServeInfo.serviceRequest" disabled style="width: 70%;" type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="(空)"/>
-        </el-form-item>
         <el-form-item label="服务概要">
           <el-input v-model="updateServeInfo.overview" disabled style="width: 70%;" type="textarea"
                     :autosize="{ minRows: 2, maxRows: 4 }" placeholder="(空)"/>
+        </el-form-item>
+        <el-form-item label="服务内容">
+          <el-input v-model="updateServeInfo.serviceRequest" disabled style="width: 70%;" type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4 }"  placeholder="(空)"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -134,18 +140,19 @@
         </el-form-item>
 
         <el-form-item label="满意度">
-          <el-select  class="m-2" placeholder="(空)" disabled v-model="updateServeInfo.myd" style="width: 80%">
-            <el-option label="☆"    value="☆" />
-            <el-option label="☆☆"    value="☆☆" />
-            <el-option label="☆☆☆"    value="☆☆☆" />
-            <el-option label="☆☆☆☆"    value="☆☆☆☆" />
-            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
-          </el-select>
+<!--          <el-select  class="m-2" placeholder="(空)" disabled v-model="updateServeInfo.myd" style="width: 80%">-->
+<!--            <el-option label="☆"    value="☆" />-->
+<!--            <el-option label="☆☆"    value="☆☆" />-->
+<!--            <el-option label="☆☆☆"    value="☆☆☆" />-->
+<!--            <el-option label="☆☆☆☆"    value="☆☆☆☆" />-->
+<!--            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />-->
+<!--          </el-select>-->
+          <el-rate v-model="value2" :colors="colors" disabled />
         </el-form-item>
         <el-form-item label="审核结果">
-          <span v-if="updateServeInfo.auditStatus===1" style="color: green">已通过</span>
-          <span v-else-if="updateServeInfo.auditStatus===0" style="color: #c1c1c1">未审核</span>
-          <span v-else-if="updateServeInfo.auditStatus===2" style="color: red">未通过</span>
+          <el-tag v-if="updateServeInfo.auditStatus===0" class="ml-2" type="info" size="large">未审核</el-tag>
+          <el-tag v-else-if="updateServeInfo.auditStatus===1" class="ml-2" type="success" size="large">已通过</el-tag>
+          <el-tag v-else-if="updateServeInfo.auditStatus===2" type="danger" size="large">未通过</el-tag>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -180,8 +187,11 @@ export default {
     let updateServeInfo = reactive({serveType:"",customer:"",overview:"",assignTime:"",
       serviceRequest:"",assigner:"",label:"",serviceProce:"",serviceProcePeople:"",serviceProceResult:"",myd:"",auditStatus:""})
     let customerManagers = reactive({})
+    const colors = ref(['#99A9BF', '#F7BA2A', '#FF9900'])
+    const value2 = ref(null)
     return{
-      customerServeQuery,serveList,total,ArchivingVisible,updateServeInfo,customerManagers
+      customerServeQuery,serveList,total,ArchivingVisible,updateServeInfo,customerManagers,
+      colors,value2
     }
   },
   methods:{
@@ -241,7 +251,7 @@ export default {
       this.paramsInitialization()
       setTimeout(this.distribution,50)
     },
-    distribution() {
+    distribution(msg) {
       for (let i = 0; i < this.serveList.length; i++) {
         for (let j = 0; j < this.customerManagers.length; j++) {
           if (this.serveList[i].assigner == this.customerManagers[j].id) {
@@ -249,8 +259,24 @@ export default {
             this.serveList[i].assigner = this.customerManagers[j].id
           }
         }
+        // <el-option label="☆"    value="☆" />
+        // <el-option label="☆☆"    value="☆☆" />
+        // <el-option label="☆☆☆"    value="☆☆☆" />
+        // <el-option label="☆☆☆☆"    value="☆☆☆☆" />
+        // <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
       }
-      console.log(this.serveList)
+      console.log(msg.myd)
+      if (msg.myd==='☆'){
+        this.value2=1
+      }else if (msg.myd==='☆☆'){
+        this.value2=2
+      }else if (msg.myd==='☆☆☆'){
+        this.value2=3
+      }else if (msg.myd==='☆☆☆☆'){
+        this.value2=4
+      }else if (msg.myd==='☆☆☆☆☆'){
+        this.value2=5
+      }
     },
     //页面初始化（查找数据）
     paramsInitialization(){

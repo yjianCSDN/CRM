@@ -88,7 +88,7 @@
 <!--事项表具体内容-->
   <el-drawer v-model="drawer"
              :with-header="false">
-    <span>当天计划</span>
+    <el-tag size="large" effect="plain">当天计划</el-tag>
     <table class="detail" v-for="item in list" :key="item" >
       <tr>
         <th colspan="2">计划项信息</th>
@@ -98,6 +98,10 @@
         <td>{{item.planItem}}</td>
       </tr>
       <tr/>
+      <tr v-show="item.customerName">
+        <td>客户名称:</td>
+        <td>{{item.customerName}}</td>
+      </tr>
       <tr v-show="item.planDate">
         <td>计划项时间</td>
         <td>{{item.planDate}}</td>
@@ -291,13 +295,14 @@ export default {
       this.userinfo.imgUrl=res.url
       this.img=res.url
     },
+    //获取计划项
     getServeInit(){
       this.$api.CustomerServer.getServeByAssigner("/CusDevPlan/myItem").then(res=>{
         if (res.code===200){
-          // console.log(res)
+          console.log("计划项内容为:::::  ",res)
           res.result.forEach(item=>{
             if (item!==null){
-              // console.log("calendar:::::::::::",item.planDate.split(" ").splice(0,1).toString())
+              console.log("item:   ",item)
               item.calendar = item.planDate.split(" ").splice(0,1).toString()
               this.SaleItem.push(item)
               if (this.CalendarTime.indexOf(item.calendar)===-1){

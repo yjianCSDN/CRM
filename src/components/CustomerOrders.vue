@@ -121,7 +121,7 @@
           <el-input v-model="customerOrder.name" style="width: 300px;" placeholder="请输入客户名称"/>
         </el-form-item>
         <el-form-item label="订单编号">
-          <el-input v-model="customerOrder.orderNo" style="width: 300px;" placeholder="请输入订单名称"/>
+          <el-input v-model="customerOrder.orderNo" style="width: 300px;" placeholder="请输入订单编号"/>
         </el-form-item>
         <el-form-item label="订单地址">
           <el-input v-model="customerOrder.address" style="width: 300px;" type="textarea"
@@ -214,7 +214,7 @@
           </template>
         </el-table-column>
         <template v-slot:empty>
-          <p>该客户暂无订单</p>
+          <p>该客户暂无订单子项数据</p>
         </template>
       </el-table>
       <el-pagination

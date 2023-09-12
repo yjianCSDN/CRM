@@ -25,7 +25,13 @@
       >
         <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center" align="center"/>
-        <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center" align="center"/>
+        <el-table-column label="服务类型" width="150" header-align="center" align="center">
+          <template #default="scope">
+            <el-tag v-if="scope.row.dicValue==='投诉'" type="danger">{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='建议'" class="ml-2" >{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='咨询'" class="ml-2" type="success" >{{ scope.row.dicValue }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center" align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center" align="center"/>
         <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center" align="center"/>
@@ -34,8 +40,9 @@
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
         <el-table-column label="审核状态" width="200" header-align="center" align="center">
           <template #default="scope">
-            <span v-if="scope.row.auditStatus===0" style="color: #c1c1c1">未审核</span>
-            <span v-else-if="scope.row.auditStatus===2" style="color: red">审核未通过</span>
+            <el-tag v-if="scope.row.auditStatus===0" class="ml-2" type="info">未审核</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus===1" class="ml-2" type="success">已通过</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus===2" type="danger">未通过</el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="70" header-align="center" align="center">
@@ -93,12 +100,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="服务内容">
-          <el-input v-model="updateServeInfo.serviceRequest" disabled style="width: 70%;" type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4 }" placeholder="空"/>
-        </el-form-item>
         <el-form-item label="服务概要">
           <el-input v-model="updateServeInfo.overview" disabled style="width: 70%;" type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4 }" placeholder="空"/>
+        </el-form-item>
+        <el-form-item label="服务内容">
+          <el-input v-model="updateServeInfo.serviceRequest" disabled style="width: 70%;" type="textarea"
                     :autosize="{ minRows: 2, maxRows: 4 }" placeholder="空"/>
         </el-form-item>
         <el-row>
@@ -210,12 +217,16 @@ export default {
     },
     assign() {
       if (this.updateServeInfo.serviceProce !== "") {
-        console.log(Cookies.get("userName"))
+        // console.log(Cookies.get("userName"))
         this.updateServeInfo.serviceProcePeople = Cookies.get("userName")
         this.$api.CustomerServer.updateCustomerServe("/customerServe/update", this.updateServeInfo).then(res => {
           // console.log(res)
           if (res.code === 200) {
             ElMessage({type: "success", message: "处理成功!"})
+            this.processingVisible = false
+            this.handleCurrentChange(this.customerServeQuery.page)
+            setTimeout(this.distribution, 50)
+            this.updateServeInfo = {}
           } else {
             ElMessage({type: "error", message: "处理失败，请稍后重试"})
           }
@@ -263,7 +274,7 @@ export default {
 }
 .page{
   position: absolute;
-  margin: 28.5% 0 0 1%;
+  margin: 0 0 0 1%;
   width: 60%;
   color: #ffffff;
 }

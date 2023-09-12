@@ -62,7 +62,7 @@ export default {
             }else if (item.type==='其他公告'){
               item.color='orange'
             }else if (item.type==='公司通知'){
-              item.color='aqua'
+              item.color='#46c9c9'
             }
           })
           this.noticeList=res.result.data

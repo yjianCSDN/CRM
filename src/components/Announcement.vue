@@ -35,12 +35,12 @@
       <el-table-column prop="title" label="标题" width="200" header-align="center" align="center"/>
       <el-table-column label="公告类型" width="100" header-align="center" align="center">
         <template #default="scope">
-          <span v-if="scope.row.type==='平台公告'" style="color: #37B328">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='新闻动态'"  style="color: #8c6fd0">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='营销机会'" style="color: orangered">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='行业资讯'" style="color: skyblue">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='其他公告'" style="color: orange">{{scope.row.type}}</span>
-          <span v-else-if="scope.row.type==='公司通知'" style="color: aqua">{{scope.row.type}}</span>
+          <el-tag v-if="scope.row.type==='平台公告'" style="color: #37B328">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='新闻动态'"  style="color: #8c6fd0">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='营销机会'" style="color: orangered">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='行业资讯'" style="color: skyblue">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='其他公告'" style="color: orange">{{scope.row.type}}</el-tag>
+          <el-tag v-else-if="scope.row.type==='公司通知'" style="color: #46c9c9">{{scope.row.type}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="publisher" label="发起者" width="130" header-align="center" align="center"/>
@@ -54,14 +54,14 @@
               :content="scope.row.content"
           >
             <template #reference>
-              <el-button class="m-2">公告信息</el-button>
+              <el-button class="m-2" link type="primary">公告信息</el-button>
             </template>
           </el-popover>
         </template>
       </el-table-column>
       <el-table-column prop="createDate" :formatter="formData" label="发布日期" width="200" header-align="center" align="center"/>
       <el-table-column prop="updateDate" :formatter="formData" label="修改日期" width="200" header-align="center" align="center"/>
-      <el-table-column fixed="right" label="操作" width="200" header-align="center" align="center">
+      <el-table-column fixed="right" label="操作" width="150" header-align="center" align="center">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="updateInit(scope.row)" v-show="updateVisible"
           >修 改

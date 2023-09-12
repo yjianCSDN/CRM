@@ -25,13 +25,26 @@
       >
         <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center" align="center"/>
-        <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center" align="center"/>
+        <el-table-column label="服务类型" width="150" header-align="center" align="center">
+          <template #default="scope">
+            <el-tag v-if="scope.row.dicValue==='投诉'" type="danger">{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='建议'" class="ml-2" >{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='咨询'" class="ml-2" type="success" >{{ scope.row.dicValue }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center" align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center" align="center"/>
         <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center" align="center"/>
         <el-table-column prop="label" label="分配人" width="135" header-align="center" align="center"/>
         <el-table-column prop="assignTime" label="分配时间" width="200" header-align="center" align="center"/>
         <el-table-column prop="updateDate" label="更新时间" width="200" header-align="center" align="center"/>
+        <el-table-column label="审核状态" width="200" header-align="center" align="center">
+          <template #default="scope">
+            <el-tag v-if="scope.row.auditStatus===0" class="ml-2" type="info">未审核</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus===1" class="ml-2" type="success">已通过</el-tag>
+            <el-tag v-else-if="scope.row.auditStatus===2" type="danger">未通过</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" width="70" header-align="center" align="center">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="processingVisible=true,updateServeInfo=JSON.parse(JSON.stringify(scope.row))"
@@ -125,18 +138,19 @@
         </el-form-item>
 
         <el-form-item label="满意度">
-          <el-select class="m-2" placeholder="请选择满意度" v-model="updateServeInfo.myd" style="width: 80%">
-            <el-option label="☆" value="☆"/>
-            <el-option label="☆☆" value="☆☆"/>
-            <el-option label="☆☆☆" value="☆☆☆"/>
-            <el-option label="☆☆☆☆" value="☆☆☆☆"/>
-            <el-option label="☆☆☆☆☆" value="☆☆☆☆☆"/>
-          </el-select>
+<!--          <el-select class="m-2" placeholder="请选择满意度" v-model="updateServeInfo.myd" style="width: 70%">-->
+<!--            <el-option label="☆" value="☆"/>-->
+<!--            <el-option label="☆☆" value="☆☆"/>-->
+<!--            <el-option label="☆☆☆" value="☆☆☆"/>-->
+<!--            <el-option label="☆☆☆☆" value="☆☆☆☆"/>-->
+<!--            <el-option label="☆☆☆☆☆" value="☆☆☆☆☆"/>-->
+<!--          </el-select>-->
+          <el-rate v-model="value2" :colors="colors" clearable/>
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-           <el-button type="primary" @click="processingVisible=false,updateServeInfo={}"
+           <el-button type="primary" @click="processingVisible=false,updateServeInfo={},this.value2=0"
            >
             取 消
           </el-button>
@@ -155,6 +169,7 @@
 <script>
 import {reactive, ref, toRaw} from "@vue/reactivity";
 import {ElMessage} from "element-plus";
+// eslint-disable-next-line no-unused-vars
 import Cookies from "js-cookie";
 
 export default {
@@ -164,6 +179,8 @@ export default {
     let serveList = reactive([])
     let total = ref("")
     let processingVisible = ref(false)
+    const colors = ref(['#99A9BF', '#F7BA2A', '#FF9900'])
+    const value2 = ref(null)
     let updateServeInfo = reactive({
       serveType: "",
       customer: "",
@@ -186,7 +203,8 @@ export default {
     let selectVisible = ref(false)
     let feedVisible = ref(false)
     return {
-      customerServeQuery, serveList, total, processingVisible, updateServeInfo, customerManagers,list,selectVisible,feedVisible
+      customerServeQuery, serveList, total, processingVisible, updateServeInfo, customerManagers,list,selectVisible,feedVisible,
+      colors,value2
     }
   },
   methods: {
@@ -230,10 +248,26 @@ export default {
       // console.log(this.serveList)
     },
     assign() {
+      // console.log(this.value2)
+      if (this.value2===1){
+        this.updateServeInfo.myd = '☆'
+      }else if (this.value2===2){
+        this.updateServeInfo.myd = '☆☆'
+      }else if (this.value2===3){
+        this.updateServeInfo.myd = '☆☆☆'
+      }else if (this.value2===4){
+        this.updateServeInfo.myd = '☆☆☆☆'
+      }else if (this.value2===5){
+        this.updateServeInfo.myd = '☆☆☆☆☆'
+      }
+      // console.log(this.updateServeInfo.myd)
       this.updateServeInfo.serviceProcePeople = Cookies.get("userName")
       this.$api.CustomerServer.updateCustomerServe("/customerServe/update", this.updateServeInfo).then(res => {
         if (res.code === 200) {
           ElMessage({type: "success", message: "反馈成功!"})
+          this.paramsInitialization()
+          this.value2 = 0
+          setTimeout(this.distribution, 50)
         } else {
           ElMessage({type: "error", message: "反馈失败，请稍后重试"})
         }
@@ -241,6 +275,7 @@ export default {
       this.processingVisible = false
       this.updateServeInfo = {}
       this.paramsInitialization()
+      this.value2 = 0
       setTimeout(this.distribution, 50)
     },
   },
@@ -274,9 +309,26 @@ export default {
   width: 95%;
 }
 .page{
-  position: absolute;
-  margin: 31.5% 0 0 1%;
+  position: relative;
+  margin: 3% 0 0 1%;
   width: 60%;
   color: #ffffff;
+}
+.demo-rate-block {
+  padding: 30px 0;
+  text-align: center;
+  border-right: solid 1px var(--el-border-color);
+  display: inline-block;
+  width: 49%;
+  box-sizing: border-box;
+}
+.demo-rate-block:last-child {
+  border-right: none;
+}
+.demo-rate-block .demonstration {
+  display: block;
+  color: var(--el-text-color-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 </style>

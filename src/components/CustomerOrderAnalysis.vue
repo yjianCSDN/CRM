@@ -10,15 +10,15 @@
     &nbsp;&nbsp;
     <el-button type="primary"  style="margin: 2.5% 0 0 0" @click="search">搜  &nbsp;&nbsp;&nbsp; 索</el-button>
   </div>
-  <div style="width: 500px;height: 250px;margin: 0 0 0 61%;display: block" ref="contribution"/>
-  <div style="width: 500px;height: 290px;margin: -2% 0 0 61%;position: relative" ref="contributionRound"/>
+  <div style="width: 500px;height: 250px;margin: -3% 0 0 61%;display: block" ref="contribution"/>
+  <div style="width: 500px;height: 290px;margin: 0 0 0 61%;position: relative" ref="contributionRound"/>
   <el-table :data="customerOrderLists"  class="tableMenu"
             max-height="550"  :default-sort="{ prop: 'createDate', order: 'descending' }"
             :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }"
             row-style="rowStyle"
   >
     <el-table-column prop="name" label="客户名称"  align="center"/>
-    <el-table-column prop="value" label="订单数量"  header-align="center"  align="center"/>
+    <el-table-column prop="value" sortable label="订单数量"  header-align="center"  align="center"/>
     <template v-slot:empty>
       <p>暂无数据</p>
     </template>
@@ -73,11 +73,19 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: toRaw([])
+          data: toRaw([]),
+          axisLabel: { interval: 0 }
         },
+        dataZoom:[
+          {
+            show: true,
+            start: 0,
+            end: 50
+          }
+        ],
         yAxis: {
           type: "value",
-          name:'件'
+          name:'（单位）件'
         },
         //系列
         series: [{

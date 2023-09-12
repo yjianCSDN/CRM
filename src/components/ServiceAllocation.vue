@@ -25,7 +25,13 @@
       >
         <el-table-column fixed="left" sortable prop="id" label="编号" width="100" align="center"/>
         <el-table-column prop="customer" label="客户名" width="150" header-align="center"  align="center"/>
-        <el-table-column prop="dicValue" label="服务类型" width="150" header-align="center"  align="center"/>
+        <el-table-column label="服务类型" width="150" header-align="center"  align="center">
+          <template #default="scope">
+            <el-tag v-if="scope.row.dicValue==='投诉'" type="danger">{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='建议'" class="ml-2" >{{ scope.row.dicValue }}</el-tag>
+            <el-tag v-else-if="scope.row.dicValue==='咨询'" class="ml-2" type="success" >{{ scope.row.dicValue }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="overview" label="概要信息" width="200" header-align="center"  align="center"/>
         <el-table-column prop="createPeople" label="创建人" width="135" header-align="center"  align="center"/>
         <el-table-column prop="createDate" sortable label="创建时间" width="210" header-align="center"  align="center"/>
@@ -242,9 +248,10 @@ export default {
   width: 95%;
 }
 .page{
-  position: absolute;
-  margin: 27% 0 0 1%;
+  position: relative;
+  margin: 3% 0 0 1%;
   width: 60%;
+  /*background-color: #8c6fd0;*/
   color: #ffffff;
 }
 </style>

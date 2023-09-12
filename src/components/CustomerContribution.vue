@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div style="width: 470px;height: 250px;margin: 0 0 0 63%;display: block" ref="contribution"></div>
-    <div style="width: 470px;height: 290px;margin: 1% 0 0 63%;position: relative" ref="contributionRound"></div>
+  <div class="CustomerContribution">
+    <div style="width: 520px;height: 250px;margin: 0 0 0 59%;display: block" ref="contribution"></div>
+    <div style="width: 520px;height: 290px;margin: 1% 0 0 59%;position: relative" ref="contributionRound"></div>
     <div class="search">
       <el-input
           v-model="customerQuery.customerName"
@@ -10,11 +10,11 @@
           style="position: relative;width: 10%;margin: -80% 0 0 3%"
       />
       <el-select  class="m-2" v-model="customerQuery.type" placeholder="选择客户金额区间"  style="margin: -80% 0 0 1%;width: 10%">
-        <el-option label="无"     value="" />
-        <el-option label="1--1000"      value="1" />
-        <el-option label="1000--3000"   value="2" />
-        <el-option label="3000--5000"   value="3" />
-        <el-option label="5000以上"      value="4" />
+        <el-option label="全部"     value="" />
+        <el-option label="1--10000"      value="1" />
+        <el-option label="10000--30000"   value="2" />
+        <el-option label="30000--50000"   value="3" />
+        <el-option label="50000以上"      value="4" />
       </el-select>
       <el-date-picker
           v-model="customerQuery.time"
@@ -60,7 +60,7 @@ import * as echarts from 'echarts';
 export default {
   name: "CustomerContribution",
   data(){
-    let customerQuery = reactive({customerName:"",customerNo:"",level:"",time:"",type:"",page:1,limit:10})
+    let customerQuery = reactive({customerName:"",customerNo:"",level:"",time:"",type:null,page:1,limit:10})
     let total = ""
     let customerList = reactive([])
     return{
@@ -110,8 +110,16 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: toRaw([])
+          data: toRaw([]),
+          axisLabel: { interval: 0 }
         },
+        dataZoom:[
+          {
+            show: true,
+            start: 0,
+            end: 50
+          }
+        ],
         yAxis: {
           type: "value",
           name:'贡献（万元）'
@@ -207,6 +215,10 @@ export default {
 </script>
 
 <style scoped>
+.CustomerContribution{
+  height: 95%;
+  width: 100%;
+}
 .tableMenu{
   margin: -38% 0 0 0;
   left: 3%;
@@ -216,7 +228,8 @@ export default {
 .page{
   position: absolute;
   top: 80%;
-  width: 100%;
+  width: 60%;
+  /*background-color: #8c6fd0;*/
   color: #ffffff;
 }
 </style>

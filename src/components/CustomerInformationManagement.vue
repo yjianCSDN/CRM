@@ -36,9 +36,17 @@
         <el-table-column prop="khno" label="客户编号" width="200" header-align="center"  align="center"/>
         <el-table-column prop="area" label="地区" width="70" header-align="center"  align="center"/>
         <el-table-column prop="cusManager" label="客户经理" width="100" header-align="center"  align="center"/>
-        <el-table-column prop="myd" label="满意度" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="myd" label="满意度" width="150" header-align="center"  align="center">
+          <template #default="scope">
+            <el-rate v-model="scope.row.value2" :colors="colors" disabled />
+          </template>
+        </el-table-column>
         <el-table-column prop="level" label="客户级别" width="150" header-align="center"  align="center"/>
-        <el-table-column prop="xyd" label="信用度" width="100" header-align="center"  align="center"/>
+        <el-table-column prop="xyd" label="信用度" width="150" header-align="center"  align="center">
+          <template #default="scope">
+            <el-rate v-model="scope.row.value1" :colors="colors" disabled />
+          </template>
+        </el-table-column>
         <el-table-column prop="address" label="详细地址" width="300" header-align="center"  align="center"/>
         <el-table-column prop="postCode" label="邮编" width="100" header-align="center"  align="center"/>
         <el-table-column prop="phone" label="电话" width="200" header-align="center"  align="center"/>
@@ -112,26 +120,34 @@
           </el-select>
         </el-form-item>
         <el-form-item label="信用度">
-          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.xyd" style="width: 195px">
-            <el-option label="☆"    value="☆" />
-            <el-option label="☆☆"    value="☆☆" />
-            <el-option label="☆☆☆"    value="☆☆☆" />
-            <el-option label="☆☆☆☆"    value="☆☆☆☆" />
-            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
-          </el-select>
+          <el-rate v-model="addCustomerInfo.value1" :colors="colors"  />
+<!--          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.xyd" style="width: 195px">-->
+<!--            <el-option label="☆"    value="☆" />-->
+<!--            <el-option label="☆☆"    value="☆☆" />-->
+<!--            <el-option label="☆☆☆"    value="☆☆☆" />-->
+<!--            <el-option label="☆☆☆☆"    value="☆☆☆☆" />-->
+<!--            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />-->
+<!--          </el-select>-->
         </el-form-item>
-        <el-form-item label="满意度">
-          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.myd" style="width: 195px">
-            <el-option label="☆"    value="☆" />
-            <el-option label="☆☆"    value="☆☆" />
-            <el-option label="☆☆☆"    value="☆☆☆" />
-            <el-option label="☆☆☆☆"    value="☆☆☆☆" />
-            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="邮编">
-          <el-input v-model="addCustomerInfo.postCode"  placeholder="请输入邮编"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="满意度">
+              <el-rate v-model="addCustomerInfo.value2" :colors="colors"  />
+              <!--          <el-select  class="m-2" placeholder="请选择" v-model="addCustomerInfo.myd" style="width: 195px">-->
+              <!--            <el-option label="☆"    value="☆" />-->
+              <!--            <el-option label="☆☆"    value="☆☆" />-->
+              <!--            <el-option label="☆☆☆"    value="☆☆☆" />-->
+              <!--            <el-option label="☆☆☆☆"    value="☆☆☆☆" />-->
+              <!--            <el-option label="☆☆☆☆☆"    value="☆☆☆☆☆" />-->
+              <!--          </el-select>-->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邮编">
+              <el-input v-model="addCustomerInfo.postCode"  placeholder="请输入邮编"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="联系电话" prop="phone">
           <el-input v-model="addCustomerInfo.phone" placeholder="请输入联系电话(必填)"/>
         </el-form-item>
@@ -200,7 +216,7 @@
           <el-input v-model="addCustomerInfo.phone" placeholder="（空）"/>
         </el-form-item>
       </el-form>
-      <el-table :data="customerOrderLists" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
+      <el-table :data="customerOrderLists" max-height="350" :default-sort="{ prop: 'createDate', order: 'descending' }"
                 :header-cell-style="{ backgroundColor: '#eef5ff',   textAlign: 'center',  }" >
         <el-table-column prop ="id" label="编号" width="100" fixed="left" align="center"/>
         <el-table-column prop ="orderNo" label="订单编号" width="170" header-align="center"  align="center"/>
@@ -208,8 +224,10 @@
         <el-table-column prop ="address" label="收货地址" width="200" header-align="center"  align="center"/>
         <el-table-column prop ="state" label="支付状态" width="100" header-align="center"  align="center">
           <template #default="scope">
-            <span v-if="scope.row.state===1" style="color:green">已支付</span>
-            <span v-else-if="scope.row.state===0" style="color: red">未支付</span>
+            <el-tag v-if="scope.row.state===1" class="ml-2" type="success" >已支付</el-tag>
+            <el-tag v-else-if="scope.row.state===0" type="danger">未支付</el-tag>
+<!--            <span v-if="scope.row.state===1" style="color:green">已支付</span>-->
+<!--            <span v-else-if="scope.row.state===0" style="color: red">未支付</span>-->
           </template>
         </el-table-column>
         <el-table-column prop ="createDate" label="创建时间" width="200" header-align="center"  align="center"/>
@@ -255,8 +273,10 @@
           <el-input v-model="orderDetailsList.address" disabled placeholder="(空)"/>
         </el-form-item>
         <el-form-item label="支付状态">
-            <span v-if="orderDetailsList.status==='已支付'" style="color:green">已支付</span>
-            <span v-else-if="orderDetailsList.status==='未支付'" style="color: red">未支付</span>
+          <el-tag v-if="orderDetailsList.status==='已支付'" class="ml-2" type="success" >已支付</el-tag>
+          <el-tag v-else-if="orderDetailsList.status==='未支付'" type="danger">未支付</el-tag>
+<!--            <span v-if="orderDetailsList.status==='已支付'" style="color:green">已支付</span>-->
+<!--            <span v-else-if="orderDetailsList.status==='未支付'" style="color: red">未支付</span>-->
         </el-form-item>
       </el-form>
       <el-table :data="goodList" max-height="520" :default-sort="{ prop: 'createDate', order: 'descending' }"
@@ -312,6 +332,7 @@ export default {
     let list = reactive([])
     let phoneList = reactive([])
     let oldPhone = ref("")
+    const colors = ref(['#99A9BF', '#F7BA2A', '#FF9900'])
 
     //增删改查许可
     let selectVisible = ref(false)
@@ -321,7 +342,7 @@ export default {
     return{
       customerList,customerQuery,total,addCustomerVisible,addCustomerInfo,phoneList,
       vv,CustomerOrderVisible,customerOrderLists,customerOrderQuery,OrderDetailsVisible,oldPhone,
-      orderDetailsList,orderDetailsQuery,goodList,list,selectVisible,addVisible,updateVisible,delVisible,
+      orderDetailsList,orderDetailsQuery,goodList,list,selectVisible,addVisible,updateVisible,delVisible,colors,
       formRules:{name:[{required:true,message:"请输入客户名称",trigger:'blur'}],
                 phone:[{required:true,message:"请输入联系电话",trigger:'blur'}],
                 level:[{required:true,message:"请选择用户级别",trigger:'blur'}]},
@@ -390,13 +411,64 @@ export default {
       this.customerQuery.page = page
       this.$api.CustomerInformation.queryCustomerByParams("/customer/lists",this.customerQuery).then(res=>{
         this.customerList = res.result.data
+        this.customerList.forEach(item=>{
+          if (item.xyd==='☆'){
+            item.value1=1
+          }else if (item.xyd==='☆☆'){
+            item.value1=2
+          }else if (item.xyd==='☆☆☆'){
+            item.value1=3
+          }else if (item.xyd==='☆☆☆☆'){
+            item.value1=4
+          }else if (item.xyd==='☆☆☆☆☆'){
+            item.value1=5
+          }
+
+          if (item.myd==='☆'){
+            item.value2=1
+          }else if (item.myd==='☆☆'){
+            item.value2=2
+          }else if (item.myd==='☆☆☆'){
+            item.value2=3
+          }else if (item.myd==='☆☆☆☆'){
+            item.value2=4
+          }else if (item.myd==='☆☆☆☆☆'){
+            item.value2=5
+          }
+          // console.log("customerList:",this.customerList)
+        })
       })
     },
     queryCustomer(){
       this.$api.CustomerInformation.queryCustomerByParams("/customer/lists").then(res=>{
         this.customerList = res.result.data
         this.total = res.result.count
-        console.log("customerList:",this.customerList)
+        this.customerList.forEach(item=>{
+          if (item.xyd==='☆'){
+            item.value1=1
+          }else if (item.xyd==='☆☆'){
+            item.value1=2
+          }else if (item.xyd==='☆☆☆'){
+            item.value1=3
+          }else if (item.xyd==='☆☆☆☆'){
+            item.value1=4
+          }else if (item.xyd==='☆☆☆☆☆'){
+            item.value1=5
+          }
+
+          if (item.myd==='☆'){
+            item.value2=1
+          }else if (item.myd==='☆☆'){
+            item.value2=2
+          }else if (item.myd==='☆☆☆'){
+            item.value2=3
+          }else if (item.myd==='☆☆☆☆'){
+            item.value2=4
+          }else if (item.myd==='☆☆☆☆☆'){
+            item.value2=5
+          }
+          // console.log("customerList:",this.customerList)
+        })
       })
       this.$api.CustomerInformation.getCusPhones("/customer/phone").then(res=>{
         for (let i = 0; i < res.result.length; i++) {
@@ -409,6 +481,30 @@ export default {
     },
     addInfo(){
       let result = true
+      if (this.addCustomerInfo.value2===1){
+        this.addCustomerInfo.myd = '☆'
+      }else if (this.addCustomerInfo.value2===2){
+        this.addCustomerInfo.myd = '☆☆'
+      }else if (this.addCustomerInfo.value2===3){
+        this.addCustomerInfo.myd = '☆☆☆'
+      }else if (this.addCustomerInfo.value2===4){
+        this.addCustomerInfo.myd = '☆☆☆☆'
+      }else if (this.addCustomerInfo.value2===5){
+        this.addCustomerInfo.myd = '☆☆☆☆☆'
+      }
+
+      if (this.addCustomerInfo.value1===1){
+        this.addCustomerInfo.xyd = '☆'
+      }else if (this.addCustomerInfo.value1===2){
+        this.addCustomerInfo.xyd = '☆☆'
+      }else if (this.addCustomerInfo.value1===3){
+        this.addCustomerInfo.xyd = '☆☆☆'
+      }else if (this.addCustomerInfo.value1===4){
+        this.addCustomerInfo.xyd = '☆☆☆☆'
+      }else if (this.addCustomerInfo.value1===5){
+        this.addCustomerInfo.xyd = '☆☆☆☆☆'
+      }
+      // console.log(this.addCustomerInfo)
       if (this.addCustomerInfo.name===undefined||this.addCustomerInfo.phone===undefined||this.addCustomerInfo.level===undefined){
         ElMessage({type:"warning",message:"必填项未填写"})
       }else if (!(/^1[34578]\d{9}$/.test(this.addCustomerInfo.phone))){

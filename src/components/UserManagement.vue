@@ -121,35 +121,42 @@
           <el-input type="password" v-model="addUserInfo.userPwd" style="width: 90%" show-password
                     placeholder="请输入用户密码"/>
         </el-form-item>
+
         <el-row>
+          <el-col :span="11">
+            <el-form-item label="用户头像">
+              <el-upload
+                  v-model:file-list="imgList"
+                  class="upload-demo"
+                  action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
+                  multiple
+                  :on-success="AddonSuccess"
+              >
+                <el-button size="small" type="primary">点我上传</el-button>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="用户角色">
+              <el-select
+                  v-model="addRoleIds"
+                  multiple
+                  clearable
+                  placeholder="Select"
+                  style="width: 90%"
+              >
+                <el-option
+                    v-for="item in RoleList"
+                    :key="item.id"
+                    :label="item.roleName"
+                    :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-form-item label="用户头像">
-          <el-upload
-              v-model:file-list="imgList"
-              class="upload-demo"
-              action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
-              multiple
-              :on-success="AddonSuccess"
-          >
-            <el-button size="small" type="primary">点我上传</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="用户角色">
-          <el-select
-              v-model="addRoleIds"
-              multiple
-              clearable
-              placeholder="Select"
-              style="width: 90%"
-          >
-            <el-option
-                v-for="item in RoleList"
-                :key="item.id"
-                :label="item.roleName"
-                :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
+
+
       </el-form>
       <template #footer>
       <span class="dialog-footer">
@@ -198,34 +205,39 @@
           <el-input type="password" v-model="updateUserInfo.userPwd" style="width: 90%" show-password
                     placeholder="请输入用户密码"/>
         </el-form-item>
-        <el-form-item label="用户头像">
-          <el-upload
-              v-model:file-list="imgList"
-              class="upload-demo"
-              action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
-              multiple
-              :on-success="UpdateOnSuccess"
-          >
-            <el-button size="small" type="primary">点我上传</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item></el-form-item>
-        <el-form-item label="用户角色">
-          <el-select
-              v-model="updateRoleId"
-              multiple
-              clearable
-              placeholder="Select"
-              style="width: 90%;"
-          >
-            <el-option
-                v-for="item in RoleList"
-                :key="item.id"
-                :label="item.roleName"
-                :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="11">
+            <el-form-item label="用户头像">
+              <el-upload
+                  v-model:file-list="imgList"
+                  class="upload-demo"
+                  action="https://www.zouhaihua.club:8080/api/fileupload/uploadP"
+                  multiple
+                  :on-success="UpdateOnSuccess"
+              >
+                <el-button size="small" type="primary">点我上传</el-button>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="用户角色">
+              <el-select
+                  v-model="updateRoleId"
+                  multiple
+                  clearable
+                  placeholder="Select"
+                  style="width: 90%;"
+              >
+                <el-option
+                    v-for="item in RoleList"
+                    :key="item.id"
+                    :label="item.roleName"
+                    :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
       <span class="dialog-footer">
